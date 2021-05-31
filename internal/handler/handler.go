@@ -17,8 +17,8 @@ type Repository struct {
 
 var Repo *Repository
 
-// NewMySQLHandlers creates db repo for postgres
-func NewMySQLHandlers(db *mysqlDriver.DB, errorLog, infoLog *log.Logger) *Repository {
+// NewMySQLHandler creates db repo
+func NewMySQLHandler(db *mysqlDriver.DB, errorLog, infoLog *log.Logger) *Repository {
 	return &Repository{
 		DB:    mysql.NewRepo(db.SQL),
 		Error: errorLog,
@@ -26,8 +26,8 @@ func NewMySQLHandlers(db *mysqlDriver.DB, errorLog, infoLog *log.Logger) *Reposi
 	}
 }
 
-// NewHandlers creates the handlers
-func NewHandlers(r *Repository) {
+// New creates the handlers
+func New(r *Repository) {
 	Repo = r
 }
 
@@ -47,5 +47,21 @@ func ValidationAPIMiddleware(next http.Handler) http.Handler {
 }
 
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Welcome to REST API\n")
+}
+
+func (m *Repository) GetCourse(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Welcome to REST API\n")
+}
+
+func (m *Repository) PostCourse(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Welcome to REST API\n")
+}
+
+func (m *Repository) PutCourse(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Welcome to REST API\n")
+}
+
+func (m *Repository) DeleteCourse(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Welcome to REST API\n")
 }
