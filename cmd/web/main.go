@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"goRent/internal/config"
 	"goRent/internal/driver/mysqlDriver"
@@ -21,13 +22,6 @@ const (
 	port            = 8080             //http port to listen to
 	idleTimeout     = 5 * time.Minute  // idleTimeout for server
 	shutdownTimeout = 10 * time.Second // shutdown timeout before connections are cancelled
-
-	dbPort      = "3306"
-	dbName      = "goRent"
-	dbUser      = "root"
-	dbPassword  = "Mysqlras520286" //insert own password
-	dbHost      = "127.0.0.1"
-	dbParseTime = true
 )
 
 var (
@@ -37,6 +31,23 @@ var (
 
 func main() {
 
+	defer func() {
+		if err := recover(); err != nil {
+			log.Println(err)
+		}
+	}()
+
+	port := flag.String("port", "8080", "server port to listen on")
+	identifier := flag.String("identifier", "GoRent", "unique identifier")
+	domain := flag.String("domain", "localhost", "domain name (e.g. example.com)")
+	dbUser := flag.String("dbuser", "", "database user")
+	dbPassword := flag.String("dbpassword", "", "database password")
+	dbName := flag.String("dbname", "", "database name")
+	dbHost := flag.String("dbhost", "", "database host")
+	dbPort := flag.String("dbport", "", "database port")
+	dbParseTime := flag.Bool("dbparsetime", true, "database parse time option")
+	flag.Parse()
+
 	f, err := os.OpenFile("log.txt", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {
 		println("fail to open log file: ", err)
@@ -44,17 +55,15 @@ func main() {
 	defer f.Close()
 
 	app = &config.AppConfig{}
+	app.Domain = *domain
 
 	// Customized loggers
-	app.Info = log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
+	app.Info = log.New(io.MultiWriter(f, os.Stdout), "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
 	app.Error = log.New(io.MultiWriter(f, os.Stdout), "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
-
-	app.Info.Println("test")
-	app.Error.Println("test")
 
 	dsn := fmt.Sprintf(
 		"%s:%s@tcp(%s:%s)/%s?parseTime=%t",
-		dbUser, dbPassword, dbHost, dbPort, dbName, dbParseTime,
+		*dbUser, *dbPassword, *dbHost, *dbPort, *dbName, *dbParseTime,
 	)
 
 	app.Info.Printf("Connecting to DB: %s...\n", dsn)
@@ -71,7 +80,7 @@ func main() {
 	session.Store = mysqlstore.New(db.SQL)
 	session.Lifetime = 24 * time.Hour
 	session.Cookie.Persist = true
-	// session.Cookie.Name = fmt.Sprintf("gbsession_id_%s", *identifier)
+	session.Cookie.Name = fmt.Sprintf("gbsession_id_%s", *identifier)
 	session.Cookie.SameSite = http.SameSiteLaxMode
 	// session.Cookie.Secure = *inProduction
 
@@ -82,7 +91,7 @@ func main() {
 	defer close(app.MailChan)
 
 	server := &http.Server{
-		Addr:        fmt.Sprintf(":%d", port),
+		Addr:        fmt.Sprintf(":%s", *port),
 		Handler:     routes(),
 		IdleTimeout: idleTimeout,
 	}
@@ -92,7 +101,7 @@ func main() {
 
 	// start server on seperate thread
 	go func() {
-		app.Info.Printf("Listening on port:%d\n", port)
+		app.Info.Printf("Listening on port:%s\n", *port)
 		if err := server.ListenAndServe(); err != nil {
 			if err != http.ErrServerClosed {
 				log.Fatal(err)

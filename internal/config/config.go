@@ -1,7 +1,6 @@
 package config
 
 import (
-	"goRent/internal/driver/mysqlDriver"
 	"goRent/internal/model"
 	"log"
 
@@ -9,7 +8,6 @@ import (
 )
 
 type AppConfig struct {
-	DB            *mysqlDriver.DB
 	Session       *scs.SessionManager
 	Domain        string
 	PreferenceMap map[string]string

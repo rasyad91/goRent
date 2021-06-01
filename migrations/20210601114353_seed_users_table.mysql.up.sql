@@ -9,7 +9,7 @@ INSERT INTO `gorent`.`users` (
     `unit_number`,
     `created_at`,
     `updated_at`
-)VALUES (
+) VALUES (
     'user1',
     'user1@gmail.com',
     'password',
