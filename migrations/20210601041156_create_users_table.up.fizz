@@ -1,0 +1,17 @@
+create_table("users") {
+  t.Column("id", "integer", {primary: true})
+  t.Column("username", "string", {"size": 255})
+  t.Column("email", "string", {})
+  t.Column("password", "string", {"size": 60})
+  t.Column("access_level", "integer", {"default": 5})
+  t.Column("rating", "float", {"scale": 1, "precision": 2})
+  t.Column("postal_code", "string", {"size": 10})
+  t.Column("street_name", "string", {"size": 255})
+  t.Column("block", "string", {"size": 10})
+  t.Column("unit_number", "string", {"size": 10})
+  t.Column("deleted_at", "timestamp", {"null": true})
+}
+
+add_index("users", "username", {"unique": true})
+add_index("users", "email", {"unique": true})
+
