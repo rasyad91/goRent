@@ -1,9 +1,9 @@
 development:
   dialect: mysql
   database: goRent
-  user: root
+  user: 
   #insert own password
-  password: Mysqlras520286
-  host: 127.0.0.1
-  port: 3306
-  pool: 5
+  password: 
+  host: 
+  port: 
+  pool: 
