@@ -1,6 +1,6 @@
 create_table("products") {
   t.Column("id", "integer", {primary: true})
-  t.Column("user_id", "integer", {})
+  t.Column("owner_id", "integer", {})
   t.Column("brand", "string", {"size": 60})
   t.Column("title", "string", {"size": 60})
   t.Column("rating", "float", {"scale": 1, "precision": 2}

@@ -1,4 +1,5 @@
 create_table("restrictions") {
   t.Column("id", "integer", {primary: true})
   t.Column("description", "string", {"size": 60})
+  t.Column("deleted_at", "timestamp", {"null": true})
 }
