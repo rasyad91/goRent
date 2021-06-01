@@ -48,7 +48,7 @@ func main() {
 	dbParseTime := flag.Bool("dbparsetime", true, "database parse time option")
 	flag.Parse()
 
-	f, err := os.OpenFile("log.txt", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	f, err := os.OpenFile("server.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {
 		println("fail to open log file: ", err)
 	}
