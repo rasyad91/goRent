@@ -2,27 +2,26 @@ package handler
 
 import (
 	"fmt"
+	"goRent/internal/config"
 	"goRent/internal/driver/mysqlDriver"
+	"goRent/internal/render"
 	"goRent/internal/repository"
 	"goRent/internal/repository/mysql"
-	"log"
 	"net/http"
 )
 
 type Repository struct {
-	DB    repository.DatabaseRepo
-	Error *log.Logger
-	Info  *log.Logger
+	DB  repository.DatabaseRepo
+	App *config.AppConfig
 }
 
 var Repo *Repository
 
 // NewMySQLHandler creates db repo
-func NewMySQLHandler(db *mysqlDriver.DB, errorLog, infoLog *log.Logger) *Repository {
+func NewMySQLHandler(db *mysqlDriver.DB, app *config.AppConfig) *Repository {
 	return &Repository{
-		DB:    mysql.NewRepo(db.SQL),
-		Error: errorLog,
-		Info:  infoLog,
+		DB:  mysql.NewRepo(db.SQL),
+		App: app,
 	}
 }
 
@@ -64,4 +63,72 @@ func (m *Repository) PutCourse(w http.ResponseWriter, r *http.Request) {
 
 func (m *Repository) DeleteCourse(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Welcome to REST API\n")
+}
+
+func (m *Repository) Login(w http.ResponseWriter, r *http.Request) {
+
+	m.App.Info.Println("Login: no session in progress")
+
+	data := make(map[string]interface{})
+
+	if r.Method == http.MethodPost {
+		if err := r.ParseForm(); err != nil {
+			m.App.Error.Println(err)
+			return
+		}
+
+		//...
+	}
+
+	if err := render.Template(w, r, "login.page.html", &render.TemplateData{
+		Data: data,
+	}); err != nil {
+		m.App.Error.Println(err)
+	}
+}
+
+func (m *Repository) Register(w http.ResponseWriter, r *http.Request) {
+
+	m.App.Info.Println("Register: no session in progress")
+
+	data := make(map[string]interface{})
+
+	if r.Method == http.MethodPost {
+		if err := r.ParseForm(); err != nil {
+			m.App.Error.Println(err)
+		}
+		//...
+
+		m.App.Info.Println("Register: redirecting to login page")
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	if err := render.Template(w, r, "register.page.html", &render.TemplateData{
+		Data: data,
+	}); err != nil {
+		m.App.Error.Println(err)
+	}
+}
+
+// Logout logs the user out
+func (m *Repository) Logout(w http.ResponseWriter, r *http.Request) {
+
+	// delete the remember me cookie, if any
+	delCookie := http.Cookie{
+		Name:     fmt.Sprintf("_%s_gowatcher_remember", m.App.PreferenceMap["identifier"]),
+		Value:    "",
+		Domain:   m.App.Domain,
+		Path:     "/",
+		MaxAge:   0,
+		HttpOnly: true,
+	}
+	http.SetCookie(w, &delCookie)
+
+	_ = m.App.Session.RenewToken(r.Context())
+	_ = m.App.Session.Destroy(r.Context())
+	_ = m.App.Session.RenewToken(r.Context())
+
+	m.App.Session.Put(r.Context(), "flash", "You've been logged out successfully!")
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

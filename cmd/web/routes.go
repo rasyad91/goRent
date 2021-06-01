@@ -11,6 +11,7 @@ func routes() http.Handler {
 
 	router := mux.NewRouter()
 	router.HandleFunc("/api/v1/", handler.Repo.Home).Methods("GET")
+	router.HandleFunc("/user/logout", handler.Repo.Logout).Methods("GET")
 
 	sub := router.NewRoute().Subrouter()
 	sub.Use(handler.ValidationAPIMiddleware)
@@ -19,6 +20,9 @@ func routes() http.Handler {
 	sub.HandleFunc("/api/v1/courses/{courseId}", handler.Repo.PostCourse).Methods("POST")
 	sub.HandleFunc("/api/v1/courses/{courseId}", handler.Repo.PutCourse).Methods("PUT")
 	sub.HandleFunc("/api/v1/courses/{courseId}", handler.Repo.DeleteCourse).Methods("DELETE")
+
+	fileServer := http.FileServer(http.Dir("./static/"))
+	router.Handle("/static/*", http.StripPrefix("/static", fileServer))
 
 	return router
 }

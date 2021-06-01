@@ -2,6 +2,7 @@ package config
 
 import (
 	"goRent/internal/driver/mysqlDriver"
+	"log"
 
 	"github.com/alexedwards/scs/v2"
 )
@@ -14,4 +15,6 @@ type AppConfig struct {
 	PreferenceMap map[string]string
 	Version       string
 	Identifier    string
+	Info          *log.Logger
+	Error         *log.Logger
 }

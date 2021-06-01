@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"goRent/internal/config"
 	"goRent/internal/driver/mysqlDriver"
 	"goRent/internal/handler"
 	"io"
@@ -31,6 +32,7 @@ const (
 
 var (
 	session *scs.SessionManager
+	app     *config.AppConfig
 )
 
 func main() {
@@ -42,20 +44,20 @@ func main() {
 	defer f.Close()
 
 	// Customized loggers
-	infoLog := log.New(io.MultiWriter(f, os.Stdout), "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
-	errorLog := log.New(io.MultiWriter(f, os.Stdout), "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
+	app.InfoLog = log.New(io.MultiWriter(f, os.Stdout), "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
+	app.ErrorLog = log.New(io.MultiWriter(f, os.Stdout), "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
 
 	dsn := fmt.Sprintf(
 		"%s:%s@tcp(%s:%s)/%s?parseTime=%t",
 		dbUser, dbPassword, dbHost, dbPort, dbName, dbParseTime,
 	)
 
-	infoLog.Printf("Connecting to DB: %s...\n", dsn)
+	app.InfoLog.Printf("Connecting to DB: %s...\n", dsn)
 	db, err := mysqlDriver.Connect(dsn)
 	if err != nil {
-		errorLog.Fatal(err)
+		app.ErrorLog.Fatal(err)
 	}
-	infoLog.Printf("Successfully connected to DB: %s\n", dsn)
+	app.InfoLog.Printf("Successfully connected to DB: %s\n", dsn)
 	defer db.SQL.Close()
 
 	// session
@@ -68,7 +70,7 @@ func main() {
 	session.Cookie.SameSite = http.SameSiteLaxMode
 	// session.Cookie.Secure = *inProduction
 
-	r := handler.NewMySQLHandler(db, errorLog, infoLog)
+	r := handler.NewMySQLHandler(db, app)
 	handler.New(r)
 
 	server := &http.Server{
@@ -82,7 +84,7 @@ func main() {
 
 	// start server on seperate thread
 	go func() {
-		infoLog.Printf("Listening on port:%d\n", port)
+		app.InfoLog.Printf("Listening on port:%d\n", port)
 		if err := server.ListenAndServe(); err != nil {
 			if err != http.ErrServerClosed {
 				log.Fatal(err)
@@ -93,11 +95,11 @@ func main() {
 	// blocks code, waits for stop to initiate
 	<-stop
 
-	infoLog.Println("Shutting down...")
+	app.InfoLog.Println("Shutting down...")
 	ctx, cancel := context.WithTimeout(context.Background(), shutdownTimeout)
 	defer cancel()
 	if err := server.Shutdown(ctx); err != nil {
-		errorLog.Fatalln(err)
+		app.ErrorLog.Fatalln(err)
 	}
-	infoLog.Println("Server shut down")
+	app.InfoLog.Println("Server shut down")
 }
