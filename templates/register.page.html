@@ -1,0 +1,43 @@
+{{template "base" .}}
+<div class="container">
+
+    <div class="row mt-5">
+        <div class="mb-3">
+
+            <div class="col-5">
+                <p>Already have an account? <a href="/login"> Sign in</a></p>
+                <hr class="mb-3" style="color:gray">
+                <h2>Create a new account</h2>
+
+                {{$res := index .Data "register"}}
+                <form method="post" novalidate>
+
+                    {{with .Form.Errors.Get "username"}}
+                    <label class="text-danger">{{.}}</label>
+                    {{end}}
+                    <div class="mb-3 form-floating">
+                        <input type="text" class="form-control form-control-lg {{with .Form.Errors.Get "username"}} is-invalid{{end}}" id="username" name="username"
+                            placeholder="Username" autocomplete="off" {{if $res.Username}}
+                            value="{{$res.Username}}" {{end}}>
+                        <label for="username" class="form-label">username</label>
+
+
+                    </div>
+                    {{with .Form.Errors.Get "password"}}
+                    <label class="text-danger">{{.}}</label>
+                    {{end}}
+                    <div class="mb-3 form-floating">
+                        <input type="password" class="form-control form-control-lg {{with .Form.Errors.Get "password"}} is-invalid{{end}}" id="password" name="password"
+                            autocomplete="off" placeholder="Password">
+                        <label for="password" class="form-label">password</label>
+
+
+                    </div>
+                    <button type="submit" class="btn btn-danger btn-lg">Create account</button>
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>

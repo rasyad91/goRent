@@ -19,5 +19,6 @@ func routes() http.Handler {
 	sub.HandleFunc("/api/v1/courses/{courseId}", handler.Repo.PostCourse).Methods("POST")
 	sub.HandleFunc("/api/v1/courses/{courseId}", handler.Repo.PutCourse).Methods("PUT")
 	sub.HandleFunc("/api/v1/courses/{courseId}", handler.Repo.DeleteCourse).Methods("DELETE")
+
 	return router
 }

@@ -1,0 +1,42 @@
+{{template "base" .}}
+<div class="container">
+
+    <div class="row mt-5">
+        <div class="mb-3">
+
+            <div class="col-5">
+                <p>First time here? <a href="/register">Create an account</a></p>
+                <hr class="mb-3" style="color:gray">
+                <h2>Sign in</h2>
+                {{with .Form.Errors.Get "login"}}
+                <label class="text-danger">{{.}}</label>
+                {{end}}
+                <form method="POST">
+
+                    {{with .Form.Errors.Get "username"}}
+                    <label class="text-danger">{{.}}</label>
+                    {{end}}
+                    <div class="mb-3 form-floating">
+                        <input type="text" class="form-control form-control-lg {{with .Form.Errors.Get "username"}} is-invalid{{end}}" id="username" name="username"
+                            placeholder="Username" autocomplete="off">
+                        <label for="username" class="form-label">username</label>
+                    </div>
+
+                    {{with .Form.Errors.Get "password"}}
+                    <label class="text-danger">{{.}}</label>
+                    {{end}}
+                    <div class="mb-3 form-floating">
+                        <input type="password" class="form-control form-control-lg {{with .Form.Errors.Get "password"}} is-invalid{{end}}" id="password" name="password"
+                            autocomplete="off" placeholder="Password">
+                        <label for="password" class="form-label">password</label>
+
+
+                    </div>
+                    <button type="submit" class="btn btn-danger btn-lg">Sign in</button>
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
