@@ -56,3 +56,16 @@ type Rent struct {
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 }
+
+type Review struct {
+	ID        int
+	OwnerID   int
+	RenterID  int
+	ProductID int
+	Type      string
+	Title     string
+	Body      string
+	Rating    float32
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
