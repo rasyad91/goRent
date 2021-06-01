@@ -23,4 +23,13 @@ type Address struct {
 }
 
 type Product struct {
+	ID          int
+	UserID      int // owner reference
+	Brand       string
+	Title       string
+	Rating      float32
+	Description string
+	DeletedAt   time.Time
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
