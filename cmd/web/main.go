@@ -43,21 +43,26 @@ func main() {
 	}
 	defer f.Close()
 
+	app = &config.AppConfig{}
+
 	// Customized loggers
-	app.InfoLog = log.New(io.MultiWriter(f, os.Stdout), "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
-	app.ErrorLog = log.New(io.MultiWriter(f, os.Stdout), "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
+	app.Info = log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
+	app.Error = log.New(io.MultiWriter(f, os.Stdout), "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
+
+	app.Info.Println("test")
+	app.Error.Println("test")
 
 	dsn := fmt.Sprintf(
 		"%s:%s@tcp(%s:%s)/%s?parseTime=%t",
 		dbUser, dbPassword, dbHost, dbPort, dbName, dbParseTime,
 	)
 
-	app.InfoLog.Printf("Connecting to DB: %s...\n", dsn)
+	app.Info.Printf("Connecting to DB: %s...\n", dsn)
 	db, err := mysqlDriver.Connect(dsn)
 	if err != nil {
-		app.ErrorLog.Fatal(err)
+		app.Error.Fatal(err)
 	}
-	app.InfoLog.Printf("Successfully connected to DB: %s\n", dsn)
+	app.Info.Printf("Successfully connected to DB: %s\n", dsn)
 	defer db.SQL.Close()
 
 	// session
@@ -84,7 +89,7 @@ func main() {
 
 	// start server on seperate thread
 	go func() {
-		app.InfoLog.Printf("Listening on port:%d\n", port)
+		app.Info.Printf("Listening on port:%d\n", port)
 		if err := server.ListenAndServe(); err != nil {
 			if err != http.ErrServerClosed {
 				log.Fatal(err)
@@ -95,11 +100,11 @@ func main() {
 	// blocks code, waits for stop to initiate
 	<-stop
 
-	app.InfoLog.Println("Shutting down...")
+	app.Info.Println("Shutting down...")
 	ctx, cancel := context.WithTimeout(context.Background(), shutdownTimeout)
 	defer cancel()
 	if err := server.Shutdown(ctx); err != nil {
-		app.ErrorLog.Fatalln(err)
+		app.Error.Fatalln(err)
 	}
-	app.InfoLog.Println("Server shut down")
+	app.Info.Println("Server shut down")
 }
