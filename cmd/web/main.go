@@ -25,7 +25,7 @@ const (
 	dbPort      = "3306"
 	dbName      = "goRent"
 	dbUser      = "root"
-	dbPassword  = "" //insert own password
+	dbPassword  = "Mysqlras520286" //insert own password
 	dbHost      = "127.0.0.1"
 	dbParseTime = true
 )
@@ -66,7 +66,7 @@ func main() {
 	defer db.SQL.Close()
 
 	// session
-	log.Printf("Initializing session manager....")
+	app.Info.Printf("Initializing session manager....")
 	session = scs.New()
 	session.Store = mysqlstore.New(db.SQL)
 	session.Lifetime = 24 * time.Hour
@@ -77,6 +77,9 @@ func main() {
 
 	r := handler.NewMySQLHandler(db, app)
 	handler.New(r)
+
+	listenForMail()
+	defer close(app.MailChan)
 
 	server := &http.Server{
 		Addr:        fmt.Sprintf(":%d", port),

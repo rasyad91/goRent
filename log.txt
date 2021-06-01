@@ -5,3 +5,7 @@ INFO: 2021/05/31 22:20:56 main.go:58: Successfully connected to DB: root:Mysqlra
 INFO: 2021/05/31 22:20:56 main.go:85: Listening on port:8080
 INFO: 2021/05/31 22:21:05 main.go:96: Shutting down...
 INFO: 2021/05/31 22:21:05 main.go:102: Server shut down
+ERROR: 2021/06/01 13:26:25 main.go:63: ConnectSQL: ping: Error 1045: Access denied for user 'root'@'localhost' (using password: NO)
+ERROR: 2021/06/01 13:27:35 main.go:53: test
+ERROR: 2021/06/01 13:27:35 main.go:63: ConnectSQL: ping: Error 1045: Access denied for user 'root'@'localhost' (using password: NO)
+ERROR: 2021/06/01 13:27:59 main.go:53: test

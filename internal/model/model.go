@@ -13,9 +13,9 @@ type User struct {
 	DeletedAt   time.Time
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
-	Products    []Product
-	Rents       []Rent // where Rent.RenterID = User ID
-	Bookings    []Rent // where Rent.OwnerID = User ID
+	Products    []Product // where ID = Product.OwnerID
+	Rents       []Rent    // where ID = Rent.RenterID
+	Bookings    []Rent    // where ID = Rent.OwnerID
 }
 
 type Address struct {
@@ -27,11 +27,12 @@ type Address struct {
 
 type Product struct {
 	ID          int
-	OwnerID     int // owner reference
+	OwnerID     int
 	Brand       string
 	Title       string
 	Rating      float32
 	Description string
+	Reviews     []Review // where ID = Review.ProductID
 	DeletedAt   time.Time
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
