@@ -1,1 +1,1 @@
-drop_table("products")
+drop_table("products");

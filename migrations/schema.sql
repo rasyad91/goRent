@@ -16,6 +16,103 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `products`
+--
+
+DROP TABLE IF EXISTS `products`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `products` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `owner_id` int NOT NULL,
+  `brand` varchar(60) COLLATE utf8mb4_general_ci NOT NULL,
+  `title` varchar(60) COLLATE utf8mb4_general_ci NOT NULL,
+  `rating` float(2,1) NOT NULL,
+  `description` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `products_users_id_fk` (`owner_id`),
+  CONSTRAINT `products_users_id_fk` FOREIGN KEY (`owner_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `rents`
+--
+
+DROP TABLE IF EXISTS `rents`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `rents` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `owner_id` int NOT NULL,
+  `renter_id` int NOT NULL,
+  `product_id` int NOT NULL,
+  `restriction_id` int NOT NULL,
+  `start_date` datetime DEFAULT NULL,
+  `end_date` datetime DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `rents_users_owner_id_fk` (`owner_id`),
+  KEY `rents_users_renter_id_fk` (`renter_id`),
+  KEY `rents_products_id_fk` (`product_id`),
+  KEY `rents_restrictions_id_fk` (`restriction_id`),
+  CONSTRAINT `rents_products_id_fk` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `rents_restrictions_id_fk` FOREIGN KEY (`restriction_id`) REFERENCES `restrictions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `rents_users_owner_id_fk` FOREIGN KEY (`owner_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `rents_users_renter_id_fk` FOREIGN KEY (`renter_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `restrictions`
+--
+
+DROP TABLE IF EXISTS `restrictions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `restrictions` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `description` varchar(60) COLLATE utf8mb4_general_ci NOT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `reviews`
+--
+
+DROP TABLE IF EXISTS `reviews`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `reviews` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `owner_id` int NOT NULL,
+  `renter_id` int NOT NULL,
+  `product_id` int NOT NULL,
+  `type` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `title` varchar(60) COLLATE utf8mb4_general_ci NOT NULL,
+  `body` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `rating` float(2,1) NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `reviews_users_owner_id_fk` (`owner_id`),
+  KEY `reviews_users_renter_id_fk` (`renter_id`),
+  KEY `reviews_products_id_fk` (`product_id`),
+  CONSTRAINT `reviews_products_id_fk` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `reviews_users_owner_id_fk` FOREIGN KEY (`owner_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `reviews_users_renter_id_fk` FOREIGN KEY (`renter_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `schema_migration`
 --
 
@@ -57,7 +154,7 @@ CREATE TABLE `users` (
   `email` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `password` varchar(60) COLLATE utf8mb4_general_ci NOT NULL,
   `access_level` int NOT NULL DEFAULT '5',
-  `rating` float(2,1) NOT NULL,
+  `rating` float(2,1) NOT NULL DEFAULT '0.0',
   `postal_code` varchar(10) COLLATE utf8mb4_general_ci NOT NULL,
   `street_name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `block` varchar(10) COLLATE utf8mb4_general_ci NOT NULL,
@@ -68,7 +165,7 @@ CREATE TABLE `users` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_username_idx` (`username`),
   UNIQUE KEY `users_email_idx` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -80,4 +177,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-06-01 13:57:35
+-- Dump completed on 2021-06-01 19:54:56

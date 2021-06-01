@@ -3,12 +3,12 @@ create_table("products") {
   t.Column("owner_id", "integer", {})
   t.Column("brand", "string", {"size": 60})
   t.Column("title", "string", {"size": 60})
-  t.Column("rating", "float", {"scale": 1, "precision": 2}
+  t.Column("rating", "float", {"scale": 1, "precision": 2})
   t.Column("description", "string", {})
   t.Column("deleted_at", "timestamp", {"null": true})
 }
 
-add_foreign_key("products", "user_id", {"users": ["id"]}, {
+add_foreign_key("products", "owner_id", {"users": ["id"]}, {
     "on_delete": "cascade",
     "on_update": "cascade",
 })

@@ -9,11 +9,13 @@ create_table("rents") {
 }
 
 add_foreign_key("rents", "owner_id", {"users": ["id"]}, {
+    "name": "rents_users_owner_id_fk",
     "on_delete": "cascade",
     "on_update": "cascade",
 })
 
 add_foreign_key("rents", "renter_id", {"users": ["id"]}, {
+    "name": "rents_users_renter_id_fk",
     "on_delete": "cascade",
     "on_update": "cascade",
 })
