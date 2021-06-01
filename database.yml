@@ -1,9 +1,0 @@
-development:
-  dialect: mysql
-  database: goRent
-  user: 
-  #insert own password
-  password: 
-  host: 
-  port: 
-  pool: 
