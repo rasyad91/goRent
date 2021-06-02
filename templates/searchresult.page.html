@@ -1,0 +1,44 @@
+{{template "base" .}}
+
+{{$res := index .Data "user"}}
+{{if $res.Username}}
+
+<article class="mt-5" style="display: grid; place-items: center;">
+    <h1>
+        Welcome, {{$res.Username}}
+    </h1>
+    <a title="Sofia Lucas, CC BY-SA 4.0 &lt;https://creativecommons.org/licenses/by-sa/4.0&gt;, via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:Scottish_fold_cat.jpg"><img width="512" alt="Scottish fold cat" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Scottish_fold_cat.jpg/512px-Scottish_fold_cat.jpg"></a>
+
+</article>
+
+{{else}}
+
+<div class="mt-5" style="display: grid; place-items: center;">
+    <h1>
+        Sign in to see content
+    </h1>
+</div>
+
+
+
+<div class="container pb-5"></div> 
+<div class="container bg-light ml-10 mr-10 rounded-lg shadow-sm pt-2 pl-5 pr-6 mb-3 bg-white">
+<div class="container">
+<h3>What would you like to rent today?</h3>
+
+<form method="post"> 
+
+    <div class="form-group pt-1">
+    <label for="exampleFormControlInput1"></label>
+    <input type="text" class="form-control" name="searchtext" placeholder="Fried Chicken ..">
+  </div>
+      {{/* <input type="submit"> */}}
+      <button type="submit" name="searchFood" class="btn btn-dark text-justify mt-2">Search</button>
+      <div class ="container pb-3"></div>
+
+</form>
+
+</div></div>
+
+
+{{end}}

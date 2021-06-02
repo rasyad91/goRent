@@ -19,18 +19,6 @@ type Node struct { //for Tries Data structure
 	isEnd    bool
 }
 
-// type DBrepo struct {
-// 	*sql.DB
-// }
-
-// func NewRepo(Conn *sql.DB) repository.DatabaseRepo {
-// 	return &DBrepo{
-// 		DB: Conn,
-// 	}
-// }
-
-// var RentalProductsList []string //global variable
-
 func (m *Repository) CreateProductList() {
 
 	// var (
