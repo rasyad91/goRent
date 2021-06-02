@@ -28,7 +28,7 @@ CREATE TABLE `products` (
   `brand` varchar(60) COLLATE utf8mb4_general_ci NOT NULL,
   `title` varchar(60) COLLATE utf8mb4_general_ci NOT NULL,
   `rating` float(2,1) NOT NULL,
-  `description` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `description` varchar(500) COLLATE utf8mb4_general_ci NOT NULL,
   `price` float(7,2) NOT NULL,
   `deleted_at` datetime DEFAULT NULL,
   `created_at` datetime NOT NULL,
@@ -36,7 +36,7 @@ CREATE TABLE `products` (
   PRIMARY KEY (`id`),
   KEY `products_users_id_fk` (`owner_id`),
   CONSTRAINT `products_users_id_fk` FOREIGN KEY (`owner_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -180,4 +180,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-06-02 10:08:26
+-- Dump completed on 2021-06-02 11:13:53
