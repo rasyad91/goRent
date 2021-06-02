@@ -16,6 +16,28 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `images`
+--
+
+DROP TABLE IF EXISTS `images`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `images` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `product_id` int NOT NULL DEFAULT '0',
+  `owner_id` int NOT NULL DEFAULT '0',
+  `body` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `images_users_id_fk` (`owner_id`),
+  KEY `images_products_id_fk` (`product_id`),
+  CONSTRAINT `images_products_id_fk` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `images_users_id_fk` FOREIGN KEY (`owner_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `products`
 --
 
@@ -30,7 +52,6 @@ CREATE TABLE `products` (
   `rating` float(2,1) NOT NULL,
   `description` varchar(500) COLLATE utf8mb4_general_ci NOT NULL,
   `price` float(7,2) NOT NULL,
-  `deleted_at` datetime DEFAULT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`),
@@ -80,7 +101,6 @@ DROP TABLE IF EXISTS `restrictions`;
 CREATE TABLE `restrictions` (
   `id` int NOT NULL AUTO_INCREMENT,
   `description` varchar(60) COLLATE utf8mb4_general_ci NOT NULL,
-  `deleted_at` datetime DEFAULT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`)
@@ -162,7 +182,6 @@ CREATE TABLE `users` (
   `street_name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `block` varchar(10) COLLATE utf8mb4_general_ci NOT NULL,
   `unit_number` varchar(10) COLLATE utf8mb4_general_ci NOT NULL,
-  `deleted_at` datetime DEFAULT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`),
@@ -180,4 +199,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-06-02 11:13:53
+-- Dump completed on 2021-06-03  6:44:51

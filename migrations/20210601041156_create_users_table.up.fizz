@@ -9,7 +9,6 @@ create_table("users") {
   t.Column("street_name", "string", {"size": 255})
   t.Column("block", "string", {"size": 10})
   t.Column("unit_number", "string", {"size": 10})
-  t.Column("deleted_at", "timestamp", {"null": true})
 }
 
 add_index("users", "username", {"unique": true})

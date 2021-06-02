@@ -6,7 +6,6 @@ create_table("products") {
   t.Column("rating", "float", {"scale": 1, "precision": 2})
   t.Column("description", "string", {"size":500})
   t.Column("price", "float", {"scale": 2, "precision": 7})
-  t.Column("deleted_at", "timestamp", {"null": true})
 }
 
 add_foreign_key("products", "owner_id", {"users": ["id"]}, {

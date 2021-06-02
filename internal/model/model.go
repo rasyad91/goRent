@@ -10,7 +10,6 @@ type User struct {
 	AccessLevel int
 	Rating      float32
 	Address     Address
-	DeletedAt   time.Time
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 	Products    []Product // where ID = Product.OwnerID
@@ -34,7 +33,6 @@ type Product struct {
 	Description string
 	Price       float32
 	Reviews     []Review // where ID = Review.ProductID
-	DeletedAt   time.Time
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }
@@ -42,7 +40,6 @@ type Product struct {
 type Restriction struct {
 	ID          int
 	Description string
-	DeletedAt   time.Time
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }

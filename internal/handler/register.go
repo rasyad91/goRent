@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"database/sql"
 	"fmt"
 	"goRent/internal/form"
 	"goRent/internal/model"
@@ -66,10 +67,15 @@ func (m *Repository) RegisterPost(w http.ResponseWriter, r *http.Request) {
 	// 	"password is required", "password must be more ..."
 	// }
 
-	_, isExist := m.DB.GetUser(newUser.Username)
-	if isExist {
-		fmt.Println("YES THIS USERNAME IS ALREADY IN USE")
+	eu, err := m.DB.GetUser(newUser.Username)
+	_ = eu
+	if err != sql.ErrNoRows {
+		m.App.Info.Println("YES THIS USERNAME IS ALREADY IN USE")
 		form.Errors.Add("username", "Username already in use")
+	}
+	if err != nil && err != sql.ErrNoRows {
+		m.App.Error.Println(err)
+		return
 	}
 
 	data["register"] = newUser
@@ -87,9 +93,8 @@ func (m *Repository) RegisterPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	addedSuccess := m.DB.InsertUser(newUser)
-	if addedSuccess {
-		fmt.Println("SUCCESSFULLY REGISTERED")
+	if err := m.DB.InsertUser(newUser); err != nil {
+		m.App.Info.Println("SUCCESSFULLY REGISTERED")
 	}
 
 	m.App.Info.Println("Register: redirecting to login page")

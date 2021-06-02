@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"goRent/internal/model"
 	"goRent/internal/repository"
-	"log"
 	"time"
 )
 
@@ -14,9 +13,9 @@ type DBrepo struct {
 	*sql.DB
 }
 
-const (
-	layoutISO = "2006-01-02"
-)
+// const (
+// 	layoutISO = "2006-01-02"
+// )
 
 // NewRepo creates the repository
 func NewRepo(Conn *sql.DB) repository.DatabaseRepo {
@@ -25,70 +24,64 @@ func NewRepo(Conn *sql.DB) repository.DatabaseRepo {
 	}
 }
 
-func (m *DBrepo) GetAllCourses() {
-
+func (m *DBrepo) GetUser(username string) (model.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	query := `select id, title, created_at, updated_at from courses`
+	row := m.QueryRowContext(ctx, "SELECT * FROM goRent.Users where username=?", username)
 
-	rows, err := m.QueryContext(ctx, query)
+	u := model.User{
+		ID:          0,
+		Username:    username,
+		Email:       "",
+		Password:    "",
+		AccessLevel: 0,
+		Rating:      0,
+		Address: model.Address{
+			PostalCode: "",
+			StreetName: "",
+			Block:      "",
+			UnitNumber: "",
+		},
+		CreatedAt: time.Time{},
+		UpdatedAt: time.Time{},
+		Products:  []model.Product{},
+		Rents:     []model.Rent{},
+		Bookings:  []model.Rent{},
+	}
+	err := row.Scan(
+		&u.ID,
+		&u.Username,
+		&u.Email,
+		&u.Password,
+		&u.AccessLevel,
+		&u.Rating,
+		&u.Address.PostalCode,
+		&u.Address.StreetName,
+		&u.Address.Block,
+		&u.Address.UnitNumber,
+		&u.CreatedAt,
+		&u.UpdatedAt,
+	)
+	fmt.Println(u)
 	if err != nil {
-		log.Println(err)
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-
-		err := rows.Scan()
-		if err != nil {
-			log.Println(err)
-
-		}
+		return model.User{}, fmt.Errorf("db GetUser: %v", err)
 	}
 
-	if err := rows.Err(); err != nil {
-		fmt.Println(err)
-	}
-
+	return u, nil
 }
 
-func (m *DBrepo) GetUser(username string) (model.User, bool) {
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
-
-	results, _ := m.QueryContext(ctx, "SELECT * FROM goRent.Users where username=?", username)
-	if results.Next() {
-		var person model.User
-		var add model.Address
-		_ = results.Scan(&person.ID, &person.Username, &person.Email, &person.Password,
-			&person.AccessLevel, &person.Rating, &add.PostalCode, &add.StreetName, &add.Block, &add.UnitNumber,
-			&person.DeletedAt, &person.CreatedAt, &person.UpdatedAt)
-		person.Address = add
-		fmt.Println(person)
-		fmt.Println(add)
-		return person, true
-	} else {
-		return model.User{}, false
-	}
-
-}
-
-func (m *DBrepo) InsertUser(u model.User) bool {
+func (m *DBrepo) InsertUser(u model.User) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 	_, err := m.ExecContext(ctx, "INSERT INTO goRent.users (username,email,password,postal_code,street_name,block,unit_number,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?);",
 		u.Username, u.Email, u.Password,
 		u.Address.PostalCode, u.Address.StreetName, u.Address.Block, u.Address.UnitNumber,
 		time.Now(), time.Now())
-
-	fmt.Println("INSERTION ERR:", err)
 	if err != nil {
-		return false
-	} else {
-		return true
+		return fmt.Errorf("db InsertUser: %v", err)
 	}
-
+	return nil
 }
 
 func (m *DBrepo) GetAllProducts() ([]model.Product, error) {
@@ -107,9 +100,7 @@ func (m *DBrepo) GetAllProducts() ([]model.Product, error) {
 	defer rows.Close()
 
 	for rows.Next() {
-
 		p := model.Product{}
-
 		err := rows.Scan(
 			&p.ID,
 			&p.OwnerID,

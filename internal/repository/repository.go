@@ -3,8 +3,7 @@ package repository
 import "goRent/internal/model"
 
 type DatabaseRepo interface {
-	GetAllCourses()
-	GetUser(username string) (model.User, bool)
-	InsertUser(user model.User) bool
+	GetUser(username string) (model.User, error)
+	InsertUser(user model.User) error
 	GetAllProducts() ([]model.Product, error)
 }
