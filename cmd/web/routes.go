@@ -10,18 +10,22 @@ import (
 func routes() http.Handler {
 
 	router := mux.NewRouter()
-	router.HandleFunc("/api/v1/", handler.Repo.Home).Methods("GET")
-	router.HandleFunc("/user/logout", handler.Repo.Logout).Methods("GET")
-	router.HandleFunc("/login", handler.Repo.Login)
-	router.HandleFunc("/register", handler.Repo.Register)
 
-	sub := router.NewRoute().Subrouter()
-	sub.Use(handler.ValidationAPIMiddleware)
+	// default middleware
+	router.Use(SessionLoad)
+	router.Use(RecoverPanic)
+	router.Use(NoSurf)
 
-	sub.HandleFunc("/api/v1/courses/{courseId}", handler.Repo.GetCourse).Methods("GET")
-	sub.HandleFunc("/api/v1/courses/{courseId}", handler.Repo.PostCourse).Methods("POST")
-	sub.HandleFunc("/api/v1/courses/{courseId}", handler.Repo.PutCourse).Methods("PUT")
-	sub.HandleFunc("/api/v1/courses/{courseId}", handler.Repo.DeleteCourse).Methods("DELETE")
+	router.HandleFunc("/", handler.Repo.Home).Methods("GET")
+
+	router.HandleFunc("/login", handler.Repo.Login).Methods("GET")
+	router.HandleFunc("/login", handler.Repo.Login).Methods("POST")
+
+	router.HandleFunc("/register", handler.Repo.Register).Methods("GET")
+	router.HandleFunc("/register", handler.Repo.Register).Methods("POST")
+
+	// sub := router.NewRoute().Subrouter()
+	// sub.Use(handler.ValidationAPIMiddleware)
 
 	fileServer := http.FileServer(http.Dir("./static/"))
 	router.Handle("/static/*", http.StripPrefix("/static", fileServer))

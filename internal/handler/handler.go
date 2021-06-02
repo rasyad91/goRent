@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"goRent/internal/config"
 	"goRent/internal/driver/mysqlDriver"
+	"goRent/internal/helper"
 	"goRent/internal/render"
 	"goRent/internal/repository"
 	"goRent/internal/repository/mysql"
@@ -30,57 +31,14 @@ func New(r *Repository) {
 	Repo = r
 }
 
-func ValidationAPIMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Do stuff here
-		v := r.URL.Query()
-		key, ok := v["key"]
-		if !ok || key[0] != "2c78afaf-97da-4816-bbee-9ad239abb296" {
-			w.WriteHeader(http.StatusNotFound)
-			w.Write([]byte("401 - Invalid key"))
-			return
-		}
-		// Call the next handler, which can be another middleware in the chain, or the final handler.
-		next.ServeHTTP(w, r)
-	})
-}
-
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Welcome to REST API\n")
-}
-
-func (m *Repository) GetCourse(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Welcome to REST API\n")
-}
-
-func (m *Repository) PostCourse(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Welcome to REST API\n")
-}
-
-func (m *Repository) PutCourse(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Welcome to REST API\n")
-}
-
-func (m *Repository) DeleteCourse(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Welcome to REST API\n")
-}
-
-func (m *Repository) Login(w http.ResponseWriter, r *http.Request) {
-
-	m.App.Info.Println("Login: no session in progress")
-
+	if true {
+		helper.ServerError(w, r, fmt.Errorf("Test"))
+		return
+	}
 	data := make(map[string]interface{})
 
-	if r.Method == http.MethodPost {
-		if err := r.ParseForm(); err != nil {
-			m.App.Error.Println(err)
-			return
-		}
-
-		//...
-	}
-
-	if err := render.Template(w, r, "login.page.html", &render.TemplateData{
+	if err := render.Template(w, r, "home.page.html", &render.TemplateData{
 		Data: data,
 	}); err != nil {
 		m.App.Error.Println(err)
@@ -88,11 +46,8 @@ func (m *Repository) Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func (m *Repository) Register(w http.ResponseWriter, r *http.Request) {
-
 	m.App.Info.Println("Register: no session in progress")
-
 	data := make(map[string]interface{})
-
 	if r.Method == http.MethodPost {
 		if err := r.ParseForm(); err != nil {
 			m.App.Error.Println(err)

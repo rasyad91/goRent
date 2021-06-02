@@ -29,6 +29,7 @@ var (
 	app     *config.AppConfig
 )
 
+// TODO clean up main() --- Rasyad
 func main() {
 
 	defer func() {

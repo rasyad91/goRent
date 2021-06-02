@@ -2,13 +2,20 @@ package render
 
 import (
 	"fmt"
+	"goRent/internal/model"
 	"net/http"
 	"text/template"
 )
 
 // TemplateData stores data to be used in Templates
 type TemplateData struct {
-	Data map[string]interface{}
+	Data            map[string]interface{}
+	CSRFToken       string
+	IsAuthenticated bool
+	User            model.User
+	Flash           string
+	Warning         string
+	Error           string
 }
 
 // Template parses and exectues template by its template name
