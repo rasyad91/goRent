@@ -31,10 +31,8 @@ func New(r *Repository) {
 }
 
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
-	// if true {
-	// 	render.ServerError(w, r, fmt.Errorf("Test"))
-	// 	return
-	// }
+	m.App.Session.Put(r.Context(), "warning", "hello")
+
 	data := make(map[string]interface{})
 
 	if err := render.Template(w, r, "home.page.html", &render.TemplateData{
