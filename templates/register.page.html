@@ -11,29 +11,42 @@
 
                 {{$res := index .Data "register"}}
                 <form method="post" novalidate>
-
-                    {{with .Form.Errors.Get "username"}}
-                    <label class="text-danger">{{.}}</label>
-                    {{end}}
-                    <div class="mb-3 form-floating">
-                        <input type="text" class="form-control form-control-lg {{with .Form.Errors.Get "username"}} is-invalid{{end}}" id="username" name="username"
-                            placeholder="Username" autocomplete="off" {{if $res.Username}}
-                            value="{{$res.Username}}" {{end}}>
-                        <label for="username" class="form-label">username</label>
-
-
+                    <div class="form-group row">
+                        <div class="form-group col-md-6">
+                            <label for="inputUsername">Username</label>
+                            <input type="username" class="form-control" id="inputUsername" placeholder="Username">
+                        </div>
+                         <div class="form-group col-md-6">
+                            <label for="inputPassword">Password</label>
+                            <input type="password" class="form-control" id="inputPassword" placeholder="Password">
+                        </div>
                     </div>
-                    {{with .Form.Errors.Get "password"}}
-                    <label class="text-danger">{{.}}</label>
-                    {{end}}
-                    <div class="mb-3 form-floating">
-                        <input type="password" class="form-control form-control-lg {{with .Form.Errors.Get "password"}} is-invalid{{end}}" id="password" name="password"
-                            autocomplete="off" placeholder="Password">
-                        <label for="password" class="form-label">password</label>
-
-
+                    <div class="form-group">
+                        <label for="inputEmail">Email</label>
+                        <input type="email" class="form-control" id="inputEmail" placeholder="Email">
                     </div>
-                    <button type="submit" class="btn btn-danger btn-lg">Create account</button>
+                    <div class="form-group row">
+                        <div class="form-group">
+                            <label for="inputAddress2">Block</label>
+                            <input type="text" class="form-control" id="addressblock" placeholder="Block Number">
+                        </div>
+                        <div class="form-group">
+                            <label for="inputAddress">Street Name</label>
+                            <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St">
+                        </div>
+                        <div class="form-group">
+                            <label for="inputAddress">Unit Number</label>
+                            <input type="text" class="form-control" id="addressunit" placeholder="eg #04-23">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputAddress">Postal Code</label>
+                        <input type="text" class="form-control" id="postalcode" placeholder="eg 519231">
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-danger btn-lg">Create account</button>
+                    </div>
+
                 </form>
 
             </div>
