@@ -2,3 +2,4 @@
 *.log
 run.sh
 database.yml
+.vscode

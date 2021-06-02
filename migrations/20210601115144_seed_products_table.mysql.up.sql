@@ -3,7 +3,11 @@ INSERT INTO `gorent`.`products` (
     `brand`, 
     `title`, 
     `rating`, 
+<<<<<<< HEAD
     `description`,
+=======
+    `description`, 
+>>>>>>> origin/alvinProducts
     `price`,
     `created_at`,
     `updated_at`

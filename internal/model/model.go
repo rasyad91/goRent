@@ -32,6 +32,7 @@ type Product struct {
 	Title       string
 	Rating      float32
 	Description string
+	Price       float32
 	Reviews     []Review // where ID = Review.ProductID
 	DeletedAt   time.Time
 	CreatedAt   time.Time

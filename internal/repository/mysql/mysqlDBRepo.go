@@ -50,7 +50,10 @@ func (m *DBrepo) GetAllCourses() {
 }
 
 func (m *DBrepo) GetUser(username string) (model.User, bool) {
-	results, _ := m.Query("SELECT * FROM goRent.Users where username=?", username)
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	results, _ := m.QueryContext(ctx, "SELECT * FROM goRent.Users where username=?", username)
 	if results.Next() {
 		var person model.User
 		var add model.Address
@@ -64,4 +67,47 @@ func (m *DBrepo) GetUser(username string) (model.User, bool) {
 	} else {
 		return model.User{}, false
 	}
+
+}
+
+func (m *DBrepo) GetAllProducts() ([]model.Product, error) {
+
+	var products []model.Product
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	query := `select id, owner_id, brand, title, rating, description, price, created_at, updated_at from products`
+
+	rows, err := m.QueryContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+
+		p := model.Product{}
+
+		err := rows.Scan(
+			&p.ID,
+			&p.OwnerID,
+			&p.Brand,
+			&p.Title,
+			&p.Rating,
+			&p.Description,
+			&p.Price,
+			&p.CreatedAt,
+			&p.UpdatedAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+		// RentalProductsList = append(RentalProductsList, strings.ToLower(title)+" - "+strings.ToLower(brand))
+		products = append(products, p)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return products, nil
 }
