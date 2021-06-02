@@ -12,4 +12,5 @@ require (
 	github.com/olivere/elastic v6.2.35+incompatible // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/xhit/go-simple-mail v2.2.2+incompatible
+	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a
 )

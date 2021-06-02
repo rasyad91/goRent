@@ -14,6 +14,10 @@ type DBrepo struct {
 	*sql.DB
 }
 
+const (
+	layoutISO = "2006-01-02"
+)
+
 // NewRepo creates the repository
 func NewRepo(Conn *sql.DB) repository.DatabaseRepo {
 	return &DBrepo{
@@ -66,6 +70,25 @@ func (m *DBrepo) GetUser(username string) (model.User, bool) {
 		return person, true
 	} else {
 		return model.User{}, false
+	}
+
+}
+
+func (m *DBrepo) InsertUser(u model.User) bool {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	_, err := m.ExecContext(ctx, "INSERT INTO goRent.users (username,email,password,postal_code,street_name,block,unit_number,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?);",
+		u.Username, u.Email, u.Password,
+		u.Address.PostalCode, u.Address.StreetName, u.Address.Block, u.Address.UnitNumber,
+		(u.CreatedAt).Format(layoutISO), (u.UpdatedAt).Format(layoutISO))
+	fmt.Println("NORMAL DATE", u.DeletedAt)
+	fmt.Println("ISO DATE", (u.DeletedAt).Format(layoutISO))
+
+	fmt.Println("INSERTION ERR:", err)
+	if err != nil {
+		return false
+	} else {
+		return true
 	}
 
 }

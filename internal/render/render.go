@@ -65,17 +65,12 @@ func ServerError(w http.ResponseWriter, r *http.Request, err error) {
 // DefaultData adds default data which is accessible to all templates
 func DefaultData(w http.ResponseWriter, r *http.Request, td TemplateData) TemplateData {
 	td.CSRFToken = nosurf.Token(r)
-	fmt.Printf("csrftoken %#v\n\n\n", td.CSRFToken)
-
 	td.IsAuthenticated = helper.IsAuthenticated(r)
-	fmt.Printf("isautenticated %#v\n\n\n", td.IsAuthenticated)
-
 	// if logged in, store user id in template data
 	if td.IsAuthenticated {
 		u := app.Session.Get(r.Context(), "user").(model.User)
 		td.User = u
 	}
-
 	td.Flash = app.Session.PopString(r.Context(), "flash")
 	td.Warning = app.Session.PopString(r.Context(), "warning")
 	td.Error = app.Session.PopString(r.Context(), "error")
