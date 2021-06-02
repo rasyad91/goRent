@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"goRent/internal/config"
 	"goRent/internal/driver/mysqlDriver"
+	"goRent/internal/form"
+	"goRent/internal/model"
 	"goRent/internal/render"
 	"goRent/internal/repository"
 	"goRent/internal/repository/mysql"
@@ -97,6 +99,21 @@ func (m *Repository) Register(w http.ResponseWriter, r *http.Request) {
 		if err := r.ParseForm(); err != nil {
 			m.App.Error.Println(err)
 		}
+		newUser := model.User{
+			Username:   r.FormValue("inputUsername"),
+			Email:      r.FormValue("inputEmail"),
+			Password:   []byte(r.FormValue("inputPassword")),
+			Block:      r.FormValue("addressblock"),
+			StreetName: r.FormValue("inputAddress"),
+			Unit:       r.FormValue("addressunit"),
+			PostalCode: r.FormValue("postalcode"),
+		}
+		form := form.New(r.PostForm)
+		form.Required("inputUsername", "inputEmail", "inputEmail", "inputPassword", "addressblock", "inputAddress", "addressunit", "postalcode")
+		if form.ExistingUser() {
+			form.Errors.Add("username", "Username already in use")
+		}
+		fmt.Println(newUser)
 		//...
 		// Sample email
 		// msg := model.MailData{

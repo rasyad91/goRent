@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"goRent/internal/model"
 	"goRent/internal/repository"
 	"log"
 	"time"
@@ -46,4 +47,21 @@ func (m *DBrepo) GetAllCourses() {
 		fmt.Println(err)
 	}
 
+}
+
+func (m *DBrepo) GetUser(username string) (model.User, error) {
+	results, _ := m.Query("SELECT * FROM goRent.Users where username=?", username)
+	if results.Next() {
+		var person model.User
+		var add model.Address 
+		_ = results.Scan(&person.ID,&person.Username,&person.Email,&person.Password,
+			&person.AccessLevel,&person.Rating,&add.PostalCode,&add.StreeName,&add.Block,&add.UnitNumber,
+			&person.DeletedAt,&person.CreatedAt,&person.UpdatedAt)
+			if add != add{}{
+				person.Address = add 
+			}
+		return person, true
+	} else {
+		return user{}, false
+	}
 }
