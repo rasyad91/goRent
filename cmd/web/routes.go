@@ -12,6 +12,8 @@ func routes() http.Handler {
 	router := mux.NewRouter()
 	router.HandleFunc("/api/v1/", handler.Repo.Home).Methods("GET")
 	router.HandleFunc("/user/logout", handler.Repo.Logout).Methods("GET")
+	router.HandleFunc("/login", handler.Repo.Login)
+	router.HandleFunc("/register", handler.Repo.Register)
 
 	sub := router.NewRoute().Subrouter()
 	sub.Use(handler.ValidationAPIMiddleware)
