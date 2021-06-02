@@ -26,13 +26,14 @@ func New(a *config.AppConfig) {
 // TemplateData stores data to be used in Templates
 type TemplateData struct {
 	Data            map[string]interface{}
+	Form            *form.Form
+	Products        []model.Product
 	CSRFToken       string
 	IsAuthenticated bool
 	User            model.User
 	Flash           string
 	Warning         string
 	Error           string
-	Form            *form.Form
 }
 
 // Template parses and exectues template by its template name
@@ -73,7 +74,6 @@ func DefaultData(w http.ResponseWriter, r *http.Request, td TemplateData) Templa
 		u := app.Session.Get(r.Context(), "user").(model.User)
 		td.User = u
 	}
-
 	td.Flash = app.Session.PopString(r.Context(), "flash")
 	td.Warning = app.Session.PopString(r.Context(), "warning")
 	td.Error = app.Session.PopString(r.Context(), "error")
