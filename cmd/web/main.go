@@ -8,6 +8,7 @@ import (
 	"goRent/internal/driver/mysqlDriver"
 	"goRent/internal/handler"
 	"goRent/internal/helper"
+	"goRent/internal/render"
 	"io"
 	"log"
 	"net/http"
@@ -84,12 +85,14 @@ func main() {
 	session.Cookie.Persist = true
 	session.Cookie.Name = fmt.Sprintf("gbsession_id_%s", *identifier)
 	session.Cookie.SameSite = http.SameSiteLaxMode
+	app.Session = session
 	// session.Cookie.Secure = *inProduction
 
 	r := handler.NewMySQLHandler(db, app)
 	handler.New(r)
 
-	helper.NewHelpers(app)
+	helper.New(app)
+	render.New(app)
 
 	listenForMail()
 	defer close(app.MailChan)

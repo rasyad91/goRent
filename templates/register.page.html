@@ -11,7 +11,7 @@
 
                 {{$res := index .Data "register"}}
                 <form method="POST" novalidate>
-                    <input type="hidden" name="csrf_token" value="{{ .CSRFToken }}">
+                    <input type="hidden" name="csrf_token" value="{{.CSRFToken }}">
                     <div class="form-group row">
                         <div class="form-group col-md-6">
                             <label for="inputUsername">Username</label>

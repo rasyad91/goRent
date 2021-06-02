@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"goRent/internal/helper"
+	"goRent/internal/render"
 	"net/http"
 
 	"github.com/justinas/nosurf"
@@ -34,7 +35,7 @@ func RecoverPanic(next http.Handler) http.Handler {
 			// Check if there has been a panic
 			if err := recover(); err != nil {
 				// return a 500 Internal Server response
-				helper.ServerError(w, r, fmt.Errorf("%s", err))
+				render.ServerError(w, r, fmt.Errorf("%s", err))
 				app.Error.Println(err)
 			}
 		}()

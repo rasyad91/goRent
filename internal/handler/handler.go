@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"goRent/internal/config"
 	"goRent/internal/driver/mysqlDriver"
-	"goRent/internal/helper"
 	"goRent/internal/render"
 	"goRent/internal/repository"
 	"goRent/internal/repository/mysql"
@@ -32,10 +31,10 @@ func New(r *Repository) {
 }
 
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
-	if true {
-		helper.ServerError(w, r, fmt.Errorf("Test"))
-		return
-	}
+	// if true {
+	// 	render.ServerError(w, r, fmt.Errorf("Test"))
+	// 	return
+	// }
 	data := make(map[string]interface{})
 
 	if err := render.Template(w, r, "home.page.html", &render.TemplateData{
