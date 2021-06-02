@@ -6,6 +6,7 @@ import (
 	"goRent/internal/model"
 	"goRent/internal/render"
 	"net/http"
+	"time"
 )
 
 func (m *Repository) Register(w http.ResponseWriter, r *http.Request) {
@@ -39,6 +40,8 @@ func (m *Repository) RegisterPost(w http.ResponseWriter, r *http.Request) {
 				UnitNumber: r.FormValue("addressunit"),
 				PostalCode: r.FormValue("postalcode"),
 			},
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
 		}
 		fmt.Println("PARSEFORM:", r.Form["username"])
 		fmt.Println("PARSEFORM:", r.Form)
