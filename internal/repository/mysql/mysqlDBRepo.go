@@ -80,9 +80,7 @@ func (m *DBrepo) InsertUser(u model.User) bool {
 	_, err := m.ExecContext(ctx, "INSERT INTO goRent.users (username,email,password,postal_code,street_name,block,unit_number,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?);",
 		u.Username, u.Email, u.Password,
 		u.Address.PostalCode, u.Address.StreetName, u.Address.Block, u.Address.UnitNumber,
-		(u.CreatedAt).Format(layoutISO), (u.UpdatedAt).Format(layoutISO))
-	fmt.Println("NORMAL DATE", u.DeletedAt)
-	fmt.Println("ISO DATE", (u.DeletedAt).Format(layoutISO))
+		time.Now(), time.Now())
 
 	fmt.Println("INSERTION ERR:", err)
 	if err != nil {
