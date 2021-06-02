@@ -70,6 +70,20 @@ func (m *DBrepo) GetUser(username string) (model.User, bool) {
 
 }
 
+func (m *DBrepo) InsertUser(u model.User) bool {
+	_, err := m.Exec("INSERT INTO goRent.users VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+		002, u.Username, u.Email, u.Password, u.AccessLevel, u.Rating,
+		u.Address.PostalCode, u.Address.StreetName, u.Address.Block, u.Address.UnitNumber,
+		u.DeletedAt, u.CreatedAt, u.UpdatedAt)
+	fmt.Println("INSERTION ERR:", err)
+	if err != nil {
+		return false
+	} else {
+		return true
+	}
+
+}
+
 func (m *DBrepo) GetAllProducts() ([]model.Product, error) {
 
 	var products []model.Product

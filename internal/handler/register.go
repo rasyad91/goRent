@@ -48,9 +48,13 @@ func (m *Repository) RegisterPost(w http.ResponseWriter, r *http.Request) {
 
 		_, isExist := m.DB.GetUser(newUser.Username)
 		if isExist {
+			fmt.Println("YES THIS USERNAME IS ALREADY IN USE")
 			form.Errors.Add("username", "Username already in use")
 		}
-		fmt.Println("REGISTER:", newUser)
+		addedSuccess := m.DB.InsertUser(newUser)
+		if addedSuccess {
+			fmt.Println("SUCCESSFULLY REGISTERED")
+		}
 
 		//...
 		// Sample email
