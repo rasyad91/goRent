@@ -11,6 +11,7 @@ type Form struct {
 	url.Values
 	Errors errors
 }
+
 type errors map[string][]string
 
 // New creates new Form instance
