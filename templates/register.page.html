@@ -4,46 +4,66 @@
     <div class="row mt-5">
         <div class="mb-3">
 
-            <div class="col-5">
+            <div class="col-7">
                 <p>Already have an account? <a href="/login"> Sign in</a></p>
                 <hr class="mb-3" style="color:gray">
-                <h2>Create a new account</h2>
+                <h2 class="mb-3">Create a new account</h2>
 
                 {{$res := index .Data "register"}}
+                {{$form := index .Form}}
                 <form method="POST" novalidate>
                     <input type="hidden" name="csrf_token" value="{{.CSRFToken }}">
-                    <div class="form-group row">
-                        <div class="form-group col-md-6">
-                            <label for="inputUsername">Username</label>
-                            <input type="username" class="form-control" name="inputUsername" placeholder="Username">
+                    <div class="form-group row mb-3">
+                        <div class="form-group col ">
+
+                            <label class="form-label"for="username">Username</label> 
+                            {{with $form.Errors.Get "username"}}
+                            <span for="username" style="padding-left:5em" class="text-danger">{{.}}</span>
+                            {{end}}
+                            <input type="username" class="form-control  {{with .Form.Errors.Get "username"}} is-invalid{{end}}" name="username" placeholder="Username" value="{{$res.Username}}">
+
+                            <div class="form-text">Choose an awesome username</div>
                         </div>
-                         <div class="form-group col-md-6">
-                            <label for="inputPassword">Password</label>
-                            <input type="password" class="form-control" name="inputPassword" placeholder="Password">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputEmail">Email</label>
-                        <input type="email" class="form-control" name="inputEmail" placeholder="Email">
-                    </div>
-                    <div class="form-group row">
-                        <div class="form-group">
-                            <label for="inputAddress2">Block</label>
-                            <input type="text" class="form-control" name="addressblock" placeholder="Block Number">
-                        </div>
-                        <div class="form-group">
-                            <label for="inputAddress">Street Name</label>
-                            <input type="text" class="form-control" name="inputAddress" placeholder="1234 Main St">
-                        </div>
-                        <div class="form-group">
-                            <label for="inputAddress">Unit Number</label>
-                            <input type="text" class="form-control" name="addressunit" placeholder="eg #04-23">
+                         <div class="form-group col ">
+                             <label class="form-label"for="password">Password</label>
+                             {{with $form.Errors.Get "password"}}
+                             <span for="password" style="padding-left:5em" class="text-danger">{{.}}</span>
+                             {{end}}
+                             <input type="password" class="form-control {{with .Form.Errors.Get "password"}} is-invalid{{end}}"" name="password" placeholder="Password">
+
+                             <div class="form-text">Must be 8-20 characters long</div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label for="inputAddress">Postal Code</label>
-                        <input type="text" class="form-control" name="postalcode" placeholder="eg 519231">
+                    <div class="form-group mb-3 ">
+                        <label class="form-label"for="email">Email</label>
+                        <input type="email" class="form-control " name="email" placeholder=" john@gmail.com" value="{{$res.Email}}">
+                        <div class="form-text">We'll never share your email with anyone else.</div>
+
                     </div>
+                    <div class="form-group row mb-3">
+                        <div class="form-group col mb-3  ">
+                            <label class="form-label"for="block">Block</label>
+                            <input type="text" class="form-control " name="block" placeholder=" 246" value="{{$res.Address.Block}}">
+
+                        </div>
+                        <div class="form-group col mb-3 ">
+                            <label class="form-label"for="streetname">Street Name</label>
+                            <input type="text" class="form-control " name="streetname" placeholder=" 1234 Main St" value="{{$res.Address.StreetName}}">
+
+                        </div>
+                    </div>
+
+                    <div class="form-group row mb-3">
+                        <div class="form-group col mb-3 ">
+                            <label class="form-label" for="unitnumber">Unit Number</label>
+                            <input type="text" class="form-control " name="unitnumber" placeholder=" #04-23" value="{{$res.Address.UnitNumber}}">
+                        </div>
+                        <div class="form-group col mb-3 ">
+                            <label class="form-label" for="postalcode">Postal Code</label>
+                            <input type="text" class="form-control " name="postalcode" placeholder=" 519231" value="{{$res.Address.PostalCode}}">
+                        </div>
+                    </div>
+    
                     <div class="form-group">
                         <button type="submit" class="btn btn-danger btn-lg">Create account</button>
                     </div>
