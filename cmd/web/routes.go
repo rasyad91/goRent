@@ -22,7 +22,7 @@ func routes() http.Handler {
 	router.HandleFunc("/login", handler.Repo.Login).Methods("POST")
 
 	router.HandleFunc("/register", handler.Repo.Register).Methods("GET")
-	router.HandleFunc("/register", handler.Repo.Register).Methods("POST")
+	router.HandleFunc("/register", handler.Repo.RegisterPost).Methods("POST")
 
 	// sub := router.NewRoute().Subrouter()
 	// sub.Use(handler.ValidationAPIMiddleware)

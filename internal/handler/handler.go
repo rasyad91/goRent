@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"goRent/internal/config"
 	"goRent/internal/driver/mysqlDriver"
+	"goRent/internal/form"
 	"goRent/internal/helper"
+	"goRent/internal/model"
 	"goRent/internal/render"
 	"goRent/internal/repository"
 	"goRent/internal/repository/mysql"
@@ -48,10 +50,41 @@ func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
 func (m *Repository) Register(w http.ResponseWriter, r *http.Request) {
 	m.App.Info.Println("Register: no session in progress")
 	data := make(map[string]interface{})
+
+	if err := render.Template(w, r, "register.page.html", &render.TemplateData{
+		Data: data,
+	}); err != nil {
+		m.App.Error.Println(err)
+	}
+}
+
+func (m *Repository) RegisterPost(w http.ResponseWriter, r *http.Request) {
+	m.App.Info.Println("Register: no session in progress")
+	data := make(map[string]interface{})
 	if r.Method == http.MethodPost {
 		if err := r.ParseForm(); err != nil {
 			m.App.Error.Println(err)
 		}
+
+		newUser := model.User{
+			Username: r.FormValue("inputUsername"),
+			Email:    r.FormValue("inputEmail"),
+			Password: r.FormValue("inputPassword"),
+			Address: model.Address{
+				Block:      r.FormValue("addressblock"),
+				StreetName: r.FormValue("inputAddress"),
+				UnitNumber: r.FormValue("addressunit"),
+				PostalCode: r.FormValue("postalcode"),
+			},
+		}
+
+		form := form.New(r.PostForm)
+		form.Required("inputUsername", "inputEmail", "inputEmail", "inputPassword", "addressblock", "inputAddress", "addressunit", "postalcode")
+		if form.ExistingUser() {
+			form.Errors.Add("username", "Username already in use")
+		}
+		fmt.Println(newUser)
+		fmt.Println(m.DB.GetUser(newUser.Username))
 		//...
 		// Sample email
 		// msg := model.MailData{

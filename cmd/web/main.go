@@ -7,6 +7,7 @@ import (
 	"goRent/internal/config"
 	"goRent/internal/driver/mysqlDriver"
 	"goRent/internal/handler"
+	"goRent/internal/helper"
 	"io"
 	"log"
 	"net/http"
@@ -87,6 +88,8 @@ func main() {
 
 	r := handler.NewMySQLHandler(db, app)
 	handler.New(r)
+
+	helper.NewHelpers(app)
 
 	listenForMail()
 	defer close(app.MailChan)
