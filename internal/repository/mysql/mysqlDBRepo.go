@@ -30,25 +30,7 @@ func (m *DBrepo) GetUser(username string) (model.User, error) {
 
 	row := m.QueryRowContext(ctx, "SELECT * FROM goRent.Users where username=?", username)
 
-	u := model.User{
-		ID:          0,
-		Username:    username,
-		Email:       "",
-		Password:    "",
-		AccessLevel: 0,
-		Rating:      0,
-		Address: model.Address{
-			PostalCode: "",
-			StreetName: "",
-			Block:      "",
-			UnitNumber: "",
-		},
-		CreatedAt: time.Time{},
-		UpdatedAt: time.Time{},
-		Products:  []model.Product{},
-		Rents:     []model.Rent{},
-		Bookings:  []model.Rent{},
-	}
+	u := model.User{}
 	err := row.Scan(
 		&u.ID,
 		&u.Username,
@@ -67,7 +49,6 @@ func (m *DBrepo) GetUser(username string) (model.User, error) {
 	if err != nil {
 		return model.User{}, fmt.Errorf("db GetUser: %v", err)
 	}
-
 	return u, nil
 }
 
