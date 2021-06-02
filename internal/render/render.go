@@ -3,7 +3,6 @@ package render
 import (
 	"fmt"
 	"goRent/internal/config"
-	"goRent/internal/form"
 	"goRent/internal/helper"
 	"goRent/internal/model"
 	"log"
@@ -32,7 +31,6 @@ type TemplateData struct {
 	Flash           string
 	Warning         string
 	Error           string
-	Form            *form.Form
 }
 
 // Template parses and exectues template by its template name
@@ -73,7 +71,6 @@ func DefaultData(w http.ResponseWriter, r *http.Request, td TemplateData) Templa
 		u := app.Session.Get(r.Context(), "user").(model.User)
 		td.User = u
 	}
-
 	td.Flash = app.Session.PopString(r.Context(), "flash")
 	td.Warning = app.Session.PopString(r.Context(), "warning")
 	td.Error = app.Session.PopString(r.Context(), "error")

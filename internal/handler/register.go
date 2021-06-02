@@ -21,7 +21,7 @@ func (m *Repository) Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := render.Template(w, r, "register.page.html", &render.TemplateData{
-		Form: &form.Form{},
+		// Form: &form.Form{},
 		Data: data,
 	}); err != nil {
 		m.App.Error.Println(err)
@@ -70,7 +70,7 @@ func (m *Repository) RegisterPost(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(form.Errors.Get("inputUsername"))
 		fmt.Println("in form. errors")
 		if err := render.Template(w, r, "register.page.html", &render.TemplateData{
-			Form: form,
+			// Form: form,
 			Data: data,
 		}); err != nil {
 			m.App.Error.Println(err)
