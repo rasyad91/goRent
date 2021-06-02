@@ -12,14 +12,6 @@ func (m *Repository) Search(w http.ResponseWriter, r *http.Request) {
 
 	m.CreateProductList()
 
-	if r.Method == http.MethodPost {
-
-		//can we store this value into middleware so the value can be passed to the next page?
-		http.Redirect(w, r, "/searchresult", http.StatusSeeOther)
-		return
-
-	}
-
 	if err := render.Template(w, r, "home.page.html", &render.TemplateData{
 		Data: nil,
 	}); err != nil {
