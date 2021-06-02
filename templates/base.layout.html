@@ -10,12 +10,11 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.1.4/dist/css/datepicker.min.css">
-    <link rel="stylesheet" type="text/css" href="../static/css/styles.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bootstrap-4@3.1.4/bootstrap-4.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notie@4.3.1/dist/notie.min.css">
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/notie/dist/notie.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css"
           integrity="sha256-2XFplPlrFClt0bIdPgpz8H7ojnk10H69xRqd9+uTShA=" crossorigin="anonymous"/>
-    <link href="/static/admin/css/app.css" rel="stylesheet">
     <title>Venue Booking System</title>
 </head>
 
@@ -44,20 +43,209 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap.native@3.0.0/dist/bootstrap-native.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 <script src="https://cdn.jsdelivr.net/npm/notie@4.3.1/dist/notie.min.js"></script>
-<script src="/static/js/attention.js"></script>
-<script src="/static/js/app.js"></script>
+<script src="https://unpkg.com/notie"></script>
+<script src="../static/js/attention.js"></script>
+<script src="../static/js/app.js"></script>
 
 <script>
     let attention = Prompt();
     {{with .Flash}}
-        successAlert('{{.Flash}}')
+        successAlert("{{.}}")
     {{end}}
     {{with .Warning}}
-        warningAlert('{{.Warning}}')
+        warningAlert("{{.}}")
+        // attention.toast({
+        //             msg: "{{.}}",
+        //             // icon: "info",
+        //         }) 
     {{end}}
     {{with .Error}} 
-        errorAlert('{{.Error}}')
+        errorAlert("{{.}}")
     {{end}}
+
+    // notifications
+function successAlert(x) {
+    notie.alert({
+        type: 'success',
+        text: x,
+    })
+}
+
+function errorAlert(x) {
+    notie.alert({
+        type: 'error',
+        text: x,
+    })
+}
+
+function warningAlert(x) {
+    console.log(x)
+    notie.alert({
+        type: 'warning',
+        text: x,
+    })
+}
+
+// attention
+function Prompt() {
+    function toast(c) {
+        const {
+            msg = "",
+            icon = "success",
+            timer = 3000,
+            showCloseButton = false,
+        } = c;
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            onOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        })
+
+        Toast.fire({
+            icon: icon,
+            title: msg,
+            timer: timer,
+            showCloseButton: showCloseButton,
+        })
+    }
+
+    function alert(c) {
+        const {
+            cancelButton = false,
+            html = "Some warning",
+            icon = "success",
+            confirmButtonText = "OK",
+            confirmButton = true,
+            title = '',
+        } = c;
+        const {value: result} = Swal.fire({
+            html: html,
+            confirmButtonText: confirmButtonText,
+            icon: icon,
+            showCancelButton: cancelButton,
+            showConfirmButton: confirmButton,
+            title: title,
+        }).then((result) => {
+            if (result) {
+                if (result.dismiss === Swal.DismissReason.cancel) {
+                } else {
+
+                }
+            }
+        })
+    }
+
+    function confirm(c) {
+        const {
+            cancelButton = true,
+            html = "Are you sure?",
+            icon = "warning",
+            confirmButtonText = "OK",
+        } = c;
+        const {value: result} = Swal.fire({
+            html: html,
+            confirmButtonText: confirmButtonText,
+            icon: icon,
+            showCancelButton: cancelButton,
+            backdrop: false,
+            showCloseButton: false,
+        }).then((result) => {
+            if (result) {
+                if (result.dismiss !== Swal.DismissReason.cancel) {
+                    if (c.callback !== undefined) {
+                        c.callback(true)
+                    }
+                } else {
+                    c.callback(false)
+                }
+            } else {
+                c.callback(false)
+            }
+        })
+    }
+
+    function promptConfirm(c) {
+        const {
+            cancelButton = true,
+            html = "Are you sure?",
+            icon = "warning",
+            confirmButtonText = "OK",
+            confirmationText = "Yes",
+        } = c;
+
+        const {value: result} = Swal.fire({
+            html: html,
+            confirmButtonText: confirmButtonText,
+            icon: icon,
+            input: 'text',
+            showCancelButton: cancelButton,
+            backdrop: false,
+            showCloseButton: false,
+        }).then((result) => {
+            if (result) {
+                if (result.dismiss !== Swal.DismissReason.cancel) {
+                    if (result.value.toUpperCase() === confirmationText.toUpperCase()) {
+                        if (c.callback !== undefined) {
+                            c.callback(true);
+                        }
+                    } else {
+                        c.callback(false);
+                    }
+                } else {
+                    c.callback(false);
+                }
+            }
+        })
+    }
+
+    function prompt(c) {
+        const {
+            cancelButton = true,
+            html = "Enter a value",
+            icon = "question",
+            buttonName = "OK",
+            input = 'text',
+            inputValue = '',
+        } = c;
+
+        const {value: result} = Swal.fire({
+            html: html,
+            confirmButtonText: buttonName,
+            icon: icon,
+            input: input,
+            inputValue: inputValue,
+            showCancelButton: cancelButton,
+        }).then((result) => {
+            if (result) {
+                if (result.dismiss !== Swal.DismissReason.cancel) {
+                    if (result.value !== "") {
+                        if (c.callback !== undefined) {
+                            c.callback(result);
+                        }
+                    } else {
+                        c.callback(false);
+                    }
+                } else {
+                    c.callback(false);
+                }
+            }
+        })
+    }
+
+    return {
+        confirm: confirm,
+        alert: alert,
+        promptConfirm: promptConfirm,
+        prompt: prompt,
+        toast: toast,
+    };
+}
 </script>
 
 

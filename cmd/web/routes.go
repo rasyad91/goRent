@@ -31,7 +31,7 @@ func routes() http.Handler {
 	// sub := router.NewRoute().Subrouter()
 	// sub.Use(handler.ValidationAPIMiddleware)
 
-	fileServer := http.FileServer(http.Dir("./static/"))
+	fileServer := http.FileServer(http.Dir("../../static/"))
 	router.Handle("/static/*", http.StripPrefix("/static", fileServer))
 
 	return router
