@@ -3,7 +3,8 @@ INSERT INTO `gorent`.`products` (
     `brand`, 
     `title`, 
     `rating`, 
-    `description`, 
+    `description`,
+    `price`, 
     `created_at`,
     `updated_at`
 ) VALUES (
@@ -12,6 +13,7 @@ INSERT INTO `gorent`.`products` (
     'Nike Vaporfly', 
     '0', 
     'Nike shoe',
+    '10.00',
     '2021-06-01',
     '2021-06-01'
 ),(
@@ -20,6 +22,7 @@ INSERT INTO `gorent`.`products` (
     'Yonex badminton racket', 
     '0', 
     'Legendary awesome racket',
+    '9.00',
     '2021-06-01',
     '2021-06-01'
 );

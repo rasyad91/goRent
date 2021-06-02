@@ -5,6 +5,7 @@ create_table("products") {
   t.Column("title", "string", {"size": 60})
   t.Column("rating", "float", {"scale": 1, "precision": 2})
   t.Column("description", "string", {})
+  t.Column("price", "float", {"scale": 2, "precision": 7})
   t.Column("deleted_at", "timestamp", {"null": true})
 }
 

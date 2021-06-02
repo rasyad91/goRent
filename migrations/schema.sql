@@ -29,6 +29,7 @@ CREATE TABLE `products` (
   `title` varchar(60) COLLATE utf8mb4_general_ci NOT NULL,
   `rating` float(2,1) NOT NULL,
   `description` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `price` float(7,2) NOT NULL,
   `deleted_at` datetime DEFAULT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
@@ -51,6 +52,8 @@ CREATE TABLE `rents` (
   `renter_id` int NOT NULL,
   `product_id` int NOT NULL,
   `restriction_id` int NOT NULL,
+  `total_cost` float(12,2) NOT NULL,
+  `duration` int NOT NULL,
   `start_date` datetime DEFAULT NULL,
   `end_date` datetime DEFAULT NULL,
   `created_at` datetime NOT NULL,
@@ -177,4 +180,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-06-01 19:54:56
+-- Dump completed on 2021-06-02 10:08:26
