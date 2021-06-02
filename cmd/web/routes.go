@@ -17,7 +17,7 @@ func routes() http.Handler {
 	// default middleware
 	router.Use(SessionLoad)
 	router.Use(RecoverPanic)
-	router.Use(NoSurf)
+	// router.Use(NoSurf)
 
 	router.HandleFunc("/", handler.Repo.Home).Methods("GET")
 

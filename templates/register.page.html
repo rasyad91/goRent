@@ -10,7 +10,8 @@
                 <h2>Create a new account</h2>
 
                 {{$res := index .Data "register"}}
-                <form method="post" novalidate>
+                <form method="POST" novalidate>
+                    <input type="hidden" name="csrf_token" value="{{ .CSRFToken }}">
                     <div class="form-group row">
                         <div class="form-group col-md-6">
                             <label for="inputUsername">Username</label>
