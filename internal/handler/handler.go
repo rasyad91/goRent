@@ -7,7 +7,9 @@ import (
 	"goRent/internal/render"
 	"goRent/internal/repository"
 	"goRent/internal/repository/mysql"
+	"html"
 	"net/http"
+	"strings"
 )
 
 type Repository struct {
@@ -45,8 +47,28 @@ func ValidationAPIMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Welcome to REST API\n")
+func (m *Repository) Search(w http.ResponseWriter, r *http.Request) {
+
+	m.CreateProductList()
+
+	if r.Method == http.MethodPost {
+		searchKW := r.FormValue("searchtext")
+
+		sr := html.EscapeString(searchKW)
+		srtL := strings.ToLower((sr))
+		_ = srtL
+		// updateUserLastSearch(srtL, u)
+		// insertUserSearchLogs(srtL, u)
+
+		http.Redirect(w, r, "/searchresult", http.StatusSeeOther)
+	}
+
+	if err := render.Template(w, r, "home.page.html", &render.TemplateData{
+		Data: nil,
+	}); err != nil {
+		m.App.Error.Println(err)
+	}
+
 }
 
 func (m *Repository) GetCourse(w http.ResponseWriter, r *http.Request) {
@@ -150,4 +172,26 @@ func (m *Repository) Logout(w http.ResponseWriter, r *http.Request) {
 
 	m.App.Session.Put(r.Context(), "flash", "You've been logged out successfully!")
 	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method == http.MethodPost {
+		searchKW := r.FormValue("searchtext")
+
+		sr := html.EscapeString(searchKW)
+		srtL := strings.ToLower((sr))
+		_ = srtL
+		// updateUserLastSearch(srtL, u)
+		// insertUserSearchLogs(srtL, u)
+
+		http.Redirect(w, r, "/searchresult", http.StatusSeeOther)
+	}
+
+	if err := render.Template(w, r, "home.page.html", &render.TemplateData{
+		Data: nil,
+	}); err != nil {
+		m.App.Error.Println(err)
+	}
+
 }

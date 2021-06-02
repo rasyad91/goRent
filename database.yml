@@ -3,7 +3,7 @@ development:
   database: goRent
   user: root
   #insert own password
-  password: Mysqlras520286
+  password: S8830571z$
   host: 127.0.0.1
   port: 3306
   pool: 5
