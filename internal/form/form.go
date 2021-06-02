@@ -2,7 +2,6 @@ package form
 
 import (
 	"fmt"
-	"goRent/internal/db"
 	"net/url"
 	"strings"
 )
@@ -46,7 +45,5 @@ func (f *Form) Valid() bool {
 }
 
 func (f *Form) ExistingUser() bool {
-	username := f.Get("username")
-	_, ok := db.Users[username]
-	return ok
+	return true
 }

@@ -102,7 +102,7 @@ func (m *Repository) Register(w http.ResponseWriter, r *http.Request) {
 		newUser := model.User{
 			Username:   r.FormValue("inputUsername"),
 			Email:      r.FormValue("inputEmail"),
-			Password:   []byte(r.FormValue("inputPassword")),
+			Password:   r.FormValue("inputPassword"),
 			Block:      r.FormValue("addressblock"),
 			StreetName: r.FormValue("inputAddress"),
 			Unit:       r.FormValue("addressunit"),
@@ -114,6 +114,7 @@ func (m *Repository) Register(w http.ResponseWriter, r *http.Request) {
 			form.Errors.Add("username", "Username already in use")
 		}
 		fmt.Println(newUser)
+		fmt.Println(GetUser(newUser.Username))
 		//...
 		// Sample email
 		// msg := model.MailData{
