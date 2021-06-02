@@ -25,15 +25,16 @@
 <div class="container bg-light ml-10 mr-10 rounded-lg shadow-sm pt-2 pl-5 pr-6 mb-3 bg-white">
 <div class="container">
 <h3>What would you like to rent today?</h3>
+<!-- <h1>IN SEARCH RESULT</h1> -->
 
-<form method="post"> 
+<form method="GET"> 
 
     <div class="form-group pt-1">
     <label for="exampleFormControlInput1"></label>
-    <input type="text" class="form-control" name="searchtext" placeholder="Fried Chicken ..">
+    <input type="text" class="form-control" name="q" placeholder="Fried Chicken .."></input>
   </div>
-      {{/* <input type="submit"> */}}
-      <button type="submit" name="searchFood" class="btn btn-dark text-justify mt-2">Search</button>
+      <!-- {{/* <input type="submit"> */}} -->
+      <button class="btn btn-dark text-justify mt-2">Search</button>
       <div class ="container pb-3"></div>
 
 </form>

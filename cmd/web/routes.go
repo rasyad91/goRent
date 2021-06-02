@@ -18,8 +18,9 @@ func routes() http.Handler {
 
 	router.HandleFunc("/api/v1/", handler.Repo.Home).Methods("GET")
 	router.HandleFunc("/user/logout", handler.Repo.Logout).Methods("GET")
+
 	router.HandleFunc("/search", handler.Repo.Search).Methods("GET")
-	router.HandleFunc("/searchresult", handler.Repo.Search).Methods("GET")
+	router.HandleFunc("/searchresult", handler.Repo.SearchResult).Methods("GET")
 
 	router.HandleFunc("/", handler.Repo.Home).Methods("GET")
 
