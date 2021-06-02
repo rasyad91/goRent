@@ -6,12 +6,8 @@ import (
 	"goRent/internal/model"
 	"goRent/internal/render"
 	"net/http"
-<<<<<<< HEAD
-	"time"
 
 	"golang.org/x/crypto/bcrypt"
-=======
->>>>>>> Login
 )
 
 func (m *Repository) Register(w http.ResponseWriter, r *http.Request) {
