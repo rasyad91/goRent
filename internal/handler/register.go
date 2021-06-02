@@ -36,26 +36,35 @@ func (m *Repository) RegisterPost(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		m.App.Error.Println(err)
 	}
-	bpassword, err := bcrypt.GenerateFromPassword([]byte(r.FormValue("inputPassword")), bcrypt.DefaultCost)
+	bpassword, err := bcrypt.GenerateFromPassword([]byte(r.FormValue("password")), bcrypt.DefaultCost)
 	if err != nil {
 		m.App.Error.Println(err)
 	}
 
 	newUser := model.User{
-		Username: r.FormValue("inputUsername"),
-		Email:    r.FormValue("inputEmail"),
+		Username: r.FormValue("username"),
+		Email:    r.FormValue("email"),
 		Password: string(bpassword),
 		Address: model.Address{
-			Block:      r.FormValue("addressblock"),
-			StreetName: r.FormValue("inputAddress"),
-			UnitNumber: r.FormValue("addressunit"),
-			PostalCode: r.FormValue("postalcode"),
+			Block:      r.FormValue("block"),
+			StreetName: r.FormValue("streetName"),
+			UnitNumber: r.FormValue("unitNumber"),
+			PostalCode: r.FormValue("postalCode"),
 		},
 	}
 
 	form := form.New(r.PostForm)
 	fmt.Println("FORM:", form)
-	form.Required("inputUsername", "inputEmail", "inputEmail", "inputPassword", "addressblock", "inputAddress", "addressunit", "postalcode")
+	form.Required("username", "email", "password", "block", "streetName", "unitNumber", "postalCode")
+
+	if len(r.FormValue("password")) > 20 || len(r.FormValue("password")) < 8 {
+		fmt.Println("YES THIS USERNAME IS ALREADY IN USE")
+		form.Errors.Add("password", "Password must be more than 8 and less than 20")
+	}
+
+	// errors["password"] = {
+	// 	"password is required", "password must be more ..."
+	// }
 
 	_, isExist := m.DB.GetUser(newUser.Username)
 	if isExist {
