@@ -57,11 +57,8 @@ func (m *Repository) RegisterPost(w http.ResponseWriter, r *http.Request) {
 	form := form.New(r.PostForm)
 	fmt.Println("FORM:", form)
 	form.Required("username", "email", "password", "block", "streetName", "unitNumber", "postalCode")
-
-	if len(r.FormValue("password")) > 20 || len(r.FormValue("password")) < 8 {
-		fmt.Println("YES THIS USERNAME IS ALREADY IN USE")
-		form.Errors.Add("password", "Password must be more than 8 and less than 20")
-	}
+	form.CheckLength("username", 1, 255)
+	form.CheckLength("password", 8, -1)
 
 	// errors["password"] = {
 	// 	"password is required", "password must be more ..."
@@ -69,13 +66,13 @@ func (m *Repository) RegisterPost(w http.ResponseWriter, r *http.Request) {
 
 	eu, err := m.DB.GetUser(newUser.Username)
 	_ = eu
-	if err != sql.ErrNoRows {
+	if err != nil {
+		if err != sql.ErrNoRows {
+			m.App.Error.Println(err)
+		}
+	} else {
 		m.App.Info.Println("YES THIS USERNAME IS ALREADY IN USE")
 		form.Errors.Add("username", "Username already in use")
-	}
-	if err != nil && err != sql.ErrNoRows {
-		m.App.Error.Println(err)
-		return
 	}
 
 	data["register"] = newUser
