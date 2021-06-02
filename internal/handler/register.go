@@ -40,15 +40,17 @@ func (m *Repository) RegisterPost(w http.ResponseWriter, r *http.Request) {
 				PostalCode: r.FormValue("postalcode"),
 			},
 		}
-
+		fmt.Println("PARSEFORM:", r.Form["username"])
+		fmt.Println("PARSEFORM:", r.Form)
 		form := form.New(r.PostForm)
+		fmt.Println("FORM:", form)
 		form.Required("inputUsername", "inputEmail", "inputEmail", "inputPassword", "addressblock", "inputAddress", "addressunit", "postalcode")
 
 		_, isExist := m.DB.GetUser(newUser.Username)
 		if isExist {
 			form.Errors.Add("username", "Username already in use")
 		}
-		fmt.Println(newUser)
+		fmt.Println("REGISTER:", newUser)
 
 		//...
 		// Sample email
