@@ -41,8 +41,9 @@ func routes() http.Handler {
 	// fileServer := http.FileServer(http.Dir("./static/"))
 	// mux.Handle("/static/", http.StripPrefix("/static", fileServer))
 	// static files
-	fileServer := http.FileServer(http.Dir("./static/"))
-	mux.Handle("/static/", http.StripPrefix("/static/", fileServer))
+
+	fileServer := http.FileServer(http.Dir("/static/"))
+	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
 	// mux.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 
 	return mux

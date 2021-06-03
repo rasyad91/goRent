@@ -6,9 +6,7 @@ import (
 	"goRent/internal/form"
 	"goRent/internal/helper"
 	"goRent/internal/model"
-	"log"
 	"net/http"
-	"runtime/debug"
 	"text/template"
 
 	"github.com/justinas/nosurf"
@@ -54,14 +52,14 @@ func Template(w http.ResponseWriter, r *http.Request, tmpl string, td *TemplateD
 
 // ServerError will display error page for internal server error
 func ServerError(w http.ResponseWriter, r *http.Request, err error) {
-	trace := fmt.Sprintf("%s\n%s", err.Error(), debug.Stack())
-	_ = log.Output(2, trace)
+	// trace := fmt.Sprintf("%s\n%s", err.Error(), debug.Stack())
+	// _ = log.Output(2, trace)
 
 	w.WriteHeader(http.StatusInternalServerError)
 	w.Header().Set("Connection", "close")
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.Header().Set("Cache-Control", "no-store, no-cache, must-revalidate, post-check=0, pre-check=0")
-	http.ServeFile(w, r, "./../static/serverError.html")
+	http.ServeFile(w, r, "./static/500.html")
 
 }
 

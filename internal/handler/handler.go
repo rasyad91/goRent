@@ -31,6 +31,7 @@ func New(r *Repository) {
 }
 
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
+	render.ServerError(w, r, fmt.Errorf(""))
 	m.App.Session.Put(r.Context(), "warning", "hello")
 
 	data := make(map[string]interface{})
