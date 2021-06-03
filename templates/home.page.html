@@ -1,5 +1,7 @@
 {{template "base" .}}
 
+{{define "content"}}
+
 {{$res := index .Data "user"}}
 {{if $res.Username}}
 
@@ -39,5 +41,5 @@
 
 </div></div>
 
-
+{{end}}
 {{end}}
