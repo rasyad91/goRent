@@ -47,7 +47,15 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 		form.Errors.Add("login", "Username or password incorrect")
 	}
 	fmt.Println("SUCCESSFULLY PULLED USER INFO")
-	err = bcrypt.CompareHashAndPassword([]byte(password), []byte(eu.Password))
+	fmt.Println(password)
+	t, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	fmt.Println(t)
+	fmt.Println(string(t))
+	fmt.Println([]byte(t))
+	fmt.Println(string(t))
+
+	fmt.Println(eu.Password)
+	err = bcrypt.CompareHashAndPassword([]byte(eu.Password), []byte(password))
 	if err != nil {
 		form.Errors.Add("login", "Username or password incorrect")
 	} else {
@@ -63,11 +71,9 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	fmt.Println("SUCCESSFULLY COMPARED PASSWORD")
 	m.App.Session.Put(r.Context(), "userID", eu.ID)
 	m.App.Session.Put(r.Context(), "flash", "You've been logged in successfully!")
-	m.App.Session.Put(r.Context(), "user", Username)
-	fmt.Println("SESSION CRAP IS SUCCESSFUL")
+	m.App.Session.Put(r.Context(), "user", eu)
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 

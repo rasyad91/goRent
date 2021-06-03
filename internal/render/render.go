@@ -70,6 +70,7 @@ func DefaultData(w http.ResponseWriter, r *http.Request, td TemplateData) Templa
 	td.CSRFToken = nosurf.Token(r)
 	td.IsAuthenticated = helper.IsAuthenticated(r)
 	// if logged in, store user id in template data
+	fmt.Printf("%#v", td)
 	if td.IsAuthenticated {
 		u := app.Session.Get(r.Context(), "user").(model.User)
 		td.User = u
