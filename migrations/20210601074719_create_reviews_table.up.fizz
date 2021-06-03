@@ -32,7 +32,7 @@ create_table("product_reviews") {
 }
 
 add_foreign_key("product_reviews", "reviewer_id", {"users": ["id"]}, {
-    "name": "reviews_product_reviewer_id_fk",
+    "name": "reviews_products_reviewer_id_fk",
     "on_delete": "cascade",
     "on_update": "cascade",
 })

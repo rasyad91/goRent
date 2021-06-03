@@ -9,36 +9,40 @@ import (
 
 func routes() http.Handler {
 
-	router := mux.NewRouter()
+	mux := mux.NewRouter()
 
 	// default middleware
-	router.Use(SessionLoad)
-	router.Use(RecoverPanic)
-	router.Use(NoSurf)
+	mux.Use(SessionLoad)
+	mux.Use(RecoverPanic)
+	mux.Use(NoSurf)
 
-	router.HandleFunc("/", handler.Repo.Home).Methods("GET")
-	router.HandleFunc("/search", handler.Repo.Search).Methods("GET")
-	router.HandleFunc("/searchresult", handler.Repo.SearchResult).Methods("GET")
+	mux.HandleFunc("/", handler.Repo.Home).Methods("GET")
+	mux.HandleFunc("/search", handler.Repo.Search).Methods("GET")
+	mux.HandleFunc("/searchresult", handler.Repo.SearchResult).Methods("GET")
 
-	router.HandleFunc("/login", handler.Repo.Login).Methods("GET")
-	router.HandleFunc("/login", handler.Repo.Login).Methods("POST")
+	mux.HandleFunc("/login", handler.Repo.Login).Methods("GET")
+	mux.HandleFunc("/login", handler.Repo.Login).Methods("POST")
 
-	router.HandleFunc("/register", handler.Repo.Register).Methods("GET")
-	router.HandleFunc("/register", handler.Repo.RegisterPost).Methods("POST")
+	mux.HandleFunc("/register", handler.Repo.Register).Methods("GET")
+	mux.HandleFunc("/register", handler.Repo.RegisterPost).Methods("POST")
 
-	router.HandleFunc("/user/{userID}/bookings", handler.Repo.UserBookings).Methods("GET")
-	router.HandleFunc("/user/{userID}/rents", handler.Repo.UserRents).Methods("GET")
-	router.HandleFunc("/user/{userID}/products", handler.Repo.UserProducts).Methods("GET")
+	mux.HandleFunc("/user/{userID}/bookings", handler.Repo.UserBookings).Methods("GET")
+	mux.HandleFunc("/user/{userID}/rents", handler.Repo.UserRents).Methods("GET")
+	mux.HandleFunc("/user/{userID}/products", handler.Repo.UserProducts).Methods("GET")
 
-	router.HandleFunc("/user/logout", handler.Repo.Logout).Methods("GET")
+	mux.HandleFunc("/user/logout", handler.Repo.Logout).Methods("GET")
 
-	// sub := router.NewRoute().Subrouter()
+	// sub := mux.NewRoute().Subrouter()
 	// sub.Use(handler.ValidationAPIMiddleware)
 
-	router.HandleFunc("/v1/products/{productId}", handler.Repo.ShowProductByID).Methods("GET")
+	mux.HandleFunc("/v1/products/{productId}", handler.Repo.ShowProductByID).Methods("GET")
 
-	fileServer := http.FileServer(http.Dir("../../static/"))
-	router.Handle("/static/*", http.StripPrefix("/static", fileServer))
+	// fileServer := http.FileServer(http.Dir("./static/"))
+	// mux.Handle("/static/", http.StripPrefix("/static", fileServer))
+		// static files
+		fileServer := http.FileServer(http.Dir("./static/"))
+		mux.Handle("/static/", http.StripPrefix("/static/", fileServer))
+		// mux.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 
-	return router
+	return mux
 }
