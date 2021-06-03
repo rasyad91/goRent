@@ -17,11 +17,16 @@ func routes() http.Handler {
 	router.Use(NoSurf)
 
 	router.HandleFunc("/", handler.Repo.Home).Methods("GET")
+<<<<<<< HEAD
+=======
+	router.HandleFunc("/user/logout", handler.Repo.Logout).Methods("GET")
+
+>>>>>>> Login
 	router.HandleFunc("/search", handler.Repo.Search).Methods("GET")
 	router.HandleFunc("/searchresult", handler.Repo.SearchResult).Methods("GET")
 
 	router.HandleFunc("/login", handler.Repo.Login).Methods("GET")
-	router.HandleFunc("/login", handler.Repo.Login).Methods("POST")
+	router.HandleFunc("/login", handler.Repo.LoginPost).Methods("POST")
 
 	router.HandleFunc("/register", handler.Repo.Register).Methods("GET")
 	router.HandleFunc("/register", handler.Repo.RegisterPost).Methods("POST")
