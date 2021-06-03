@@ -35,6 +35,9 @@
                     </div>
                     <div class="form-group mb-3 ">
                         <label class="form-label"for="email">Email</label>
+                        {{with $form.Errors.Get "email"}}
+                             <span for="email" style="padding-left:5em" class="text-danger">{{.}}</span>
+                        {{end}}
                         <input type="email" class="form-control " name="email" placeholder=" john@gmail.com" value="{{$res.Email}}">
                         <div class="form-text">We'll never share your email with anyone else.</div>
 
@@ -42,12 +45,18 @@
                     <div class="form-group row mb-3">
                         <div class="form-group col mb-3  ">
                             <label class="form-label"for="block">Block</label>
+                            {{with $form.Errors.Get "block"}}
+                                <span for="block" style="padding-left:5em" class="text-danger">{{.}}</span>
+                            {{end}}
                             <input type="text" class="form-control " name="block" placeholder=" 246" value="{{$res.Address.Block}}">
 
                         </div>
                         <div class="form-group col mb-3 ">
                             <label class="form-label"for="streetname">Street Name</label>
-                            <input type="text" class="form-control " name="streetname" placeholder=" 1234 Main St" value="{{$res.Address.StreetName}}">
+                            {{with $form.Errors.Get "streetName"}}
+                                <span for="streetName" style="padding-left:5em" class="text-danger">{{.}}</span>
+                            {{end}}
+                            <input type="text" class="form-control " name="streetName" placeholder=" 1234 Main St" value="{{$res.Address.StreetName}}">
 
                         </div>
                     </div>
@@ -55,11 +64,17 @@
                     <div class="form-group row mb-3">
                         <div class="form-group col mb-3 ">
                             <label class="form-label" for="unitnumber">Unit Number</label>
-                            <input type="text" class="form-control " name="unitnumber" placeholder=" #04-23" value="{{$res.Address.UnitNumber}}">
+                            {{with $form.Errors.Get "unitNumber"}}
+                                <span for="unitNumber" style="padding-left:5em" class="text-danger">{{.}}</span>
+                            {{end}}
+                            <input type="text" class="form-control " name="unitNumber" placeholder=" #04-23" value="{{$res.Address.UnitNumber}}">
                         </div>
                         <div class="form-group col mb-3 ">
-                            <label class="form-label" for="postalcode">Postal Code</label>
-                            <input type="text" class="form-control " name="postalcode" placeholder=" 519231" value="{{$res.Address.PostalCode}}">
+                            <label class="form-label" for="postalCode">Postal Code</label>
+                            {{with $form.Errors.Get "postalCode"}}
+                                <span for="postalCode" style="padding-left:5em" class="text-danger">{{.}}</span>
+                            {{end}}
+                            <input type="text" class="form-control " name="postalCode" placeholder=" 519231" value="{{$res.Address.PostalCode}}">
                         </div>
                     </div>
     

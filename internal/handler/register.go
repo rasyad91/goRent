@@ -59,11 +59,12 @@ func (m *Repository) RegisterPost(w http.ResponseWriter, r *http.Request) {
 	form.Required("username", "email", "password", "block", "streetName", "unitNumber", "postalCode")
 	form.CheckLength("username", 1, 255)
 	form.CheckLength("password", 8, -1)
-
-	// errors["password"] = {
-	// 	"password is required", "password must be more ..."
-	// }
-
+	form.CheckLength("email", 1, 255)
+	form.CheckLength("block", 1, 10)
+	form.CheckLength("streetName", 1, 255)
+	form.CheckLength("unitNumber", 1, 10)
+	form.CheckLength("postalCode", 1, 10)
+	form.CheckEmail("email")
 	eu, err := m.DB.GetUser(newUser.Username)
 	_ = eu
 	if err != nil {
