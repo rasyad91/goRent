@@ -58,6 +58,7 @@ func (m *Repository) SearchResult(w http.ResponseWriter, r *http.Request) {
 					Rating      string `json:"rating"`
 					Description string `json:"description"`
 					Price       string `json:"price"`
+					Image1      string `json:"img1_url"`
 					CreateAt    string `json:"create_at"`
 					UpdatedAt   string `json:"updated_at"`
 				} `json:"_source"`
@@ -120,8 +121,12 @@ func (m *Repository) SearchResult(w http.ResponseWriter, r *http.Request) {
 						m.App.Error.Println(err_productPrice)
 					}
 
+					var jsonImage = []string{v.Source.Image1}
+
 					product = append(product, model.Product{ID: productID, OwnerID: productOwnerID, Brand: v.Source.Brand, Title: v.Source.Title,
-						Rating: float32(productRating), Description: v.Source.Description, Price: float32(productPrice)})
+						Rating: float32(productRating), Description: v.Source.Description, Price: float32(productPrice), Images: jsonImage})
+
+					fmt.Println("this is jsonImage", jsonImage)
 
 					// fmt.Println(p.Hits.Hits)
 
@@ -133,6 +138,7 @@ func (m *Repository) SearchResult(w http.ResponseWriter, r *http.Request) {
 					fmt.Println("This is the product price", v.Price)
 					fmt.Println("This is the product rating", v.Rating)
 					fmt.Println("---- ---- ----")
+					fmt.Println("this is the product image link", v.Images)
 				}
 
 			}

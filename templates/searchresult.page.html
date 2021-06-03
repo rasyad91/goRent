@@ -26,13 +26,9 @@
 <div class="container bg-light ml-10 mr-10 rounded-lg shadow-sm pt-2 pl-5 pr-6 mb-3 bg-white">
 <div class="container">
 <h3>What would you like to rent today?</h3>
-<<<<<<< HEAD
 <!-- <h1>IN SEARCH RESULT</h1> -->
 
 <form method="GET" action="/searchresult"> 
-=======
-<form method="GET" action = "/searchresult">
->>>>>>> origin/alvinsearchresultwithjson
 
     <div class="form-group pt-1">
     <label for="exampleFormControlInput1"></label>
@@ -52,11 +48,12 @@
 
     {{range $res := index .Data "product"}}
 
-
+{{/* {{(index .Data 0).SysID}} */}}
 <div class="col-md-4">
 	<figure class="card card-product">
 		{{/* <div class="img-wrap"><img src="https://s9.postimg.org/tupxkvfj3/image.jpg"></div> */}}
-                <div class="card"> <img src="https://imgur.com/edOjtEC.png" class="card-img-top" width="100%">
+                {{/* <div class="card"> <img src={{$res.Images}} class="card-img-top" width="100%"> */}}
+                <div class="card"> <img src={{index $res.Images 0}} class="card-img-top" width="100%">
 		<figcaption class="info-wrap">
 
             <!--- passed 1 ---->
