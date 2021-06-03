@@ -38,7 +38,7 @@ type TemplateData struct {
 func Template(w http.ResponseWriter, r *http.Request, tmpl string, td *TemplateData) error {
 
 	t := DefaultData(w, r, *td)
-	ts, err := template.ParseFiles(fmt.Sprintf("./templates/%s", tmpl), "./templates/base.layout.html", "./templates/header.layout.html")
+	ts, err := template.ParseFiles(fmt.Sprintf("./templates/%s", tmpl), "./templates/base.layout.html", "./templates/header.layout.html", "./templates/footer.layout.html")
 	if err != nil {
 		return fmt.Errorf("ParseTemplate: Unable to find template pages: %w", err)
 	}
@@ -56,7 +56,7 @@ func ServerError(w http.ResponseWriter, r *http.Request, err error) {
 	// _ = log.Output(2, trace)
 
 	w.WriteHeader(http.StatusInternalServerError)
-	w.Header().Set("Connection", "close")
+	w.Header().Set("Connection", "closec")
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.Header().Set("Cache-Control", "no-store, no-cache, must-revalidate, post-check=0, pre-check=0")
 	http.ServeFile(w, r, "./static/500.html")
