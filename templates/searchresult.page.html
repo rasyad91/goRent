@@ -87,8 +87,13 @@
                     </div> 
                     
                     <div class="mx-3 mt-0 mb-1 ce">
+                    <form method="GET" class="mb-2" action="/v1/products/{{$res.ID}}">
                     <button type="button" class="btn btn-danger btn-block"><small>VIEW DETAILS</small></button>
+                    </form>
+                    
+                    <form method="GET" action="/searchresult">
                     <button type="button" class="btn btn-danger btn-block"><small>ADD TO CART</small></button>
+                    </form>
                     </div> <small class="d-flex justify-content-center text-muted">*WOO TEAM WIP*</small>
                 </div>
        
