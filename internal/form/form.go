@@ -3,6 +3,7 @@ package form
 import (
 	"fmt"
 	"net/url"
+	"regexp"
 	"strings"
 )
 
@@ -47,6 +48,15 @@ func (f *Form) CheckLength(field string, min, max int) {
 	}
 }
 
+//CheckEmail validates the email
+func (f *Form) CheckEmail(field string) {
+	value := f.Get(field)
+	var emailRegex = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
+	validEmail := emailRegex.MatchString(value)
+	if !validEmail {
+		f.Errors.Add(field, fmt.Sprintf("Please enter valid email"))
+	}
+}
 func (f *Form) Required(fields ...string) {
 	for _, field := range fields {
 		value := f.Get(field)
