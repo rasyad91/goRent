@@ -115,4 +115,13 @@ INSERT INTO `gorent`.`products` (
     '3.99',
     '2021-06-01',
     '2021-06-01'
+),(
+    '1', 
+    'IceHockey Ltd', 
+    'hockey sticks for an entire team', 
+    '0', 
+    'We recently had all the hockey sticks replaced for the entire team because of S.O.P that the management wanted. They are as good as new because we rarely used them. Very wasted to let them rot so we have deicded to rent them.',
+    '19.99',
+    '2021-06-01',
+    '2021-06-01'
 );
