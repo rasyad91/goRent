@@ -16,7 +16,7 @@ func routes() http.Handler {
 	router.Use(RecoverPanic)
 	router.Use(NoSurf)
 
-	router.HandleFunc("/api/v1/", handler.Repo.Home).Methods("GET")
+	router.HandleFunc("/", handler.Repo.Home).Methods("GET")
 	router.HandleFunc("/user/logout", handler.Repo.Logout).Methods("GET")
 
 	router.HandleFunc("/search", handler.Repo.Search).Methods("GET")
@@ -25,7 +25,7 @@ func routes() http.Handler {
 	router.HandleFunc("/", handler.Repo.Home).Methods("GET")
 
 	router.HandleFunc("/login", handler.Repo.Login).Methods("GET")
-	router.HandleFunc("/login", handler.Repo.Login).Methods("POST")
+	router.HandleFunc("/login", handler.Repo.LoginPost).Methods("POST")
 
 	router.HandleFunc("/register", handler.Repo.Register).Methods("GET")
 	router.HandleFunc("/register", handler.Repo.RegisterPost).Methods("POST")

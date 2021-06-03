@@ -8,27 +8,26 @@
                 <p>First time here? <a href="/register">Create an account</a></p>
                 <hr class="mb-3" style="color:gray">
                 <h2>Sign in</h2>
+                {{$res := index .Data "login"}}
+                {{$form := index .Form}}
                 {{with .Form.Errors.Get "login"}}
                 <label class="text-danger">{{.}}</label>
                 {{end}}
                 <form method="POST">
-
-                    {{with .Form.Errors.Get "username"}}
-                    <label class="text-danger">{{.}}</label>
-                    {{end}}
-                    <div class="mb-3 form-floating">
-                        <input type="text" class="form-control form-control-lg {{with .Form.Errors.Get "username"}} is-invalid{{end}}" id="username" name="username"
-                            placeholder="Username" autocomplete="off">
-                        <label for="username" class="form-label">username</label>
+                    <input type="hidden" name="csrf_token" value="{{.CSRFToken }}">
+                    <div class="form-group mb-3 ">
+                            <label class="form-label"for="username">Username</label> 
+                            {{with $form.Errors.Get "username"}}
+                            <span for="username" style="padding-left:5em" class="text-danger">{{.}}</span>
+                            {{end}}
+                            <input type="username" class="form-control  {{with .Form.Errors.Get "username"}} is-invalid{{end}}" name="username" placeholder="Username" value="{{$res.Username}}">
                     </div>
-
-                    {{with .Form.Errors.Get "password"}}
-                    <label class="text-danger">{{.}}</label>
-                    {{end}}
-                    <div class="mb-3 form-floating">
-                        <input type="password" class="form-control form-control-lg {{with .Form.Errors.Get "password"}} is-invalid{{end}}" id="password" name="password"
-                            autocomplete="off" placeholder="Password">
-                        <label for="password" class="form-label">password</label>
+                    <div class="form-group mb-3 ">
+                            <label class="form-label"for="password">Password</label> 
+                            {{with $form.Errors.Get "password"}}
+                            <span for="password" style="padding-left:5em" class="text-danger">{{.}}</span>
+                            {{end}}
+                            <input type="password" class="form-control  {{with .Form.Errors.Get "password"}} is-invalid{{end}}" name="password" placeholder="password" value="{{$res.Password}}">
                     </div>
                     <button type="submit" class="btn btn-danger btn-lg">Sign in</button>
                 </form>
