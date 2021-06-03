@@ -38,12 +38,13 @@ func routes() http.Handler {
 
 	mux.HandleFunc("/v1/products/{productId}", handler.Repo.ShowProductByID).Methods("GET")
 
-	// fileServer := http.FileServer(http.Dir("./static/"))
-	// mux.Handle("/static/", http.StripPrefix("/static", fileServer))
+	fileServer := http.FileServer(http.Dir("./static/"))
+	mux.PathPrefix("/static/").Handler(http.StripPrefix("/static", fileServer))
+
 	// static files
 
-	fileServer := http.FileServer(http.Dir("/static/"))
-	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
+	// fileServer := http.FileServer(http.Dir("/static/"))
+	// mux.Handle("/static/", http.StripPrefix("/static", fileServer))
 	// mux.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 
 	return mux
