@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"goRent/internal/config"
 	"goRent/internal/driver/mysqlDriver"
+	"goRent/internal/model"
 	"goRent/internal/render"
 	"goRent/internal/repository"
 	"goRent/internal/repository/mysql"
@@ -35,6 +36,12 @@ func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
 
 	data := make(map[string]interface{})
 
+	u := m.App.Session.Get(r.Context(), "user").(model.User)
+	fmt.Println("PRINTINT U", u)
+	fmt.Println("checking authenticate", m.App.Session.Exists(r.Context(), "userID"))
+	if isLoggedIn := helper.IsAuthenticated(); isLoggedIn {
+		data[""]
+	}
 	if err := render.Template(w, r, "home.page.html", &render.TemplateData{
 		Data: data,
 	}); err != nil {
