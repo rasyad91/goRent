@@ -38,6 +38,31 @@ CREATE TABLE `images` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `product_reviews`
+--
+
+DROP TABLE IF EXISTS `product_reviews`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `product_reviews` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `reviewer_id` int NOT NULL,
+  `reviewer_name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `product_id` int NOT NULL,
+  `title` varchar(60) COLLATE utf8mb4_general_ci NOT NULL,
+  `body` varchar(500) COLLATE utf8mb4_general_ci NOT NULL,
+  `rating` float(2,1) NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `reviews_product_reviewer_id_fk` (`reviewer_id`),
+  KEY `product_reviews_products_id_fk` (`product_id`),
+  CONSTRAINT `product_reviews_products_id_fk` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `reviews_product_reviewer_id_fk` FOREIGN KEY (`reviewer_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `products`
 --
 
@@ -75,8 +100,8 @@ CREATE TABLE `rents` (
   `restriction_id` int NOT NULL,
   `total_cost` float(12,2) NOT NULL,
   `duration` int NOT NULL,
-  `start_date` datetime DEFAULT NULL,
-  `end_date` datetime DEFAULT NULL,
+  `start_date` datetime NOT NULL,
+  `end_date` datetime NOT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`),
@@ -108,34 +133,6 @@ CREATE TABLE `restrictions` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `reviews`
---
-
-DROP TABLE IF EXISTS `reviews`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `reviews` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `owner_id` int NOT NULL,
-  `renter_id` int NOT NULL,
-  `product_id` int NOT NULL,
-  `type` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `title` varchar(60) COLLATE utf8mb4_general_ci NOT NULL,
-  `body` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `rating` float(2,1) NOT NULL,
-  `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `reviews_users_owner_id_fk` (`owner_id`),
-  KEY `reviews_users_renter_id_fk` (`renter_id`),
-  KEY `reviews_products_id_fk` (`product_id`),
-  CONSTRAINT `reviews_products_id_fk` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `reviews_users_owner_id_fk` FOREIGN KEY (`owner_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `reviews_users_renter_id_fk` FOREIGN KEY (`renter_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `schema_migration`
 --
 
@@ -161,6 +158,31 @@ CREATE TABLE `sessions` (
   `expiry` timestamp(6) NOT NULL,
   PRIMARY KEY (`token`),
   KEY `sessions_expiry_idx` (`expiry`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `user_reviews`
+--
+
+DROP TABLE IF EXISTS `user_reviews`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `user_reviews` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `reviewer_id` int NOT NULL,
+  `reviewer_name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `receiver_id` int NOT NULL,
+  `title` varchar(60) COLLATE utf8mb4_general_ci NOT NULL,
+  `body` varchar(500) COLLATE utf8mb4_general_ci NOT NULL,
+  `rating` float(2,1) NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `reviews_users_reviewer_id_fk` (`reviewer_id`),
+  KEY `reviews_users_receiver_id_fk` (`receiver_id`),
+  CONSTRAINT `reviews_users_receiver_id_fk` FOREIGN KEY (`receiver_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `reviews_users_reviewer_id_fk` FOREIGN KEY (`reviewer_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -199,4 +221,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-06-03  6:44:51
+-- Dump completed on 2021-06-03 11:57:16

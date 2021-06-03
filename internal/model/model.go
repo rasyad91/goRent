@@ -12,9 +12,10 @@ type User struct {
 	Address     Address
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
-	Products    []Product // where ID = Product.OwnerID
-	Rents       []Rent    // where ID = Rent.RenterID
-	Bookings    []Rent    // where ID = Rent.OwnerID
+	Products    []Product    // where ID = Product.OwnerID from products table
+	Rents       []Rent       // where ID = Rent.RenterID from rents table
+	Bookings    []Rent       // where ID = Rent.OwnerID from rents table
+	Reviews     []UserReview // where ID = UserReviews.ReceiverID from reviewstable
 }
 
 type Address struct {
@@ -32,7 +33,7 @@ type Product struct {
 	Rating      float32
 	Description string
 	Price       float32
-	Reviews     []Review // where ID = Review.ProductID
+	Reviews     []ProductReview // where ID = ProductReview.ProductID from reviews table
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }
@@ -40,6 +41,7 @@ type Product struct {
 type Restriction struct {
 	ID          int
 	Description string
+	DeletedAt   time.Time
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }
@@ -56,15 +58,26 @@ type Rent struct {
 	UpdatedAt     time.Time
 }
 
-type Review struct {
-	ID        int
-	OwnerID   int
-	RenterID  int
-	ProductID int
-	Type      string
-	Title     string
-	Body      string
-	Rating    float32
-	CreatedAt time.Time
-	UpdatedAt time.Time
+type UserReview struct {
+	ID           int
+	ReviewerID   int // the one thats making the review
+	ReviewerName string
+	ReceiverID   int // the one thats get reviewed
+	Title        string
+	Body         string
+	Rating       float32
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+}
+
+type ProductReview struct {
+	ID           int
+	ReviewerID   int // the one thats making the review
+	ReviewerName string
+	ProductID    int
+	Title        string
+	Body         string
+	Rating       float32
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
 }

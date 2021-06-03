@@ -1,1 +1,2 @@
-drop_table("reviews")
+drop_table("user_reviews")
+drop_table("product_reviews")

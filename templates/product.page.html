@@ -1,0 +1,35 @@
+{{template "base" .}}
+
+{{define "content"}}
+<div class="container grid mt-5">
+    {{$res := index .Data "product"}}
+        <div class="row">
+            <h1>{{$res.ID}}</h1>
+            <h3>{{$res.OwnerID}}</h3>
+            <h3>{{$res.Brand}}</h3>
+            <h3>{{$res.Title}}</h3>
+            <h3>{{$res.Rating}}</h3>
+            <h3>{{$res.Description}}</h3>
+            <h3>{{$res.Price}}</h3>
+            <h3>{{$res.CreatedAt}}</h3>
+            <h3>{{$res.UpdatedAt}}</h3>
+        </div>
+<br>
+<br>
+<br>
+        {{$reviews := $res.Reviews}}
+
+        {{range $reviews}}
+            <h1>{{.ID}}</h1>
+            <h3>{{.ReviewerID}}</h3>
+            <h3>{{.ReviewerName}}</h3>
+            <h3>{{.ProductID}}</h3>
+            <h3>{{.Title}}</h3>
+            <h3>{{.Body}}</h3>
+            <h3>{{.Rating}}</h3>
+            <h3>{{.CreatedAt}}</h3>
+            <h3>{{.UpdatedAt}}</h3>
+        {{end}}
+
+</div>
+{{end}}

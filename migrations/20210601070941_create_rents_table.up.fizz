@@ -6,8 +6,8 @@ create_table("rents") {
   t.Column("restriction_id", "integer", {})
   t.Column("total_cost", "float", {"scale": 2, "precision": 12})
   t.Column("duration", "int", {})
-  t.Column("start_date", "timestamp", {"null": true})
-  t.Column("end_date", "timestamp", {"null": true})
+  t.Column("start_date", "timestamp", {})
+  t.Column("end_date", "timestamp", {})
 }
 
 add_foreign_key("rents", "owner_id", {"users": ["id"]}, {

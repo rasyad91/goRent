@@ -16,9 +16,6 @@ func routes() http.Handler {
 	router.Use(RecoverPanic)
 	router.Use(NoSurf)
 
-	router.HandleFunc("/api/v1/", handler.Repo.Home).Methods("GET")
-	router.HandleFunc("/user/logout", handler.Repo.Logout).Methods("GET")
-
 	router.HandleFunc("/search", handler.Repo.Search).Methods("GET")
 	router.HandleFunc("/searchresult", handler.Repo.SearchResult).Methods("GET")
 
@@ -30,8 +27,12 @@ func routes() http.Handler {
 	router.HandleFunc("/register", handler.Repo.Register).Methods("GET")
 	router.HandleFunc("/register", handler.Repo.RegisterPost).Methods("POST")
 
+	router.HandleFunc("/user/logout", handler.Repo.Logout).Methods("GET")
+
 	// sub := router.NewRoute().Subrouter()
 	// sub.Use(handler.ValidationAPIMiddleware)
+
+	router.HandleFunc("/v1/products/{productId}", handler.Repo.ShowProductByID).Methods("GET")
 
 	fileServer := http.FileServer(http.Dir("../../static/"))
 	router.Handle("/static/*", http.StripPrefix("/static", fileServer))
