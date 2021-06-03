@@ -36,6 +36,7 @@ func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
 
 	data := make(map[string]interface{})
 
+	fmt.Println(data)
 	if err := render.Template(w, r, "home.page.html", &render.TemplateData{
 		Data: data,
 	}); err != nil {
