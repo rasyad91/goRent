@@ -17,11 +17,8 @@ func routes() http.Handler {
 	router.Use(NoSurf)
 
 	router.HandleFunc("/", handler.Repo.Home).Methods("GET")
-<<<<<<< HEAD
-=======
 	router.HandleFunc("/user/logout", handler.Repo.Logout).Methods("GET")
 
->>>>>>> Login
 	router.HandleFunc("/search", handler.Repo.Search).Methods("GET")
 	router.HandleFunc("/searchresult", handler.Repo.SearchResult).Methods("GET")
 
