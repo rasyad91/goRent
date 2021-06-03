@@ -2,12 +2,14 @@ package main
 
 import (
 	"context"
+	"encoding/gob"
 	"flag"
 	"fmt"
 	"goRent/internal/config"
 	"goRent/internal/driver/mysqlDriver"
 	"goRent/internal/handler"
 	"goRent/internal/helper"
+	"goRent/internal/model"
 	"goRent/internal/render"
 	"io"
 	"log"
@@ -30,6 +32,10 @@ var (
 	session *scs.SessionManager
 	app     *config.AppConfig
 )
+
+func init() {
+	gob.Register(model.User{})
+}
 
 // TODO clean up main() --- Rasyad
 func main() {
