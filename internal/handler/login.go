@@ -126,3 +126,9 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 
 //  http.Redirect(w, r, "/admin/overview", http.StatusSeeOther)
 // }
+
+m.App.Session.Put(r.Context(), "success", "hello")
+fmt.Printf("%#v", m.App.Session)
+//to do 
+- add in notification for register and login
+- feed in user info for header 
