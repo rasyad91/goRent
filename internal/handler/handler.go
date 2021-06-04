@@ -1,10 +1,8 @@
 package handler
 
 import (
-	"fmt"
 	"goRent/internal/config"
 	"goRent/internal/driver/mysqlDriver"
-	"goRent/internal/model"
 	"goRent/internal/render"
 	"goRent/internal/repository"
 	"goRent/internal/repository/mysql"
@@ -32,13 +30,17 @@ func New(r *Repository) {
 }
 
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
-	m.App.Session.Put(r.Context(), "warning", "hello")
-
+	if f := m.App.Session.Get(r.Context(), "flash"); f != nil {
+		m.App.Session.Put(r.Context(), "warning", nil)
+	} else {
+		m.App.Session.Put(r.Context(), "warning", "hello")
+	}
+	// m.App.Session.Put(r.Context(), "flash", "let's see")
 	data := make(map[string]interface{})
 
-	u := m.App.Session.Get(r.Context(), "user").(model.User)
-	fmt.Println("PRINTINT U", u)
-	fmt.Println("checking authenticate", m.App.Session.Exists(r.Context(), "userID"))
+	// u := m.App.Session.Get(r.Context(), "user").(model.User)
+	// fmt.Println("PRINTINT U", u)
+	// fmt.Println("checking authenticate", m.App.Session.Exists(r.Context(), "userID"))
 
 	if err := render.Template(w, r, "home.page.html", &render.TemplateData{
 		Data: data,

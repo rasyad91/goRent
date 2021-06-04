@@ -12,7 +12,7 @@ import (
 )
 
 func (m *Repository) Register(w http.ResponseWriter, r *http.Request) {
-	m.App.Info.Println("Register: GET")
+	m.App.Info.Println("Register: GET", m.App.Session.Get(r.Context(), "user"))
 	data := make(map[string]interface{})
 	data["register"] = model.User{
 		Username: "",
