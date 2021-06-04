@@ -37,7 +37,7 @@
 {{end}} -->
 
 <header class="header"> 
-    <nav class="navbar navbar-expand-lg navbar-light bg-white px-lg-5"><a class="navbar-brand" href="index.html">Varkala</a>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white px-lg-5"><a class="navbar-brand" href="/"><i class="fab fa-renren"></i>    GoRent</a>
       <ul class="list-inline mb-0 d-block d-lg-none">
         <li class="list-inline-item mr-3"><a class="text-dark text-hover-primary" href="#" data-toggle="modal" data-target="#loginModal">
             <svg class="svg-icon navbar-icon">
@@ -60,56 +60,23 @@
         </svg>
       </button>
       <div class="collapse navbar-collapse" id="navbarContent">
-        <ul class="navbar-nav mt-3 mt-lg-0">
-          <!-- Megamenu-->
-          <li class="nav-item dropdown position-static"><a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">Pages</a>
-            <div class="dropdown-menu megamenu px-4 px-lg-5 py-lg-5" data-translate-x="-50%" style="transform: translateX(-50%) translateY(30px);">
-              <div class="row">
-                <div class="col-lg-3 col-sm-6"><img class="img-fluid mb-3 d-none d-lg-block" src="https://d19m59y37dris4.cloudfront.net/varkala/1-2-1/img/blog/ian-dooley-347962-unsplash.jpg" alt="">
-                  <!-- Megamenu list-->
-                  <h6>Order process</h6>
-                  <ul class="megamenu-list list-unstyled">
-                    <li class="megamenu-list-item"><a class="megamenu-list-link" href="cart.html">Shopping cart   </a></li>
-                    <li class="megamenu-list-item"><a class="megamenu-list-link" href="checkout1.html">Checkout - Five steps <span class="badge badge-primary-light ml-1">New</span>   </a></li>
-                    <li class="megamenu-list-item"><a class="megamenu-list-link" href="checkout.html">Checkout - Single-page   </a></li>
-                    <li class="megamenu-list-item"><a class="megamenu-list-link" href="checkout-confirmed.html">Checkout - confirmed   </a></li>
-                    <li class="megamenu-list-item"><a class="megamenu-list-link" href="wishlist.html">Wishlist   </a></li>
-                  </ul>
-                </div>
-                <div class="col-lg-3 col-sm-6"><img class="img-fluid mb-3 d-none d-lg-block" src="https://d19m59y37dris4.cloudfront.net/varkala/1-2-1/img/blog/photo-1534126511673-b6899657816a.jpg" alt="">
-                  <!-- Megamenu list-->
-                  <h6>Customer</h6>
-                  <ul class="megamenu-list list-unstyled mb-lg-0">
-                    <li class="megamenu-list-item"><a class="megamenu-list-link" href="customer-login.html">Login/sign up<span class="badge badge-primary-light ml-1">New</span>   </a></li>
-                    <li class="megamenu-list-item"><a class="megamenu-list-link" href="customer-orders.html">Orders <span class="badge badge-primary-light ml-1">New</span>   </a></li>
-                    <li class="megamenu-list-item"><a class="megamenu-list-link" href="customer-order.html">Order detail <span class="badge badge-primary-light ml-1">New</span>   </a></li>
-                    <li class="megamenu-list-item"><a class="megamenu-list-link" href="customer-order-tracking.html">Order tracking <span class="badge badge-primary-light ml-1">New</span>   </a></li>
-                    <li class="megamenu-list-item"><a class="megamenu-list-link" href="customer-addresses.html">Addresses <span class="badge badge-primary-light ml-1">New</span>   </a></li>
-                    <li class="megamenu-list-item"><a class="megamenu-list-link" href="customer-account.html">Profile <span class="badge badge-primary-light ml-1">New</span>   </a></li>
-                    <li class="megamenu-list-item"><a class="megamenu-list-link" href="customer-wishlist.html">Wishlist <span class="badge badge-primary-light ml-1">New</span>   </a></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </li>
-          <!-- /Megamenu end-->
+        <!-- <ul class="navbar-nav mt-3 mt-lg-0">
+
           <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" id="docsDropdown" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Docs</a>
             <div class="dropdown-menu" aria-labelledby="homeDropdown" style="transform: translateY(30px);"><a class="dropdown-item" href="docs/index.html">Introduction </a><a class="dropdown-item" href="docs/directory-structure.html">Directory structure </a><a class="dropdown-item" href="docs/gulp.html">Gulp </a><a class="dropdown-item" href="docs/customizing-css.html">Customizing CSS </a><a class="dropdown-item" href="docs/credits.html">Credits </a><a class="dropdown-item" href="docs/changelog.html">Changelog </a>
               <div class="dropdown-divider"></div><a class="dropdown-item" href="docs/components-bootstrap.html">Bootstrap </a><a class="dropdown-item" href="docs/components-theme.html">Theme </a>
             </div>
           </li>
-        </ul>
-        <form class="d-lg-flex ml-auto mr-lg-5 mr-xl-6 my-4 my-lg-0" action="#">
+        </ul> -->
+        <form class="d-lg-flex ml-auto mr-lg-5 mr-xl-6 my-4 my-lg-0" action="/searchresult" method="GET">
           <div class="input-group input-group-underlined">
-            <input class="form-control form-control-underlined pl-3" type="text" placeholder="Search" aria-label="Search" aria-describedby="button-search">
+            <input name="q" class="form-control form-control-underlined pl-3" type="text" placeholder="Search" aria-label="Search" aria-describedby="button-search">
             <div class="input-group-append ml-0">
-              <button class="btn btn-underlined py-0" id="button-search" type="button"> 
-                <svg class="svg-icon navbar-icon">
-                  <use xlink:href="#search-1"> </use>
-                </svg>
+              <button class="btn btn-underlined py-0" id="button-search"> 
+                <i class="fas fa-search"></i>
               </button>
             </div>
-          </div>
+         </div>
         </form>
         <ul class="list-inline mb-0 d-none d-lg-block">
           <li class="list-inline-item mr-3"><a class="text-dark text-hover-primary" href="#" data-toggle="modal" data-target="#loginModal">

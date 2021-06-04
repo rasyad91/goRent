@@ -73,6 +73,7 @@ CREATE TABLE `products` (
   `id` int NOT NULL AUTO_INCREMENT,
   `owner_id` int NOT NULL,
   `brand` varchar(60) COLLATE utf8mb4_general_ci NOT NULL,
+  `category` varchar(60) COLLATE utf8mb4_general_ci NOT NULL,
   `title` varchar(60) COLLATE utf8mb4_general_ci NOT NULL,
   `rating` float(2,1) NOT NULL,
   `description` varchar(500) COLLATE utf8mb4_general_ci NOT NULL,
@@ -221,4 +222,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-06-04  6:32:57
+-- Dump completed on 2021-06-04  9:21:35
