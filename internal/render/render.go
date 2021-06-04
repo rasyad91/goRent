@@ -6,8 +6,10 @@ import (
 	"goRent/internal/form"
 	"goRent/internal/helper"
 	"goRent/internal/model"
+	"html/template"
+	"log"
 	"net/http"
-	"text/template"
+	"runtime/debug"
 
 	"github.com/justinas/nosurf"
 )
@@ -38,7 +40,8 @@ type TemplateData struct {
 func Template(w http.ResponseWriter, r *http.Request, tmpl string, td *TemplateData) error {
 
 	t := DefaultData(w, r, *td)
-	ts, err := template.ParseFiles(fmt.Sprintf("./templates/%s", tmpl), "./templates/base.layout.html", "./templates/header.layout.html", "./templates/footer.layout.html")
+
+	ts, err := template.New(tmpl).Funcs(function).ParseFiles(fmt.Sprintf("./templates/%s", tmpl), "./templates/base.layout.html", "./templates/header.layout.html", "./templates/footer.layout.html")
 	if err != nil {
 		return fmt.Errorf("ParseTemplate: Unable to find template pages: %w", err)
 	}
@@ -52,8 +55,8 @@ func Template(w http.ResponseWriter, r *http.Request, tmpl string, td *TemplateD
 
 // ServerError will display error page for internal server error
 func ServerError(w http.ResponseWriter, r *http.Request, err error) {
-	// trace := fmt.Sprintf("%s\n%s", err.Error(), debug.Stack())
-	// _ = log.Output(2, trace)
+	trace := fmt.Sprintf("%s\n%s", err.Error(), debug.Stack())
+	_ = log.Output(2, trace)
 
 	w.WriteHeader(http.StatusInternalServerError)
 	w.Header().Set("Connection", "closec")
@@ -68,7 +71,6 @@ func DefaultData(w http.ResponseWriter, r *http.Request, td TemplateData) Templa
 	td.CSRFToken = nosurf.Token(r)
 	td.IsAuthenticated = helper.IsAuthenticated(r)
 	// if logged in, store user id in template data
-	fmt.Printf("%#v", td)
 	if td.IsAuthenticated {
 		u := app.Session.Get(r.Context(), "user").(model.User)
 		td.User = u
