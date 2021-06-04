@@ -19,6 +19,9 @@ func routes() http.Handler {
 	mux.HandleFunc("/", handler.Repo.Home).Methods("GET")
 	mux.HandleFunc("/search", handler.Repo.Search).Methods("GET")
 	mux.HandleFunc("/searchresult", handler.Repo.SearchResult).Methods("GET")
+
+	mux.PathPrefix("/user").Subrouter().Use(Auth)
+
 	mux.HandleFunc("/user/logout", handler.Repo.Logout).Methods("GET")
 
 	mux.HandleFunc("/login", handler.Repo.Login).Methods("GET")

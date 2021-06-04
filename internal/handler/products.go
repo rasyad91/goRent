@@ -24,7 +24,6 @@ func (m *Repository) ShowProductByID(w http.ResponseWriter, r *http.Request) {
 		m.App.Error.Println(err)
 		return
 	}
-	fmt.Println(p.Reviews)
 	data := make(map[string]interface{})
 	data["product"] = p
 

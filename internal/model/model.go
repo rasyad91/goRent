@@ -29,6 +29,7 @@ type Product struct {
 	ID          int
 	OwnerID     int
 	Brand       string
+	Category    string
 	Title       string
 	Rating      float32
 	Description string

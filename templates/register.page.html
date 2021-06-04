@@ -1,4 +1,7 @@
 {{template "base" .}}
+
+{{define "content"}}
+
 <div class="container">
 
     <div class="row mt-5">
@@ -28,7 +31,7 @@
                              {{with $form.Errors.Get "password"}}
                              <span for="password" style="padding-left:5em" class="text-danger">{{.}}</span>
                              {{end}}
-                             <input type="password" class="form-control {{with .Form.Errors.Get "password"}} is-invalid{{end}}"" name="password" placeholder="Password">
+                             <input type="password" class="form-control {{with .Form.Errors.Get "password"}} is-invalid{{end}}" name="password" placeholder="Password">
 
                              <div class="form-text">Must be 8-20 characters long</div>
                         </div>
@@ -89,3 +92,5 @@
 
     </div>
 </div>
+
+{{end}}

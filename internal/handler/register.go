@@ -94,6 +94,7 @@ func (m *Repository) RegisterPost(w http.ResponseWriter, r *http.Request) {
 	if err := m.DB.InsertUser(newUser); err != nil {
 		m.App.Info.Println("SUCCESSFULLY REGISTERED")
 	}
+	m.App.Session.Put(r.Context(), "flash", "You've registered successfully!")
 
 	m.App.Info.Println("Register: redirecting to login page")
 	http.Redirect(w, r, "/login", http.StatusSeeOther)

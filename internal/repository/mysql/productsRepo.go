@@ -14,7 +14,7 @@ func (m *DBrepo) GetProductByID(id int) (model.Product, error) {
 	p := model.Product{}
 
 	query := `select 
-				p.id, p.owner_id, p.brand, p.title, p.rating, p.description, p.price, p.created_at, p.updated_at
+				p.id, p.owner_id, p.brand, p.category, p.title, p.rating, p.description, p.price, p.created_at, p.updated_at
 			from
 				products p where id = ?
 			`
@@ -22,6 +22,7 @@ func (m *DBrepo) GetProductByID(id int) (model.Product, error) {
 		&p.ID,
 		&p.OwnerID,
 		&p.Brand,
+		&p.Category,
 		&p.Title,
 		&p.Rating,
 		&p.Description,

@@ -5563,7 +5563,7 @@ input[type="button"].btn-block {
     float: left;
     padding-right: .5rem;
     color: #868e96;
-    content: "â€”"
+    content: ">"
 }
 
 .breadcrumb-item+.breadcrumb-item:hover::before {
@@ -8951,7 +8951,7 @@ button.bg-muted:focus {
         position: -webkit-sticky;
         position: sticky;
         top: 0;
-        z-index: 1020
+        z-index: 1
     }
 }
 

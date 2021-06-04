@@ -6,8 +6,8 @@
 <section>
     <div class="container-fluid px-xl-7 pt-5 pb-3 pb-lg-6">
       <ul class="breadcrumb undefined">
-        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-        <li class="breadcrumb-item"><a href="category-full.html">Jeans</a></li>
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item"><a href="/searchresult?q=">Products</a></li>
         <li class="breadcrumb-item active">{{$res.Title}}            </li>
       </ul>
       <div class="row">
@@ -28,39 +28,29 @@
               </ul>
               <div class="d-flex align-items-center text-sm">
                 <ul class="list-inline mr-2 mb-0">
-                  <li class="list-inline-item mr-0"><i class="fa fa-star text-primary"></i></li>
-                  <li class="list-inline-item mr-0"><i class="fa fa-star text-primary"></i></li>
-                  <li class="list-inline-item mr-0"><i class="fa fa-star text-primary"></i></li>
-                  <li class="list-inline-item mr-0"><i class="fa fa-star text-primary"></i></li>
+                  {{range $index := iterate (floatToInt $res.Rating)}}
+                  <li class="list-inline-item mr-0"><i class="fa fa-star text-danger"></i></li>
+                  {{end}}
+                  {{range $index := iterate (substract 5 (floatToInt $res.Rating))}}
                   <li class="list-inline-item mr-0"><i class="fa fa-star text-gray-300"></i></li>
+                  {{end}}
                 </ul><span class="text-muted text-uppercase">{{len $res.Reviews}} reviews</span>
               </div>
             </div>
             <p class="mb-4 text-muted">{{$res.Description}}</p>
+            <ul class="list-unstyled">
+              <li><strong>Brand:</strong> <a class="text-muted" href="/searchresult?q={{$res.Brand}}">{{$res.Brand}}</a></li>
+              <li><strong>Category:</strong> <a class="text-muted" href="/searchresult?q={{$res.Category}}">{{$res.Category}}</a></li>
+            </ul>
             <form id="buyForm" action="#">
               <div class="row">
                 <div class="col-sm-6 col-lg-12 detail-option mb-4">
-                  <h6 class="detail-option-heading">Size <span>(required)</span></h6>
-                  <div class="dropdown bootstrap-select"><select class="selectpicker" name="size" data-style="btn-selectpicker">
-                    <option value="value_0">Small</option>
-                    <option value="value_1">Medium</option>
-                    <option value="value_2">Large</option>
-                  </select><button type="button" tabindex="-1" class="btn dropdown-toggle btn-selectpicker" data-toggle="dropdown" role="combobox" aria-owns="bs-select-1" aria-haspopup="listbox" aria-expanded="false" title="Small"><div class="filter-option"><div class="filter-option-inner"><div class="filter-option-inner-inner">Small</div></div> </div></button><div class="dropdown-menu "><div class="inner show" role="listbox" id="bs-select-1" tabindex="-1"><ul class="dropdown-menu inner show" role="presentation"></ul></div></div></div>
-                </div>
                 <div class="col-sm-6 col-lg-12 detail-option mb-5">
-                  <h6 class="detail-option-heading">Type <span>(required)</span></h6>
-                  <label class="btn btn-sm btn-outline-primary detail-option-btn-label" for="material_0"> Hoodie
-                    <input class="input-invisible" type="radio" name="material" value="value_0" id="material_0" required="">
-                  </label>
-                  <label class="btn btn-sm btn-outline-primary detail-option-btn-label" for="material_1"> College
-                    <input class="input-invisible" type="radio" name="material" value="value_1" id="material_1" required="">
-                  </label>
                 </div>
               </div>
               <div class="input-group w-100 mb-4">
-                <input class="form-control form-control-lg detail-quantity" name="items" type="number" value="1">
                 <div class="input-group-append flex-grow-1">
-                  <button class="btn btn-dark btn-block" type="submit"> <i class="fa fa-shopping-cart mr-2"></i>Add to Cart</button>
+                  <button class="btn btn-danger btn-block btn-lg" type="submit"> <i class="fa fas fa-book mr-2"></i>Add to Booking</button>
                 </div>
               </div>
               <div class="row mb-4">
@@ -72,10 +62,10 @@
                   </ul>
                 </div>
               </div>
-              <ul class="list-unstyled">
+              <!-- <ul class="list-unstyled">
                 <li><strong>Category:</strong> <a class="text-muted" href="#">Jeans</a></li>
                 <li><strong>Tags:</strong> <a class="text-muted" href="#">Leisure</a>, <a class="text-muted" href="#">Elegant</a></li>
-              </ul>
+              </ul> -->
             </form>
           </div>
         </div>
@@ -85,188 +75,67 @@
 <section class="mt-5">
     <div class="container">
       <ul class="nav nav-tabs flex-column flex-sm-row" role="tablist">
-        <li class="nav-item"><a class="nav-link detail-nav-link active" data-toggle="tab" href="#description" role="tab" aria-selected="true">Description</a></li>
-        <li class="nav-item"><a class="nav-link detail-nav-link" data-toggle="tab" href="#additional-information" role="tab" aria-selected="false">Additional Information</a></li>
-        <li class="nav-item"><a class="nav-link detail-nav-link" data-toggle="tab" href="#reviews" role="tab" aria-selected="false">Reviews</a></li>
+        <li class="nav-item"><a class="nav-link detail-nav-link active" data-toggle="tab" href="#reviews" role="tab" aria-selected="false">Reviews</a></li>
+        <li class="nav-item"><a class="nav-link detail-nav-link" data-toggle="tab" href="#leave-review" role="tab" aria-selected="false">Leave a review</a></li>
       </ul>
       <div class="tab-content py-4">
-        <div class="tab-pane fade px-3 active show" id="description" role="tabpanel">
+
+        <div class="tab-pane fade px-3 active show" id="reviews" role="tabpanel">
           <div class="row">
-            <div class="col-md-7">
-              <h5>About</h5>
-              <p class="text-muted">Samsa was a travelling salesman - and above it there hung a picture that he had recently cut out of an illustrated magazine and housed in a nice, gilded frame.</p>
-              <p class="text-muted">He must have tried it a hundred times, shut his eyes so that he wouldn't have to look at the floundering legs, and only stopped when he began to feel a mild, dull pain there that he had never felt before.</p>
-              <h5>You will love</h5>
-              <ul class="text-muted"> 
-                <li>He must have tried it a hundred times</li>
-                <li>shut his eyes so that he wouldn't have to look</li>
-                <li>at the floundering legs, and only stopped</li>
-              </ul>
-            </div>
-            <div class="col-md-5"><img class="img-fluid" src="https://d19m59y37dris4.cloudfront.net/varkala/1-2-1/img/product/detail-3.jpg" alt=""></div>
-          </div>
-        </div>
-        <div class="fade tab-pane" id="additional-information" role="tabpanel">
-          <div class="row">
-            <div class="col-lg-6">
-              <table class="table text-sm">
-                <tbody>
-                  <tr>
-                    <th class="font-weight-normal border-0">Product #</th>
-                    <td class="text-muted border-0">Lorem ipsum dolor sit amet</td>
-                  </tr>
-                  <tr>
-                    <th class="font-weight-normal ">Available packaging</th>
-                    <td class="text-muted ">LOLDuis aute irure dolor in reprehenderit</td>
-                  </tr>
-                  <tr>
-                    <th class="font-weight-normal ">Weight</th>
-                    <td class="text-muted ">dolor sit amet</td>
-                  </tr>
-                  <tr>
-                    <th class="font-weight-normal ">Sunt in culpa qui</th>
-                    <td class="text-muted ">Lorem ipsum dolor sit amet</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="col-lg-6">
-              <table class="table text-sm">
-                <tbody>
-                  <tr>
-                    <th class="font-weight-normal border-0">Weight</th>
-                    <td class="text-muted border-0">dolor sit amet                           </td>
-                  </tr>
-                  <tr>
-                    <th class="font-weight-normal ">Sunt in culpa qui</th>
-                    <td class="text-muted ">Lorem ipsum dolor sit amet                           </td>
-                  </tr>
-                  <tr>
-                    <th class="font-weight-normal ">Product #</th>
-                    <td class="text-muted ">Lorem ipsum dolor sit amet                           </td>
-                  </tr>
-                  <tr>
-                    <th class="font-weight-normal ">Available packaging</th>
-                    <td class="text-muted ">LOLDuis aute irure dolor in reprehenderit                           </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-        <div class="tab-pane fade" id="reviews" role="tabpanel">
-          <div class="row mb-5">
             <div class="col-lg-10 col-xl-9">
+              {{$reviews := $res.Reviews}}
+              {{range $reviews}}
               <div class="media review">
                 <div class="media-body">
-                  <h5 class="mt-2 mb-1">Han Solo</h5>
-                  <div class="mb-2"><i class="fa fa-xs fa-star text-warning"></i><i class="fa fa-xs fa-star text-warning"></i><i class="fa fa-xs fa-star text-warning"></i><i class="fa fa-xs fa-star text-warning"></i><i class="fa fa-xs fa-star text-warning"></i>
+                  <h5 class="mt-2 mb-1">{{.ReviewerName}}</h5>
+                  <div class="mb-2">
+                    {{range $index := iterate (floatToInt .Rating)}}
+                    <li class="list-inline-item mr-0"><i class="fa fa-star text-danger"></i></li>
+                    {{end}}
+                    {{range $index := iterate (substract 5 (floatToInt .Rating))}}
+                    <li class="list-inline-item mr-0"><i class="fa fa-star text-gray-300"></i></li>
+                    {{end}}
                   </div>
-                  <p class="text-muted">One morning, when Gregor Samsa woke from troubled dreams, he found himself transformed in his bed into a horrible vermin. He lay on his armour-like back, and if he lifted his head a little he could see his brown belly, slightly domed and divided by arches into stiff sections     </p>
+                  <p class="text-muted">{{.Body}}</p>
                 </div>
               </div>
-              <div class="media review">
-                <div class="media-body">
-                  <h5 class="mt-2 mb-1">Luke Skywalker</h5>
-                  <div class="mb-2"><i class="fa fa-xs fa-star text-warning"></i><i class="fa fa-xs fa-star text-warning"></i><i class="fa fa-xs fa-star text-warning"></i><i class="fa fa-xs fa-star text-warning"></i><i class="fa fa-xs fa-star text-gray-200"></i>
-                  </div>
-                  <p class="text-muted">The bedding was hardly able to cover it and seemed ready to slide off any moment. His many legs, pitifully thin compared with the size of the rest of him, waved about helplessly as he looked. "What's happened to me?" he thought. It wasn't a dream.     </p>
-                </div>
-              </div>
-              <div class="media review">
-                <div class="media-body">
-                  <h5 class="mt-2 mb-1">Princess Leia</h5>
-                  <div class="mb-2"><i class="fa fa-xs fa-star text-warning"></i><i class="fa fa-xs fa-star text-warning"></i><i class="fa fa-xs fa-star text-warning"></i><i class="fa fa-xs fa-star text-gray-200"></i><i class="fa fa-xs fa-star text-gray-200"></i>
-                  </div>
-                  <p class="text-muted">His room, a proper human room although a little too small, lay peacefully between its four familiar walls. A collection of textile samples lay spread out on the table.     </p>
-                </div>
-              </div>
-              <div class="media review">
-                <div class="media-body">
-                  <h5 class="mt-2 mb-1">Jabba Hut</h5>
-                  <div class="mb-2"><i class="fa fa-xs fa-star text-warning"></i><i class="fa fa-xs fa-star text-warning"></i><i class="fa fa-xs fa-star text-warning"></i><i class="fa fa-xs fa-star text-warning"></i><i class="fa fa-xs fa-star text-warning"></i>
-                  </div>
-                  <p class="text-muted">Samsa was a travelling salesman - and above it there hung a picture that he had recently cut out of an illustrated magazine and housed in a nice, gilded frame.     </p>
-                </div>
-              </div>
-              <div class="py-5 px-3">
-                <h5 class="mb-4">Leave a review</h5>
-                <form class="mb-4 form" id="reviewForm" method="post" action="contact.php">
-                  <div class="row">
-                    <div class="col-sm-6">
-                      <div class="form-group">
-                        <label class="form-label" for="name">Your name *</label>
-                        <input class="form-control" type="text" name="name" id="name" placeholder="Enter your name" required="required">
-                      </div>
-                    </div>
-                    <div class="col-sm-6">
-                      <div class="form-group">
-                        <label class="form-label" for="rating">Your rating *</label>
-                        <select class="custom-select focus-shadow-0" name="rating" id="rating">
-                          <option value="5">★★★★★ (5/5)</option>
-                          <option value="4">★★★★☆ (4/5)</option>
-                          <option value="3">★★★☆☆ (3/5)</option>
-                          <option value="2">★★☆☆☆ (2/5)</option>
-                          <option value="1">★☆☆☆☆ (1/5)</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label" for="emailReview">Your email *</label>
-                    <input class="form-control" type="email" name="email" id="emailReview" placeholder="Enter your  email" required="required">
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label" for="reviewReview">Review text *</label>
-                    <textarea class="form-control" rows="4" name="review" id="reviewReview" placeholder="Enter your review" required="required"></textarea>
-                  </div>
-                  <button class="btn btn-outline-dark" type="submit">Post review</button>
-                </form>
-                <p class="text-muted text-sm"><span class="badge badge-info">Note</span> This form shows usage of the classic Bootstrap form controls, not their underlined variants. You can choose whichever variant you want.</p>
-              </div>
+              {{end}}
             </div>
+          </div>
+        </div>
+        <div class="fade tab-pane" id="leave-review" role="tabpanel">
+          <div class="py-5 px-3">
+            <form class="form" id="reviewForm" method="post" action="contact.php">
+              <div class="row">
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <label class="form-label" for="name">Username *</label>
+                    <input class="form-control" type="text" name="username" id="name" placeholder="Enter your name" required="required">
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <label class="form-label" for="rating">Rating *</label>
+                    <select class="custom-select focus-shadow-0" name="rating" id="rating">
+                      <option value="5">★★★★★ (5/5)</option>
+                      <option value="4">★★★★☆ (4/5)</option>
+                      <option value="3">★★★☆☆ (3/5)</option>
+                      <option value="2">★★☆☆☆ (2/5)</option>
+                      <option value="1">★☆☆☆☆ (1/5)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="reviewReview">Review text *</label>
+                <textarea class="form-control" rows="4" name="review" id="reviewReview" placeholder="Enter your review" required="required"></textarea>
+              </div>
+              <button class="btn btn-outline-dark" type="submit">Post review</button>
+            </form>
           </div>
         </div>
       </div>
     </div>
   </section>
-
-
-<div class="container">
-    <div class="row">
-        {{$res := index .Data "product"}}
-        <div class="col">
-            <img src="..." class="img-fluid" alt="...">
-        </div>
-        <div class="col ">
-
-        </div>
-            <h1>{{$res.ID}}</h1>
-            <h3>{{$res.OwnerID}}</h3>
-            <h3>{{$res.Brand}}</h3>
-            <h3>{{$res.Title}}</h3>
-            <h3>{{$res.Rating}}</h3>
-            <h3>{{$res.Description}}</h3>
-            <h3>{{$res.Price}}</h3>
-            <h3>{{$res.CreatedAt}}</h3>
-            <h3>{{$res.UpdatedAt}}</h3>
-        </div>
-    </div>
-    <div class="row">
-        {{$reviews := $res.Reviews}}
-
-        {{range $reviews}}
-            <h1>{{.ID}}</h1>
-            <h3>{{.ReviewerID}}</h3>
-            <h3>{{.ReviewerName}}</h3>
-            <h3>{{.ProductID}}</h3>
-            <h3>{{.Title}}</h3>
-            <h3>{{.Body}}</h3>
-            <h3>{{.Rating}}</h3>
-            <h3>{{.CreatedAt}}</h3>
-            <h3>{{.UpdatedAt}}</h3>
-        {{end}}
-    </div>
-</div>
 
 {{end}}

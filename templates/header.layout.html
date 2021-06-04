@@ -1,6 +1,6 @@
 {{define "header"}}
 
-{{$res := index .Data "user"}}
+<!-- {{$res := index .Data "user"}}
 {{if $res.Username}}
 
 <div class="mx-5">
@@ -32,7 +32,75 @@
     </nav>
 </div>
 
-{{end}}
+
+
+{{end}} -->
+
+<header class="header"> 
+    <nav class="navbar navbar-expand-lg navbar-light bg-white px-lg-5"><a class="navbar-brand" href="/"><i class="fab fa-renren"></i>    GoRent</a>
+      <ul class="list-inline mb-0 d-block d-lg-none">
+        <li class="list-inline-item mr-3"><a class="text-dark text-hover-primary" href="#" data-toggle="modal" data-target="#loginModal">
+            <svg class="svg-icon navbar-icon">
+              <use xlink:href="#avatar-1"> </use>
+            </svg></a></li>
+        <li class="list-inline-item mr-3"><a class="text-dark text-hover-primary position-relative" href="wishlist.html">
+            <svg class="svg-icon navbar-icon">
+              <use xlink:href="#heart-1"> </use>
+            </svg>
+            <div class="navbar-icon-badge">3</div></a></li>
+        <li class="list-inline-item position-relative mr-3"><a class="text-dark text-hover-primary" href="#" data-toggle="modal" data-target="#sidebarCart">
+            <svg class="svg-icon navbar-icon">
+              <use xlink:href="#retail-bag-1"> </use>
+            </svg>
+            <div class="navbar-icon-badge">5</div></a></li>
+      </ul>
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+        <svg class="svg-icon navbar-icon">
+          <use xlink:href="#menu-hamburger-1"> </use>
+        </svg>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarContent">
+        <!-- <ul class="navbar-nav mt-3 mt-lg-0">
+
+          <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" id="docsDropdown" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Docs</a>
+            <div class="dropdown-menu" aria-labelledby="homeDropdown" style="transform: translateY(30px);"><a class="dropdown-item" href="docs/index.html">Introduction </a><a class="dropdown-item" href="docs/directory-structure.html">Directory structure </a><a class="dropdown-item" href="docs/gulp.html">Gulp </a><a class="dropdown-item" href="docs/customizing-css.html">Customizing CSS </a><a class="dropdown-item" href="docs/credits.html">Credits </a><a class="dropdown-item" href="docs/changelog.html">Changelog </a>
+              <div class="dropdown-divider"></div><a class="dropdown-item" href="docs/components-bootstrap.html">Bootstrap </a><a class="dropdown-item" href="docs/components-theme.html">Theme </a>
+            </div>
+          </li>
+        </ul> -->
+        <form class="d-lg-flex ml-auto mr-lg-5 mr-xl-6 my-4 my-lg-0" action="/searchresult" method="GET">
+          <div class="input-group input-group-underlined">
+            <input name="q" class="form-control form-control-underlined pl-3" type="text" placeholder="Search" aria-label="Search" aria-describedby="button-search">
+            <div class="input-group-append ml-0">
+              <button class="btn btn-underlined py-0" id="button-search"> 
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+         </div>
+        </form>
+        <ul class="list-inline mb-0 d-none d-lg-block">
+          <li class="list-inline-item mr-3"><a class="text-dark text-hover-primary" href="#" data-toggle="modal" data-target="#loginModal">
+              <svg class="svg-icon navbar-icon">
+                <use xlink:href="#avatar-1"> </use>
+              </svg></a></li>
+          <li class="list-inline-item mr-3"><a class="text-dark text-hover-primary position-relative" href="wishlist.html">
+              <svg class="svg-icon navbar-icon">
+                <use xlink:href="#heart-1"> </use>
+              </svg>
+              <div class="navbar-icon-badge">3</div></a></li>
+          <li class="list-inline-item position-relative mr-3"><a class="text-dark text-hover-primary" href="#" data-toggle="modal" data-target="#sidebarCart">
+              <svg class="svg-icon navbar-icon">
+                <use xlink:href="#retail-bag-1"> </use>
+              </svg>
+              <div class="navbar-icon-badge">5</div></a></li>
+          <li class="list-inline-item"><a class="text-dark text-hover-primary" href="#" data-toggle="modal" data-target="#sidebarRight">
+              <svg class="svg-icon navbar-icon">
+                <use xlink:href="#menu-hamburger-1"> </use>
+              </svg></a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
 
 
 {{end}}
