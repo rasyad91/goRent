@@ -35,6 +35,8 @@ var (
 
 func init() {
 	gob.Register(model.User{})
+	gob.Register(model.Product{})
+
 }
 
 // TODO clean up main() --- Rasyad

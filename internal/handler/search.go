@@ -151,6 +151,8 @@ func (m *Repository) SearchResult(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data["product"] = product
+	m.App.Session.Put(r.Context(), "result", product)
+
 	// m.CreateProductList()
 
 	// if r.Method == http.MethodPost {
