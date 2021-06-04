@@ -22,7 +22,7 @@ func routes() http.Handler {
 
 	mux.PathPrefix("/user").Subrouter().Use(Auth)
 
-	mux.HandleFunc("/user/logout", handler.Repo.Logout).Methods("GET")
+	mux.HandleFunc("/logout", handler.Repo.Logout).Methods("GET")
 
 	mux.HandleFunc("/login", handler.Repo.Login).Methods("GET")
 	mux.HandleFunc("/login", handler.Repo.LoginPost).Methods("POST")

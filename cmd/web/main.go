@@ -35,7 +35,10 @@ var (
 
 func init() {
 	gob.Register(model.User{})
+<<<<<<< HEAD
 	gob.Register(model.Product{})
+=======
+>>>>>>> origin/Login
 	gob.Register([]model.Product{})
 
 }

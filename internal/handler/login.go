@@ -78,6 +78,28 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
+// Logout logs the user out
+func (m *Repository) Logout(w http.ResponseWriter, r *http.Request) {
+
+	// delete the remember me cookie, if any
+	delCookie := http.Cookie{
+		Name:     fmt.Sprintf("_%s_gowatcher_remember", m.App.PreferenceMap["identifier"]),
+		Value:    "",
+		Domain:   m.App.Domain,
+		Path:     "/",
+		MaxAge:   0,
+		HttpOnly: true,
+	}
+	http.SetCookie(w, &delCookie)
+	fmt.Println("Setting Cookie here")
+	_ = m.App.Session.RenewToken(r.Context())
+	_ = m.App.Session.Destroy(r.Context())
+	_ = m.App.Session.RenewToken(r.Context())
+	fmt.Println("LOGOUT Session", m.App.Session.Get(r.Context(), "user"))
+	m.App.Session.Put(r.Context(), "flash", "You've been logged out successfully!")
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
 // WHEN USER REACH LOGIN SCREEN:
 // // LoginScreen shows the home (login) screen
 // func (repo *DBRepo) LoginScreen(w http.ResponseWriter, r *http.Request) {
@@ -127,3 +149,9 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 
 //  http.Redirect(w, r, "/admin/overview", http.StatusSeeOther)
 // }
+
+// m.App.Session.Put(r.Context(), "success", "hello")
+// fmt.Printf("%#v", m.App.Session)
+// //to do
+// - add in notification for register and login
+// - feed in user info for header
