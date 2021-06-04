@@ -1,5 +1,5 @@
 {{define "header"}}
-
+{{$res := index .Data "user"}}
 <!-- {{$res := index .Data "user"}}
 {{if $res.Username}}
 
@@ -91,12 +91,23 @@
           <li class="list-inline-item position-relative mr-3"><a class="text-dark text-hover-primary" href="#" data-toggle="modal" data-target="#sidebarCart">
               <svg class="svg-icon navbar-icon">
                 <use xlink:href="#retail-bag-1"> </use>
-              </svg>
+              </svg> 
               <div class="navbar-icon-badge">5</div></a></li>
           <li class="list-inline-item"><a class="text-dark text-hover-primary" href="#" data-toggle="modal" data-target="#sidebarRight">
               <svg class="svg-icon navbar-icon">
                 <use xlink:href="#menu-hamburger-1"> </use>
               </svg></a></li>
+        {{if .IsAuthenticated}}
+          <li class="list-inline-item"><a class="text-dark text-hover-primary" href="/logout" data-toggle="modal" data-target="#sidebarRight">
+              <svg class="svg-icon navbar-icon">
+                <use xlink:href="#menu-hamburger-1"> </use>
+              </svg> Logout</a></li>
+        {{else}}
+          <li class="list-inline-item"><a class="text-dark text-hover-primary" href="/login" data-toggle="modal" data-target="#sidebarRight">
+              <svg class="svg-icon navbar-icon">
+                <use xlink:href="#menu-hamburger-1"> </use>
+              </svg> Login</a></li>
+        {{end}}
         </ul>
       </div>
     </nav>

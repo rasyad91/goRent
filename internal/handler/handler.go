@@ -32,19 +32,14 @@ func New(r *Repository) {
 }
 
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
+	m.App.Session.Put(r.Context(), "warning", "hello")
 
 	data := make(map[string]interface{})
 
-<<<<<<< HEAD
 	u := m.App.Session.Get(r.Context(), "user").(model.User)
 	fmt.Println("PRINTINT U", u)
 	fmt.Println("checking authenticate", m.App.Session.Exists(r.Context(), "userID"))
-	if isLoggedIn := helper.IsAuthenticated(); isLoggedIn {
-		data[""]
-	}
-=======
-	fmt.Println(data)
->>>>>>> main
+
 	if err := render.Template(w, r, "home.page.html", &render.TemplateData{
 		Data: data,
 	}); err != nil {
