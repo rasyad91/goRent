@@ -50,16 +50,7 @@
               </div>
               <div class="input-group w-100 mb-4">
                 <div class="input-group-append flex-grow-1">
-                  <button class="btn btn-danger btn-block btn-lg" type="submit"> <i class="fa fas fa-book mr-2"></i>Add to Booking</button>
-                </div>
-              </div>
-              <div class="row mb-4">
-                <div class="col-6"><a href="#"> <i class="far fa-heart mr-2"></i>Add to wishlist </a></div>
-                <div class="col-6 text-right">
-                  <ul class="list-inline mb-0">
-                    <li class="list-inline-item mr-2"><a class="text-dark text-hover-primary" href="#"><i class="fab fa-facebook-f"> </i></a></li>
-                    <li class="list-inline-item"><a class="text-dark text-hover-primary" href="#"><i class="fab fa-twitter"> </i></a></li>
-                  </ul>
+                  <button class="btn btn-outline-dark btn-block" type="submit"><i class="fa fas fa-book mr-2"></i>    Add to Booking</button>
                 </div>
               </div>
               <!-- <ul class="list-unstyled">
@@ -79,15 +70,15 @@
         <li class="nav-item"><a class="nav-link detail-nav-link" data-toggle="tab" href="#leave-review" role="tab" aria-selected="false">Leave a review</a></li>
       </ul>
       <div class="tab-content py-4">
-
         <div class="tab-pane fade px-3 active show" id="reviews" role="tabpanel">
           <div class="row">
-            <div class="col-lg-10 col-xl-9">
+            <div class="">
               {{$reviews := $res.Reviews}}
               {{range $reviews}}
               <div class="media review">
                 <div class="media-body">
                   <h5 class="mt-2 mb-1">{{.ReviewerName}}</h5>
+                  <span class="float-right">{{shortDate .UpdatedAt}}</span>
                   <div class="mb-2">
                     {{range $index := iterate (floatToInt .Rating)}}
                     <li class="list-inline-item mr-0"><i class="fa fa-star text-danger"></i></li>
@@ -105,7 +96,7 @@
         </div>
         <div class="fade tab-pane" id="leave-review" role="tabpanel">
           <div class="py-5 px-3">
-            <form class="form" id="reviewForm" method="post" action="contact.php">
+            <form class="form" id="reviewForm" method="post" action="">
               <div class="row">
                 <div class="col-sm-6">
                   <div class="form-group">

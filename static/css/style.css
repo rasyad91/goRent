@@ -12903,7 +12903,7 @@ body {
     background: #fff
 }
 
-@media (max-width: 767.98px) {
+@media (max-width: 100%) {
     .review-image {
         width: 100px;
         padding: .4rem
