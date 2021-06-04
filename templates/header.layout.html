@@ -40,7 +40,7 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-white px-lg-5"><a class="navbar-brand" href="/"><i class="fab fa-renren"></i>    GoRent</a>
       <ul class="list-inline mb-0 d-block d-lg-none">
         {{if .IsAuthenticated}}
-          <li class="list-inline-item"><a class="text-dark text-hover-primary" href="/user/account" data-toggle="modal" data-target="#sidebarRight">
+          <li class="list-inline-item"><a class="text-dark text-hover-primary" href="/user/{{.User.ID}}/account" data-toggle="modal" data-target="#sidebarRight">
               <svg class="svg-icon navbar-icon">
                 <use xlink:href="#menu-hamburger-1"> </use>
               </svg> {{.User.Username}}</a></li>
@@ -117,7 +117,7 @@
                 <use xlink:href="#menu-hamburger-1"> </use>
               </svg></a></li>
         {{if .IsAuthenticated}}
-          <li class="list-inline-item"><a class="text-dark text-hover-primary" href="/user/account" data-toggle="modal" data-target="#sidebarRight">
+          <li class="list-inline-item"><a class="text-dark text-hover-primary" href="/user/{{.User.ID}}/account" data-toggle="modal" data-target="#sidebarRight">
               <svg class="svg-icon navbar-icon">
                 <use xlink:href="#menu-hamburger-1"> </use>
               </svg> {{.User.Username}}</a></li>
