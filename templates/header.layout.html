@@ -1,5 +1,5 @@
 {{define "header"}}
-{{$res := index .Data "user"}}
+{{/* {{$res := index .Data "user"}} */}}
 <!-- {{$res := index .Data "user"}}
 {{if $res.Username}}
 
@@ -97,17 +97,17 @@
               <svg class="svg-icon navbar-icon">
                 <use xlink:href="#menu-hamburger-1"> </use>
               </svg></a></li>
-        {{if .IsAuthenticated}}
+        {{/* {{if .IsAuthenticated}} */}}
           <li class="list-inline-item"><a class="text-dark text-hover-primary" href="/logout" data-toggle="modal" data-target="#sidebarRight">
               <svg class="svg-icon navbar-icon">
                 <use xlink:href="#menu-hamburger-1"> </use>
               </svg> Logout</a></li>
-        {{else}}
+        {{/* {{else}} */}}
           <li class="list-inline-item"><a class="text-dark text-hover-primary" href="/login" data-toggle="modal" data-target="#sidebarRight">
               <svg class="svg-icon navbar-icon">
                 <use xlink:href="#menu-hamburger-1"> </use>
               </svg> Login</a></li>
-        {{end}}
+        {{/* {{end}} */}}
         </ul>
       </div>
     </nav>

@@ -46,25 +46,3 @@ func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
 		m.App.Error.Println(err)
 	}
 }
-
-// Logout logs the user out
-func (m *Repository) Logout(w http.ResponseWriter, r *http.Request) {
-
-	// delete the remember me cookie, if any
-	delCookie := http.Cookie{
-		Name:     fmt.Sprintf("_%s_gowatcher_remember", m.App.PreferenceMap["identifier"]),
-		Value:    "",
-		Domain:   m.App.Domain,
-		Path:     "/",
-		MaxAge:   0,
-		HttpOnly: true,
-	}
-	http.SetCookie(w, &delCookie)
-
-	_ = m.App.Session.RenewToken(r.Context())
-	_ = m.App.Session.Destroy(r.Context())
-	_ = m.App.Session.RenewToken(r.Context())
-
-	m.App.Session.Put(r.Context(), "flash", "You've been logged out successfully!")
-	http.Redirect(w, r, "/", http.StatusSeeOther)
-}
