@@ -43,20 +43,28 @@
               <li><strong>Category:</strong> <a class="text-muted" href="/searchresult?q={{$res.Category}}">{{$res.Category}}</a></li>
             </ul>
             <form id="buyForm" action="#">
-              <div class="row">
-                <div class="col-sm-6 col-lg-12 detail-option mb-4">
-                <div class="col-sm-6 col-lg-12 detail-option mb-5">
-                </div>
-              </div>
+              <div class="form-row mt-5 mb-5">
+                    <div id="reservation-date">
+                        <div class="row">
+                            <div class="col">
+                              <strong>Start</strong>
+                                <input required type="text" class="form-control" name="startDate"
+                                    placeholder="Start" id="flatpickr">
+                            </div>
+                            <div class="col">
+                              <strong>End</strong>
+                                <input required type="text" class="form-control" name="endDate"
+                                    placeholder="End" id="flatpickr2">
+                            </div>
+                        </div>
+                    </div>
+               </div>
+              
               <div class="input-group w-100 mb-4">
                 <div class="input-group-append flex-grow-1">
                   <button class="btn btn-outline-dark btn-block" type="submit"><i class="fa fas fa-book mr-2"></i>    Add to Booking</button>
                 </div>
               </div>
-              <!-- <ul class="list-unstyled">
-                <li><strong>Category:</strong> <a class="text-muted" href="#">Jeans</a></li>
-                <li><strong>Tags:</strong> <a class="text-muted" href="#">Leisure</a>, <a class="text-muted" href="#">Elegant</a></li>
-              </ul> -->
             </form>
           </div>
         </div>
@@ -130,3 +138,36 @@
   </section>
 
 {{end}}
+
+{{define "script"}}
+<script src="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.1.4/dist/js/datepicker.min.js"></script>
+<script>
+
+
+  
+const start = document.querySelector('input[name="startDate"]');
+const datepicker1 = new Datepicker(start, {
+  // ...options
+}); 
+
+const end = document.querySelector('input[name="endDate"]');
+const datepicker2 = new Datepicker(end, {
+  // ...options
+}); 
+
+  // const dateNow = Date.now()
+
+  // // var elem = document.getElementById("datepicker");
+  // const elem = document.querySelector('input[name="startDate"]');
+  // var datepicker = new Datepicker(elem, {
+  //   format:  "yyyy-mm-dd",
+  //   minDate: dateNow
+  // }); 
+
+  // const elem = document.querySelector('input[name="endDate"]');
+  // var datepicker = new Datepicker(elem, {
+  //   format:  "yyyy-mm-dd",
+  //   minDate: dateNow
+  // }); 
+</script>
+  {{end}}
