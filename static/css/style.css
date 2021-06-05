@@ -3708,8 +3708,8 @@ input[type="button"].btn-block {
     display: none;
     float: left;
     min-width: 10rem;
-    padding: .5rem 0;
-    margin: .125rem 0 0;
+    /* padding: .5rem 0; */
+    /* margin: .125rem 0 0; */
     font-size: .875rem;
     color: #212529;
     text-align: left;
@@ -12430,7 +12430,6 @@ body {
 }
 
 .navbar .dropdown-menu {
-    margin-top: 1.2rem;
     transition: -webkit-transform .2s;
     transition: transform .2s;
     transition: transform .2s, -webkit-transform .2s;

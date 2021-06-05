@@ -68,12 +68,14 @@ func (m *DBrepo) GetRentsByProductID(id int) ([]model.Rent, error) {
 
 	rents := []model.Rent{}
 
-	query := `select id, owner_id, renter_id, product_id, restriction_id, start_date, end_date, created_at, updated_at
+	query := `select 
+	id, owner_id, renter_id, product_id, restriction_id, start_date, end_date, created_at, updated_at
+		from rents
 		where product_id = ?`
 
 	rows, err := m.DB.QueryContext(ctx, query, id)
 	if err != nil {
-		return nil, fmt.Errorf("db getrentbyproductid: %v", err)
+		return nil, fmt.Errorf("db line76 getrentbyproductid: %v", err)
 	}
 	defer rows.Close()
 
@@ -97,7 +99,17 @@ func (m *DBrepo) GetRentsByProductID(id int) ([]model.Rent, error) {
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("db getrentbyproductid: %v", err)
 	}
-
 	return rents, nil
+}
 
+func (m *DBrepo) AddProductReview(review model.ProductReview) error {
+
+	// ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	// defer cancel()
+
+	// tx := sql.Tx{}
+	
+
+
+	return nil
 }

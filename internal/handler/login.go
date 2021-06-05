@@ -47,14 +47,14 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 		form.Errors.Add("login", "Username or password incorrect")
 	}
 	fmt.Println("SUCCESSFULLY PULLED USER INFO")
-	fmt.Println(password)
-	t, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	fmt.Println(t)
-	fmt.Println(string(t))
-	fmt.Println([]byte(t))
-	fmt.Println(string(t))
+	// fmt.Println(password)
+	// t, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	// fmt.Println(t)
+	// fmt.Println(string(t))
+	// fmt.Println([]byte(t))
+	// fmt.Println(string(t))
 
-	fmt.Println(eu.Password)
+	// fmt.Println(eu.Password)
 	err = bcrypt.CompareHashAndPassword([]byte(eu.Password), []byte(password))
 	if err != nil {
 		form.Errors.Add("login", "Username or password incorrect")
@@ -75,6 +75,8 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 	m.App.Session.Put(r.Context(), "userID", eu.ID)
 	m.App.Session.Put(r.Context(), "flash", fmt.Sprintf("Welcome, %s", eu.Username))
 	m.App.Session.Put(r.Context(), "user", eu)
+	m.App.Session.Put(r.Context(), "cart", []model.Rent{})
+
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 

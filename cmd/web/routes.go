@@ -37,7 +37,9 @@ func routes() http.Handler {
 	// sub := mux.NewRoute().Subrouter()
 	// sub.Use(handler.ValidationAPIMiddleware)
 
-	mux.HandleFunc("/v1/products/{productId}", handler.Repo.ShowProductByID).Methods("GET")
+	mux.HandleFunc("/v1/products/{productID}", handler.Repo.ShowProductByID).Methods("GET")
+	mux.HandleFunc("/v1/products/{productID}/review", handler.Repo.PostReview).Methods("POST")
+
 
 	fileServer := http.FileServer(http.Dir("./static/"))
 	mux.PathPrefix("/static/").Handler(http.StripPrefix("/static", fileServer))

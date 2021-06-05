@@ -1,6 +1,7 @@
 package render
 
 import (
+	"goRent/internal/config"
 	"html/template"
 	"math"
 	"time"
@@ -12,6 +13,8 @@ var function = template.FuncMap{
 	"floatToInt": FloatToInt,
 	"substract":  Substract,
 }
+
+
 
 // returns a slice of ints, starting at 1 going to count
 func Iterate(count int) []int {
@@ -25,7 +28,7 @@ func Iterate(count int) []int {
 
 // Short date returns time in DD-MM-YYYY format
 func ShortDate(t time.Time) string {
-	return t.Format("02-01-2006")
+	return t.Format(config.DateLayout)
 }
 
 func FloatToInt(f float32) int {

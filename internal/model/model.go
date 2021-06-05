@@ -15,7 +15,7 @@ type User struct {
 	Products    []Product    // where ID = Product.OwnerID from products table
 	Rents       []Rent       // where ID = Rent.RenterID from rents table
 	Bookings    []Rent       // where ID = Rent.OwnerID from rents table
-	Reviews     []UserReview // where ID = UserReviews.ReceiverID from reviewstable
+	UserReviews     []UserReview // where ID = UserReviews.ReceiverID from reviewstable
 }
 
 type Address struct {
