@@ -13,12 +13,10 @@ func (m *Repository) ShowProductByID(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	fmt.Println("PARAMS", params)
 	productId, err := strconv.Atoi(params["productId"])
-	fmt.Println("productid", productId)
 	if err != nil {
 		m.App.Error.Println(err)
 		return
 	}
-
 	p, err := m.DB.GetProductByID(productId)
 	if err != nil {
 		m.App.Error.Println(err)

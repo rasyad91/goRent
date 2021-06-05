@@ -4,170 +4,220 @@
 
 {{$res := index .Data "product"}}
 <section>
-    <div class="container-fluid px-xl-7 pt-5 pb-3 pb-lg-6">
-      <ul class="breadcrumb undefined">
-        <li class="breadcrumb-item"><a href="/">Home</a></li>
-        <li class="breadcrumb-item"><a href="/searchresult?q=">Products</a></li>
-        <li class="breadcrumb-item active">{{$res.Title}}            </li>
-      </ul>
-      <div class="row">
-        <div class="col-lg-6 col-xl-7 pt-4 order-2 order-lg-1 photoswipe-gallery"><a class="d-block mb-4" href="img/product/detail-3-gray.jpg" data-caption="{{$res.Title}} 1 - Caption text" data-toggle="photoswipe" data-width="1200" data-height="1200"> 
-            <div data-toggle="zoom" data-image="img/product/detail-3-gray.jpg" style="position: relative; overflow: hidden;"><img class="img-fluid" src="https://d19m59y37dris4.cloudfront.net/varkala/1-2-1/img/product/detail-3-gray.jpg" alt="{{$res.Title}} 1"><img role="presentation" alt="" src="img/product/detail-3-gray.jpg" class="zoomImg" style="position: absolute; top: 0px; left: -29.020091240035022px; opacity: 0; width: 1313px; height: 1313px; border: none; max-width: none; max-height: none;"></div></a><a class="d-block mb-4" href="" data-caption="{{$res.Title}} 2 - Caption text" data-toggle="photoswipe" data-width="1200" data-height="1200"> 
-            <div data-toggle="zoom" data-image="img/product/detail-1-gray.jpg" style="position: relative; overflow: hidden;"><img class="img-fluid" src="https://d19m59y37dris4.cloudfront.net/varkala/1-2-1/img/product/detail-1-gray.jpg" alt="{{$res.Title}} 2"><img role="presentation" alt="" src="img/product/detail-1-gray.jpg" class="zoomImg" style="position: absolute; top: 0px; left: 0px; opacity: 0; width: 1313px; height: 1313px; border: none; max-width: none; max-height: none;"></div></a><a class="d-block mb-4" href="" data-caption="{{$res.Title}} 3 - Caption text" data-toggle="photoswipe" data-width="1200" data-height="1200"> 
-            <div data-toggle="zoom" data-image="img/product/detail-2-gray.jpg" style="position: relative; overflow: hidden;"><img class="img-fluid" src="https://d19m59y37dris4.cloudfront.net/varkala/1-2-1/img/product/detail-2-gray.jpg" alt="{{$res.Title}} 3"><img role="presentation" alt="" src="img/product/detail-2-gray.jpg" class="zoomImg" style="position: absolute; top: 0px; left: 0px; opacity: 0; width: 1313px; height: 1313px; border: none; max-width: none; max-height: none;"></div></a><a class="d-block mb-4" href="" data-caption="{{$res.Title}} 4 - Caption text" data-toggle="photoswipe" data-width="1200" data-height="1200"> 
-            <div data-toggle="zoom" data-image="img/product/detail-4-gray.jpg" style="position: relative; overflow: hidden;"><img class="img-fluid" src="https://d19m59y37dris4.cloudfront.net/varkala/1-2-1/img/product/detail-4-gray.jpg" alt="{{$res.Title}} 4"><img role="presentation" alt="" src="img/product/detail-4-gray.jpg" class="zoomImg" style="position: absolute; top: 0px; left: 0px; opacity: 0; width: 1313px; height: 1313px; border: none; max-width: none; max-height: none;"></div></a><a class="d-block mb-4" href="" data-caption="{{$res.Title}} 5 - Caption text" data-toggle="photoswipe" data-width="1200" data-height="1200"> 
-            <div data-toggle="zoom" data-image="img/product/detail-5-gray.jpg" style="position: relative; overflow: hidden;"><img class="img-fluid" src="https://d19m59y37dris4.cloudfront.net/varkala/1-2-1/img/product/detail-5-gray.jpg" alt="{{$res.Title}} 5"><img role="presentation" alt="" src="img/product/detail-5-gray.jpg" class="zoomImg" style="position: absolute; top: 0px; left: 0px; opacity: 0; width: 1315px; height: 1315px; border: none; max-width: none; max-height: none;"></div></a><a class="d-block mb-4" href="" data-caption="{{$res.Title}} 6 - Caption text" data-toggle="photoswipe" data-width="1200" data-height="1200"> 
-            <div data-toggle="zoom" data-image="img/product/detail-6.jpg" style="position: relative; overflow: hidden;"><img class="img-fluid" src="https://d19m59y37dris4.cloudfront.net/varkala/1-2-1/img/product/detail-6.jpg" alt="{{$res.Title}} 6"><img role="presentation" alt="" src="img/product/detail-6.jpg" class="zoomImg" style="position: absolute; top: -302.94137168141594px; left: -344.7441131745081px; opacity: 0; width: 1024px; height: 1024px; border: none; max-width: none; max-height: none;"></div></a>
+  <div class="container-fluid px-xl-7 pt-5 pb-3 pb-lg-6">
+    <ul class="breadcrumb undefined">
+      <li class="breadcrumb-item"><a href="/">Home</a></li>
+      <li class="breadcrumb-item"><a href="/searchresult?q=">Products</a></li>
+      <li class="breadcrumb-item active">{{$res.Title}} </li>
+    </ul>
+    <div class="row">
+      <div class="col-lg-6 col-xl-7 pt-4 order-2 order-lg-1 photoswipe-gallery"><a class="d-block mb-4"
+          href="img/product/detail-3-gray.jpg" data-caption="{{$res.Title}} 1 - Caption text" data-toggle="photoswipe"
+          data-width="1200" data-height="1200">
+          <div data-toggle="zoom" data-image="img/product/detail-3-gray.jpg"
+            style="position: relative; overflow: hidden;"><img class="img-fluid"
+              src="https://d19m59y37dris4.cloudfront.net/varkala/1-2-1/img/product/detail-3-gray.jpg"
+              alt="{{$res.Title}} 1"><img role="presentation" alt="" src="img/product/detail-3-gray.jpg" class="zoomImg"
+              style="position: absolute; top: 0px; left: -29.020091240035022px; opacity: 0; width: 1313px; height: 1313px; border: none; max-width: none; max-height: none;">
+          </div>
+        </a><a class="d-block mb-4" href="" data-caption="{{$res.Title}} 2 - Caption text" data-toggle="photoswipe"
+          data-width="1200" data-height="1200">
+          <div data-toggle="zoom" data-image="img/product/detail-1-gray.jpg"
+            style="position: relative; overflow: hidden;"><img class="img-fluid"
+              src="https://d19m59y37dris4.cloudfront.net/varkala/1-2-1/img/product/detail-1-gray.jpg"
+              alt="{{$res.Title}} 2"><img role="presentation" alt="" src="img/product/detail-1-gray.jpg" class="zoomImg"
+              style="position: absolute; top: 0px; left: 0px; opacity: 0; width: 1313px; height: 1313px; border: none; max-width: none; max-height: none;">
+          </div>
+        </a><a class="d-block mb-4" href="" data-caption="{{$res.Title}} 3 - Caption text" data-toggle="photoswipe"
+          data-width="1200" data-height="1200">
+          <div data-toggle="zoom" data-image="img/product/detail-2-gray.jpg"
+            style="position: relative; overflow: hidden;"><img class="img-fluid"
+              src="https://d19m59y37dris4.cloudfront.net/varkala/1-2-1/img/product/detail-2-gray.jpg"
+              alt="{{$res.Title}} 3"><img role="presentation" alt="" src="img/product/detail-2-gray.jpg" class="zoomImg"
+              style="position: absolute; top: 0px; left: 0px; opacity: 0; width: 1313px; height: 1313px; border: none; max-width: none; max-height: none;">
+          </div>
+        </a><a class="d-block mb-4" href="" data-caption="{{$res.Title}} 4 - Caption text" data-toggle="photoswipe"
+          data-width="1200" data-height="1200">
+          <div data-toggle="zoom" data-image="img/product/detail-4-gray.jpg"
+            style="position: relative; overflow: hidden;"><img class="img-fluid"
+              src="https://d19m59y37dris4.cloudfront.net/varkala/1-2-1/img/product/detail-4-gray.jpg"
+              alt="{{$res.Title}} 4"><img role="presentation" alt="" src="img/product/detail-4-gray.jpg" class="zoomImg"
+              style="position: absolute; top: 0px; left: 0px; opacity: 0; width: 1313px; height: 1313px; border: none; max-width: none; max-height: none;">
+          </div>
+        </a><a class="d-block mb-4" href="" data-caption="{{$res.Title}} 5 - Caption text" data-toggle="photoswipe"
+          data-width="1200" data-height="1200">
+          <div data-toggle="zoom" data-image="img/product/detail-5-gray.jpg"
+            style="position: relative; overflow: hidden;"><img class="img-fluid"
+              src="https://d19m59y37dris4.cloudfront.net/varkala/1-2-1/img/product/detail-5-gray.jpg"
+              alt="{{$res.Title}} 5"><img role="presentation" alt="" src="img/product/detail-5-gray.jpg" class="zoomImg"
+              style="position: absolute; top: 0px; left: 0px; opacity: 0; width: 1315px; height: 1315px; border: none; max-width: none; max-height: none;">
+          </div>
+        </a><a class="d-block mb-4" href="" data-caption="{{$res.Title}} 6 - Caption text" data-toggle="photoswipe"
+          data-width="1200" data-height="1200">
+          <div data-toggle="zoom" data-image="img/product/detail-6.jpg" style="position: relative; overflow: hidden;">
+            <img class="img-fluid" src="https://d19m59y37dris4.cloudfront.net/varkala/1-2-1/img/product/detail-6.jpg"
+              alt="{{$res.Title}} 6"><img role="presentation" alt="" src="img/product/detail-6.jpg" class="zoomImg"
+              style="position: absolute; top: -302.94137168141594px; left: -344.7441131745081px; opacity: 0; width: 1024px; height: 1024px; border: none; max-width: none; max-height: none;">
+          </div>
+        </a>
+      </div>
+      <div class="col-lg-6 col-xl-4 pt-4 order-1 order-lg-2 ml-lg-auto">
+        <div class="sticky-top" style="top: 100px;">
+          <h1 class="mb-4">{{$res.Title}}</h1>
+          <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-sm-between mb-4">
+            <ul class="list-inline mb-2 mb-sm-0">
+              <li class="list-inline-item h4 font-weight-light mb-0">${{$res.Price}}</li>
+            </ul>
+            <div class="d-flex align-items-center text-sm">
+              <ul class="list-inline mr-2 mb-0">
+                {{range $index := iterate (floatToInt $res.Rating)}}
+                <li class="list-inline-item mr-0"><i class="fa fa-star text-danger"></i></li>
+                {{end}}
+                {{range $index := iterate (substract 5 (floatToInt $res.Rating))}}
+                <li class="list-inline-item mr-0"><i class="fa fa-star text-gray-300"></i></li>
+                {{end}}
+              </ul><span class="text-muted text-uppercase">{{len $res.Reviews}} reviews</span>
+            </div>
+          </div>
+          <p class="mb-4 text-muted">{{$res.Description}}</p>
+          <ul class="list-unstyled">
+            <li><strong>Brand:</strong> <a class="text-muted" href="/searchresult?q={{$res.Brand}}">{{$res.Brand}}</a>
+            </li>
+            <li><strong>Category:</strong> <a class="text-muted"
+                href="/searchresult?q={{$res.Category}}">{{$res.Category}}</a></li>
+          </ul>
+
+          <form id="buyForm" action="#">
+            <input type="hidden" name="csrf_token" value="{{.CSRFToken }}">
+            <div class="form-row mt-5 mb-5">
+              <div class="row" id="date">
+                <div class="col">
+                  <strong>Start</strong>
+                  <input required type="text" class="form-control" name="start" placeholder="Start" id="start">
+                </div>
+                <div class="col">
+                  <strong>End</strong>
+                  <input required type="text" class="form-control" name="end" placeholder="End" id="end">
+                </div>
+              </div>
+            </div>
+            <div class="input-group w-100 mb-4">
+              <div class="input-group-append flex-grow-1">
+                <button id="button1" value="1" class="btn btn-outline-dark btn-block" type="button"><i class="fa fas fa-book mr-2"></i> Add to
+                  Booking</button>
+              </div>
+            </div>
+          </form>
         </div>
-        <div class="col-lg-6 col-xl-4 pt-4 order-1 order-lg-2 ml-lg-auto">
-          <div class="sticky-top" style="top: 100px;">
-            <h1 class="mb-4">{{$res.Title}}</h1>
-            <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-sm-between mb-4">
-              <ul class="list-inline mb-2 mb-sm-0">
-                <li class="list-inline-item h4 font-weight-light mb-0">${{$res.Price}}</li>
-              </ul>
-              <div class="d-flex align-items-center text-sm">
-                <ul class="list-inline mr-2 mb-0">
-                  {{range $index := iterate (floatToInt $res.Rating)}}
+      </div>
+    </div>
+  </div>
+</section>
+<section class="mt-5">
+  <div class="container">
+    <ul class="nav nav-tabs flex-column flex-sm-row" role="tablist">
+      <li class="nav-item"><a class="nav-link detail-nav-link active" data-toggle="tab" href="#reviews" role="tab"
+          aria-selected="false">Reviews</a></li>
+      <li class="nav-item"><a class="nav-link detail-nav-link" data-toggle="tab" href="#leave-review" role="tab"
+          aria-selected="false">Leave a review</a></li>
+    </ul>
+    <div class="tab-content py-4">
+      <div class="tab-pane fade px-3 active show" id="reviews" role="tabpanel">
+        <div class="row">
+          <div class="">
+            {{$reviews := $res.Reviews}}
+            {{range $reviews}}
+            <div class="media review">
+              <div class="media-body">
+                <h5 class="mt-2 mb-1">{{.ReviewerName}}</h5>
+                <span class="float-right">{{shortDate .UpdatedAt}}</span>
+                <div class="mb-2">
+                  {{range $index := iterate (floatToInt .Rating)}}
                   <li class="list-inline-item mr-0"><i class="fa fa-star text-danger"></i></li>
                   {{end}}
-                  {{range $index := iterate (substract 5 (floatToInt $res.Rating))}}
+                  {{range $index := iterate (substract 5 (floatToInt .Rating))}}
                   <li class="list-inline-item mr-0"><i class="fa fa-star text-gray-300"></i></li>
                   {{end}}
-                </ul><span class="text-muted text-uppercase">{{len $res.Reviews}} reviews</span>
+                </div>
+                <p class="text-muted">{{.Body}}</p>
               </div>
             </div>
-            <p class="mb-4 text-muted">{{$res.Description}}</p>
-            <ul class="list-unstyled">
-              <li><strong>Brand:</strong> <a class="text-muted" href="/searchresult?q={{$res.Brand}}">{{$res.Brand}}</a></li>
-              <li><strong>Category:</strong> <a class="text-muted" href="/searchresult?q={{$res.Category}}">{{$res.Category}}</a></li>
-            </ul>
-            <form id="buyForm" action="#">
-              <div class="form-row mt-5 mb-5">
-                    <div id="reservation-date">
-                        <div class="row">
-                            <div class="col">
-                              <strong>Start</strong>
-                                <input required type="text" class="form-control" name="startDate"
-                                    placeholder="Start" id="flatpickr">
-                            </div>
-                            <div class="col">
-                              <strong>End</strong>
-                                <input required type="text" class="form-control" name="endDate"
-                                    placeholder="End" id="flatpickr2">
-                            </div>
-                        </div>
-                    </div>
-               </div>
-              
-              <div class="input-group w-100 mb-4">
-                <div class="input-group-append flex-grow-1">
-                  <button class="btn btn-outline-dark btn-block" type="submit"><i class="fa fas fa-book mr-2"></i>    Add to Booking</button>
-                </div>
-              </div>
-            </form>
+            {{end}}
           </div>
         </div>
       </div>
-    </div>
-  </section>
-<section class="mt-5">
-    <div class="container">
-      <ul class="nav nav-tabs flex-column flex-sm-row" role="tablist">
-        <li class="nav-item"><a class="nav-link detail-nav-link active" data-toggle="tab" href="#reviews" role="tab" aria-selected="false">Reviews</a></li>
-        <li class="nav-item"><a class="nav-link detail-nav-link" data-toggle="tab" href="#leave-review" role="tab" aria-selected="false">Leave a review</a></li>
-      </ul>
-      <div class="tab-content py-4">
-        <div class="tab-pane fade px-3 active show" id="reviews" role="tabpanel">
-          <div class="row">
-            <div class="">
-              {{$reviews := $res.Reviews}}
-              {{range $reviews}}
-              <div class="media review">
-                <div class="media-body">
-                  <h5 class="mt-2 mb-1">{{.ReviewerName}}</h5>
-                  <span class="float-right">{{shortDate .UpdatedAt}}</span>
-                  <div class="mb-2">
-                    {{range $index := iterate (floatToInt .Rating)}}
-                    <li class="list-inline-item mr-0"><i class="fa fa-star text-danger"></i></li>
-                    {{end}}
-                    {{range $index := iterate (substract 5 (floatToInt .Rating))}}
-                    <li class="list-inline-item mr-0"><i class="fa fa-star text-gray-300"></i></li>
-                    {{end}}
-                  </div>
-                  <p class="text-muted">{{.Body}}</p>
+      <div class="fade tab-pane" id="leave-review" role="tabpanel">
+        <div class="py-5 px-3">
+          <form class="form" id="reviewForm" method="post" action="">
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label class="form-label" for="name">Username *</label>
+                  <input class="form-control" type="text" name="username" id="name" placeholder="Enter your name"
+                    required="required">
                 </div>
               </div>
-              {{end}}
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label class="form-label" for="rating">Rating *</label>
+                  <select class="custom-select focus-shadow-0" name="rating" id="rating">
+                    <option value="5">★★★★★ (5/5)</option>
+                    <option value="4">★★★★☆ (4/5)</option>
+                    <option value="3">★★★☆☆ (3/5)</option>
+                    <option value="2">★★☆☆☆ (2/5)</option>
+                    <option value="1">★☆☆☆☆ (1/5)</option>
+                  </select>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-        <div class="fade tab-pane" id="leave-review" role="tabpanel">
-          <div class="py-5 px-3">
-            <form class="form" id="reviewForm" method="post" action="">
-              <div class="row">
-                <div class="col-sm-6">
-                  <div class="form-group">
-                    <label class="form-label" for="name">Username *</label>
-                    <input class="form-control" type="text" name="username" id="name" placeholder="Enter your name" required="required">
-                  </div>
-                </div>
-                <div class="col-sm-6">
-                  <div class="form-group">
-                    <label class="form-label" for="rating">Rating *</label>
-                    <select class="custom-select focus-shadow-0" name="rating" id="rating">
-                      <option value="5">★★★★★ (5/5)</option>
-                      <option value="4">★★★★☆ (4/5)</option>
-                      <option value="3">★★★☆☆ (3/5)</option>
-                      <option value="2">★★☆☆☆ (2/5)</option>
-                      <option value="1">★☆☆☆☆ (1/5)</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-              <div class="form-group">
-                <label class="form-label" for="reviewReview">Review text *</label>
-                <textarea class="form-control" rows="4" name="review" id="reviewReview" placeholder="Enter your review" required="required"></textarea>
-              </div>
-              <button class="btn btn-outline-dark" type="submit">Post review</button>
-            </form>
-          </div>
+            <div class="form-group">
+              <label class="form-label" for="reviewReview">Review text *</label>
+              <textarea class="form-control" rows="4" name="review" id="reviewReview" placeholder="Enter your review"
+                required="required"></textarea>
+            </div>
+            <button class="btn btn-outline-dark" type="submit">Post review</button>
+          </form>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
 {{end}}
 
 {{define "script"}}
-<script src="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.1.4/dist/js/datepicker.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.1.4/dist/js/datepicker-full.min.js"></script>
 <script>
+  const dateToday = Date.now()
+
+  const elem = document.getElementById('date');
+  const rangepicker = new DateRangePicker(elem, {
+    format: "dd-mm-yyyy",
+    minDate: dateToday
+  });
 
 
-  
-const start = document.querySelector('input[name="startDate"]');
-const datepicker1 = new Datepicker(start, {
-  // ...options
-}); 
+  const button = document.getElementById("button1")
+  button.addEventListener("click", e => {
+    alert("click" + button.value)
+    console.log("click button", end.value)
+    console.log(start.value)
 
-const end = document.querySelector('input[name="endDate"]');
-const datepicker2 = new Datepicker(end, {
-  // ...options
-}); 
+  })
 
-  // const dateNow = Date.now()
+  const start = document.getElementById("start")
+  start.addEventListener("change", e => {
+    console.log("change", start.value)
 
-  // // var elem = document.getElementById("datepicker");
-  // const elem = document.querySelector('input[name="startDate"]');
-  // var datepicker = new Datepicker(elem, {
-  //   format:  "yyyy-mm-dd",
-  //   minDate: dateNow
-  // }); 
+    console.log(start.value)
+  })
 
-  // const elem = document.querySelector('input[name="endDate"]');
-  // var datepicker = new Datepicker(elem, {
-  //   format:  "yyyy-mm-dd",
-  //   minDate: dateNow
-  // }); 
+  const end = document.getElementById("end")
+  end.addEventListener("change", e => {
+    console.log("change", end.value)
+
+    console.log(end.value)
+  })
+
 </script>
-  {{end}}
+{{end}}
