@@ -32,8 +32,8 @@ INSERT INTO `gorent`.`users` (
     '2021-06-01',
     '2021-06-01'
 ),(
-    'user2',
-    'user2@gmail.com',
+    'user3',
+    'user3@gmail.com',
     '$2a$10$aoXFGMbRkCUtJJ/KJ90Z3ufJcH60fvJSAsoqe7R33lr3FC0Xt78ay',
     '0',
     '541202',

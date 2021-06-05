@@ -3,6 +3,8 @@
 {{define "content"}}
 
 {{$res := index .Data "product"}}
+{{$user := index .Data "user"}}
+
 <section>
   <div class="container-fluid px-xl-7 pt-5 pb-3 pb-lg-6">
     <ul class="breadcrumb undefined">
@@ -89,6 +91,10 @@
 
           <form id="buyForm" action="#">
             <input type="hidden" name="csrf_token" value="{{.CSRFToken }}">
+            <input type="hidden" name="owner_id" value="{{$res.OwnerID}}">
+            <input type="hidden" name="price" value="{{$res.Price}}">
+
+
             <div class="form-row mt-5 mb-5">
               <div class="row" id="date">
                 <div class="col">

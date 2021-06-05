@@ -41,7 +41,7 @@ type Product struct {
 }
 
 type Restriction struct {
-	ID          int
+	ID          int				// ID = 1, booked by user, ID = 2, blocked by owner
 	Description string
 	DeletedAt   time.Time
 	CreatedAt   time.Time
