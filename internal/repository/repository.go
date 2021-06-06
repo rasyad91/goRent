@@ -10,4 +10,10 @@ type DatabaseRepo interface {
 	// Products
 	GetAllProducts() ([]model.Product, error)
 	GetProductByID(id int) (model.Product, error)
+
+	// Rents
+	GetRentsByProductID(id int) ([]model.Rent, error)
+
+	// Reviews
+	AddProductReview(pr model.ProductReview) error
 }

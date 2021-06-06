@@ -17,7 +17,7 @@ type User struct {
 	Products    []Product    // where ID = Product.OwnerID from products table
 	Rents       []Rent       // where ID = Rent.RenterID from rents table
 	Bookings    []Rent       // where ID = Rent.OwnerID from rents table
-	Reviews     []UserReview // where ID = UserReviews.ReceiverID from reviewstable
+	UserReviews []UserReview // where ID = UserReviews.ReceiverID from reviewstable
 }
 
 type Address struct {
@@ -43,7 +43,7 @@ type Product struct {
 }
 
 type Restriction struct {
-	ID          int
+	ID          int // ID = 1, booked by user, ID = 2, blocked by owner
 	Description string
 	DeletedAt   time.Time
 	CreatedAt   time.Time
@@ -56,6 +56,8 @@ type Rent struct {
 	RenterID      int
 	ProductID     int
 	RestrictionID int
+	Processed     bool // false = in cart, true = checkedout
+	TotalCost     float32
 	StartDate     time.Time
 	EndDate       time.Time
 	CreatedAt     time.Time
@@ -67,7 +69,6 @@ type UserReview struct {
 	ReviewerID   int // the one thats making the review
 	ReviewerName string
 	ReceiverID   int // the one thats get reviewed
-	Title        string
 	Body         string
 	Rating       float32
 	CreatedAt    time.Time
@@ -79,7 +80,6 @@ type ProductReview struct {
 	ReviewerID   int // the one thats making the review
 	ReviewerName string
 	ProductID    int
-	Title        string
 	Body         string
 	Rating       float32
 	CreatedAt    time.Time

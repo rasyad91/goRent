@@ -7,7 +7,7 @@
     <div class="row mt-5">
         <div class="mb-3">
 
-            <div class="col-7">
+            <div class="col-9">
                 <p>Already have an account? <a href="/login"> Sign in</a></p>
                 <hr class="mb-3" style="color:gray">
                 <h2 class="mb-3">Create a new account</h2>
@@ -21,7 +21,7 @@
 
                             <label class="form-label"for="username">Username</label> 
                             {{with $form.Errors.Get "username"}}
-                            <span for="username" style="padding-left:5em" class="text-danger">{{.}}</span>
+                            <span for="username"  class="text-danger float-right">{{.}}</span>
                             {{end}}
                             <input type="username" class="form-control  {{with .Form.Errors.Get "username"}} is-invalid{{end}}" name="username" placeholder="Username" value="{{$res.Username}}">
                             <div class="form-text">Choose an awesome username</div>
@@ -29,7 +29,7 @@
                          <div class="form-group col ">
                              <label class="form-label"for="password">Password</label>
                              {{with $form.Errors.Get "password"}}
-                             <span for="password" style="padding-left:5em" class="text-danger">{{.}}</span>
+                             <span for="password"  class="text-danger float-right">{{.}}</span>
                              {{end}}
                              <input type="password" class="form-control {{with .Form.Errors.Get "password"}} is-invalid{{end}}" name="password" placeholder="Password">
 
@@ -39,9 +39,9 @@
                     <div class="form-group mb-3 ">
                         <label class="form-label"for="email">Email</label>
                         {{with $form.Errors.Get "email"}}
-                             <span for="email" style="padding-left:5em" class="text-danger">{{.}}</span>
+                             <span for="email"  class="text-danger float-right">{{.}}</span>
                         {{end}}
-                        <input type="email" class="form-control " name="email" placeholder=" john@gmail.com" value="{{$res.Email}}">
+                        <input type="email" class="form-control {{with .Form.Errors.Get "email"}} is-invalid{{end}}" name="email" placeholder=" john@gmail.com" value="{{$res.Email}}">
                         <div class="form-text">We'll never share your email with anyone else.</div>
 
                     </div>
@@ -49,17 +49,17 @@
                         <div class="form-group col mb-3  ">
                             <label class="form-label"for="block">Block</label>
                             {{with $form.Errors.Get "block"}}
-                                <span for="block" style="padding-left:5em" class="text-danger">{{.}}</span>
+                                <span for="block"  class="text-danger float-right">{{.}}</span>
                             {{end}}
-                            <input type="text" class="form-control " name="block" placeholder=" 246" value="{{$res.Address.Block}}">
+                            <input type="text" class="form-control {{with .Form.Errors.Get "block"}} is-invalid{{end}}" name="block" placeholder=" 246" value="{{$res.Address.Block}}">
 
                         </div>
                         <div class="form-group col mb-3 ">
                             <label class="form-label"for="streetname">Street Name</label>
                             {{with $form.Errors.Get "streetName"}}
-                                <span for="streetName" style="padding-left:5em" class="text-danger">{{.}}</span>
+                                <span for="streetName"  class="text-danger float-right">{{.}}</span>
                             {{end}}
-                            <input type="text" class="form-control " name="streetName" placeholder=" 1234 Main St" value="{{$res.Address.StreetName}}">
+                            <input type="text" class="form-control {{with .Form.Errors.Get "streetName"}} is-invalid{{end}}" name="streetName" placeholder=" 1234 Main St" value="{{$res.Address.StreetName}}">
 
                         </div>
                     </div>
@@ -68,21 +68,21 @@
                         <div class="form-group col mb-3 ">
                             <label class="form-label" for="unitnumber">Unit Number</label>
                             {{with $form.Errors.Get "unitNumber"}}
-                                <span for="unitNumber" style="padding-left:5em" class="text-danger">{{.}}</span>
+                                <span for="unitNumber"  class="text-danger float-right">{{.}}</span>
                             {{end}}
-                            <input type="text" class="form-control " name="unitNumber" placeholder=" #04-23" value="{{$res.Address.UnitNumber}}">
+                            <input type="text" class="form-control {{with .Form.Errors.Get "unitNumber"}} is-invalid{{end}}" name="unitNumber" placeholder=" #04-23" value="{{$res.Address.UnitNumber}}">
                         </div>
                         <div class="form-group col mb-3 ">
                             <label class="form-label" for="postalCode">Postal Code</label>
                             {{with $form.Errors.Get "postalCode"}}
-                                <span for="postalCode" style="padding-left:5em" class="text-danger">{{.}}</span>
+                                <span for="postalCode"  class="text-danger float-right">{{.}}</span>
                             {{end}}
-                            <input type="text" class="form-control " name="postalCode" placeholder=" 519231" value="{{$res.Address.PostalCode}}">
+                            <input type="text" class="form-control {{with .Form.Errors.Get "postalCode"}} is-invalid{{end}}" name="postalCode" placeholder=" 519231" value="{{$res.Address.PostalCode}}">
                         </div>
                     </div>
     
                     <div class="form-group">
-                        <button type="submit" class="btn btn-danger btn-lg">Create account</button>
+                        <button type="submit" class="btn btn-outline-dark btn-lg">Create account</button>
                     </div>
 
                 </form>

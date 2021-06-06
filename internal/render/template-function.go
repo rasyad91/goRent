@@ -1,16 +1,20 @@
 package render
 
 import (
+	"fmt"
+	"goRent/internal/config"
+	"goRent/internal/model"
 	"html/template"
 	"math"
 	"time"
 )
 
 var function = template.FuncMap{
-	"shortDate":  ShortDate,
-	"iterate":    Iterate,
-	"floatToInt": FloatToInt,
-	"substract":  Substract,
+	"shortDate":        ShortDate,
+	"iterate":          Iterate,
+	"floatToInt":       FloatToInt,
+	"substract":        Substract,
+	"unprocessedRents": UnprocessedRents,
 }
 
 // returns a slice of ints, starting at 1 going to count
@@ -25,7 +29,7 @@ func Iterate(count int) []int {
 
 // Short date returns time in DD-MM-YYYY format
 func ShortDate(t time.Time) string {
-	return t.Format("2006-01-02")
+	return t.Format(config.DateLayout)
 }
 
 func FloatToInt(f float32) int {
@@ -35,4 +39,15 @@ func FloatToInt(f float32) int {
 
 func Substract(x, y int) int {
 	return x - y
+}
+
+func UnprocessedRents(rents []model.Rent) []model.Rent {
+	unprocessed := []model.Rent{}
+	for _, r := range rents {
+		if !r.Processed {
+			unprocessed = append(unprocessed, r)
+		}
+	}
+	fmt.Println(unprocessed)
+	return unprocessed
 }

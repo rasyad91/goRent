@@ -138,4 +138,64 @@ INSERT INTO `gorent`.`products` (
     '19.99',
     '2021-06-01',
     '2021-06-01'
+),(
+    '2', 
+    'Addidas',
+    'Sports', 
+    'Addidas Boost', 
+    '4.5', 
+    'Super Limited Edition Nike shoe. Weaar once and these shoes will make you take off. Experience the all new air jordans today!',
+    '49.99',
+    '2021-06-01',
+    '2021-06-01'
+),(
+    '2', 
+    'Williams',
+    'Sports', 
+    'Williams badminton racket', 
+    '3.4', 
+    'Legendary awesome racket',
+    '7.49',  
+    '2021-06-01',
+    '2021-06-01'
+),(
+    '2', 
+    'For Python Dummies',
+    'Education', 
+    'Pyton for dummies', 
+    '5', 
+    'If youve been struggling with picking up GO as a programming language, this book will definitely change the way you think of go. Contains 101 secrets used by top professionals in the industry.',
+    '2.94',
+    '2021-06-01',
+    '2021-06-01'
+),(
+    '2', 
+    'Casio',
+    'Electronic', 
+    'Graphical calculator', 
+    '0', 
+    'Legendary calculator that made me pass all my tests',
+    '1.00',
+    '2021-06-01',
+    '2021-06-01'
+),(
+    '2', 
+    'Apple',
+    'Bag', 
+    'Apple laptop bag', 
+    '0', 
+    'Got it free from the IT department when I reported at work for the first day. It offeres a lot of protection for your laptop but it is too chunky for me. Renting off cheap.',
+    '0.50',
+    '2021-06-01',
+    '2021-06-01'
+),(
+    '3', 
+    'Dell',
+    'Electronic', 
+    'Dual printer', 
+    '0', 
+    'This printer is not just your run-of-the-mill printer. It is a monochrome printer. That means it doesnt just print in black and white. It also doesnt scream at you when you run out of red, green even when you do not use those colors',
+    '9.99',
+    '2021-06-01',
+    '2021-06-01'
 );

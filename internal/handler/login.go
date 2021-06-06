@@ -47,14 +47,14 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 		form.Errors.Add("login", "Username or password incorrect")
 	}
 	fmt.Println("SUCCESSFULLY PULLED USER INFO")
-	fmt.Println(password)
-	t, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	fmt.Println(t)
-	fmt.Println(string(t))
-	fmt.Println([]byte(t))
-	fmt.Println(string(t))
+	// fmt.Println(password)
+	// t, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	// fmt.Println(t)
+	// fmt.Println(string(t))
+	// fmt.Println([]byte(t))
+	// fmt.Println(string(t))
 
-	fmt.Println(eu.Password)
+	// fmt.Println(eu.Password)
 	err = bcrypt.CompareHashAndPassword([]byte(eu.Password), []byte(password))
 	if err != nil {
 		form.Errors.Add("login", "Username or password incorrect")
@@ -71,9 +71,39 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+
+	for _, v := range eu.Rents {
+		fmt.Printf("%#v\n", v)
+	}
+
+	kk := render.UnprocessedRents(eu.Rents)
+	fmt.Println("kk: ", kk)
 	m.App.Session.Put(r.Context(), "userID", eu.ID)
 	m.App.Session.Put(r.Context(), "flash", fmt.Sprintf("Welcome, %s", eu.Username))
 	m.App.Session.Put(r.Context(), "user", eu)
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+// Logout logs the user out
+func (m *Repository) Logout(w http.ResponseWriter, r *http.Request) {
+
+	// delete the remember me cookie, if any
+	delCookie := http.Cookie{
+		Name:     fmt.Sprintf("_%s_gowatcher_remember", m.App.PreferenceMap["identifier"]),
+		Value:    "",
+		Domain:   m.App.Domain,
+		Path:     "/",
+		MaxAge:   0,
+		HttpOnly: true,
+	}
+	http.SetCookie(w, &delCookie)
+	fmt.Println("Setting Cookie here")
+	_ = m.App.Session.RenewToken(r.Context())
+	_ = m.App.Session.Destroy(r.Context())
+	_ = m.App.Session.RenewToken(r.Context())
+	fmt.Println("LOGOUT Session", m.App.Session.Get(r.Context(), "user"))
+	m.App.Session.Put(r.Context(), "flash", "You've been logged out successfully!")
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
@@ -126,3 +156,9 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 
 //  http.Redirect(w, r, "/admin/overview", http.StatusSeeOther)
 // }
+
+// m.App.Session.Put(r.Context(), "success", "hello")
+// fmt.Printf("%#v", m.App.Session)
+// //to do
+// - add in notification for register and login
+// - feed in user info for header

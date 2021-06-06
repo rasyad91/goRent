@@ -15,3 +15,7 @@ type AppConfig struct {
 	Error         *log.Logger
 	MailChan      chan model.MailData
 }
+
+const (
+	DateLayout = "02-01-2006"
+)
