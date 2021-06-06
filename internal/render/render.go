@@ -75,7 +75,7 @@ func DefaultData(w http.ResponseWriter, r *http.Request, td TemplateData) Templa
 		u := app.Session.Get(r.Context(), "user").(model.User)
 		td.User = u
 	}
-	
+
 	td.Flash = app.Session.PopString(r.Context(), "flash")
 	td.Warning = app.Session.PopString(r.Context(), "warning")
 	td.Error = app.Session.PopString(r.Context(), "error")

@@ -89,28 +89,33 @@
                 href="/searchresult?q={{$res.Category}}">{{$res.Category}}</a></li>
           </ul>
 
-          <form id="buyForm" action="#">
+          <form id="addRent" action="/v1/products/addRent" method="POST">
             <input type="hidden" name="csrf_token" value="{{.CSRFToken }}">
             <input type="hidden" name="owner_id" value="{{$res.OwnerID}}">
+            <input type="hidden" name="product_id" value="{{$res.ID}}">
             <input type="hidden" name="price" value="{{$res.Price}}">
+            <input type="hidden" name="product_title" value="{{$res.Title}}">
+            <input type="hidden" name="blocked" value="{{index .Data "blocked"}}">
+
+
 
             <div class="form-row mt-5 mb-5">
               <div class="row" id="date">
                 <div class="col">
                   <strong>Start</strong>
-                  <input required type="text" class="form-control" name="start" placeholder="Start" id="start">
+                  <input required type="text" class="form-control" name="start_date" placeholder="Start" id="start">
                 </div>
                 <div class="col">
                   <strong>End</strong>
-                  <input required type="text" class="form-control" name="end" placeholder="End" id="end">
+                  <input required type="text" class="form-control" name="end_date" placeholder="End" id="end">
                 </div>
               </div>
             </div>
             <div class="input-group w-100 mb-4">
               <div class="input-group-append flex-grow-1">
-                <button id="button1" value="1" class="btn btn-outline-dark btn-block" type="button">
-                  <i class="fa fas fa-book mr-2"></i> Add to
-                  Booking</button>
+                <button id="addRent" value="1" class="btn btn-outline-dark btn-block" type="submit">
+                  <i class="fas fa-shopping-cart mr-2"></i>Add to Cart</button>
+                  
               </div>
             </div>
           </form>
@@ -153,10 +158,11 @@
             {{end}}
           </div>
         </div>
-      </div>
+      </div>product_title
       <form class="form" id="reviewForm" method="post" action="/v1/products/{{$res.ID}}/review">
         <input type="hidden" name="csrf_token" value="{{.CSRFToken }}">
         <input type="hidden" name="product_id" value="{{$res.ID}}">
+
         {{with .IsAuthenticated}}
         <div class="fade tab-pane" id="leave-review" role="tabpanel">
           <div class="py-5 px-3">
@@ -186,7 +192,7 @@
               <textarea class="form-control" rows="4" name="body" id="reviewReview" placeholder="Enter your review"
                 required="required"></textarea>
             </div>
-            <button class="btn btn-outline-dark" type="submit">Post review</button>
+            <button id="reviewForm" class="btn btn-outline-dark" type="submit">Post review</button>
       </form>
     </div>
   </div>

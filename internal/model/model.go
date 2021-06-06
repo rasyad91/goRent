@@ -55,6 +55,7 @@ type Rent struct {
 	ProductID     int
 	RestrictionID int
 	Processed     bool // false = in cart, true = checkedout
+	Duration      int
 	TotalCost     float32
 	StartDate     time.Time
 	EndDate       time.Time

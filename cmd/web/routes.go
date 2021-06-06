@@ -34,6 +34,8 @@ func routes() http.Handler {
 	mux.PathPrefix("/auth").Subrouter().Use(Auth)
 
 	mux.HandleFunc("/v1/products/{productID}", handler.Repo.ShowProductByID).Methods("GET")
+	mux.HandleFunc("/v1/products/addRent", handler.Repo.PostRent).Methods("POST")
+
 	mux.HandleFunc("/v1/products/{productID}/review", handler.Repo.PostReview).Methods("POST")
 
 	fileServer := http.FileServer(http.Dir("./static/"))

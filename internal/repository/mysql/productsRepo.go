@@ -101,7 +101,7 @@ func (m *DBrepo) GetRentsByProductID(id int) ([]model.Rent, error) {
 	return rents, nil
 }
 
-func (m *DBrepo) AddProductReview(pr model.ProductReview) error {
+func (m *DBrepo) CreateProductReview(pr model.ProductReview) error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -145,9 +145,6 @@ func (m *DBrepo) AddProductReview(pr model.ProductReview) error {
 	// update rating on product
 
 	newRating := rating + (pr.Rating-rating)/float32(reviewCount)
-	fmt.Println(reviewCount)
-	fmt.Println(rating)
-	fmt.Println(newRating)
 
 	query = `UPDATE products SET rating = ? WHERE (id = ?);`
 	if _, err := tx.ExecContext(ctx, query, newRating, pr.ProductID); err != nil {
@@ -155,6 +152,33 @@ func (m *DBrepo) AddProductReview(pr model.ProductReview) error {
 		return fmt.Errorf("db addproductreview update rating: %v", err)
 	}
 	tx.Commit()
+
+	return nil
+}
+
+func (m *DBrepo) CreateRent(r model.Rent) error {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	query := `INSERT INTO rents (owner_id, renter_id, product_id, restriction_id, processed,duration, total_cost, start_date, end_date, created_at, updated_at)
+				VALUES (?,?,?,?,?,?,?,?,?,?,?)`
+
+	if _, err := m.DB.ExecContext(ctx, query,
+		r.OwnerID,
+		r.RenterID,
+		r.ProductID,
+		1,
+		false,
+		r.Duration,
+		r.TotalCost,
+		r.StartDate,
+		r.EndDate,
+		time.Now(),
+		time.Now(),
+	); err != nil {
+		return fmt.Errorf("db createrent: %v", err)
+	}
 
 	return nil
 }
