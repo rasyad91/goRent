@@ -14,6 +14,12 @@ type AppConfig struct {
 	Info          *log.Logger
 	Error         *log.Logger
 	MailChan      chan model.MailData
+
+	AwsAccessKey string
+	AwsSecretKey string
+	AwsUrl       string
+	AwsSniff     bool
+	AwsRegion    string
 }
 
 const (

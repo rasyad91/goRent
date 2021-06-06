@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"encoding/gob"
-	"encoding/json"
 	"flag"
 	"fmt"
 	"goRent/internal/config"
@@ -21,11 +20,9 @@ import (
 
 	"github.com/alexedwards/scs/mysqlstore"
 	"github.com/alexedwards/scs/v2"
-	"github.com/aws/aws-sdk-go/aws/credentials"
 
 	// "github.com/olivere/elastic"
-	aws "github.com/olivere/elastic/aws/v4"
-	"github.com/olivere/elastic/v7"
+
 	"github.com/olivere/env"
 )
 
@@ -68,7 +65,7 @@ func main() {
 	dbParseTime := flag.Bool("dbparsetime", true, "database parse time option")
 	accessKey := flag.String("access-key", env.String("", "AWS_ACCESS_KEY", "AWS_ACCESS_KEY_ID"), "Access Key ID")
 	secretKey := flag.String("secret-key", env.String("", "AWS_SECRET_KEY", "AWS_SECRET_ACCESS_KEY"), "Secret access key")
-	url := flag.String("esUrl", "", "Elasticsearch URL")
+	esUrl := flag.String("esUrl", "", "Elasticsearch URL")
 	sniff := flag.Bool("sniff", false, "Enable or disable sniffing")
 	region := flag.String("region", "", "AWS Region name")
 
@@ -83,6 +80,12 @@ func main() {
 
 	app = &config.AppConfig{}
 	app.Domain = *domain
+
+	app.AwsAccessKey = *accessKey
+	app.AwsSecretKey = *secretKey
+	app.AwsUrl = *esUrl
+	app.AwsSniff = *sniff
+	app.AwsRegion = *region
 
 	// Customized loggers
 	app.Info = log.New(io.MultiWriter(f, os.Stdout), "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
@@ -131,7 +134,7 @@ func main() {
 	signal.Notify(stop, os.Interrupt)
 
 	//start of elastic search codes
-	if *url == "" {
+	if *esUrl == "" {
 		// log.Fatal("please specify a URL with -url")
 		app.Error.Println("please specify a URL with -url")
 	}
@@ -150,60 +153,60 @@ func main() {
 
 	}
 
-	signingClient := aws.NewV4SigningClient(credentials.NewStaticCredentials(
-		*accessKey,
-		*secretKey,
-		"",
-	), *region)
+	// signingClient := aws.NewV4SigningClient(credentials.NewStaticCredentials(
+	// 	*accessKey,
+	// 	*secretKey,
+	// 	"",
+	// ), *region)
 
-	ctx := context.Background()
+	// ctx := context.Background()
 
-	client, err := elastic.NewClient(
-		elastic.SetURL(*url),
-		elastic.SetSniff(*sniff),
-		elastic.SetHealthcheck(false),
-		elastic.SetHttpClient(signingClient),
-	)
-	if err != nil {
-		// log.Fatal(err)
-		app.Error.Println(err)
-	}
-	// _ = client
+	// client, err := elastic.NewClient(
+	// 	elastic.SetURL(*esUrl),
+	// 	elastic.SetSniff(*sniff),
+	// 	elastic.SetHealthcheck(false),
+	// 	elastic.SetHttpClient(signingClient),
+	// )
+	// if err != nil {
+	// 	// log.Fatal(err)
+	// 	app.Error.Println(err)
+	// }
+	// // _ = client
 
-	//samplesesarch
-	// termQuery := elastic.NewTermQuery("title", "school laptops")
-	stringQuery := elastic.NewQueryStringQuery("lion king series 1")
-	searchResult, err := client.Search().
-		Index("sample_product_list"). // search in index "tweets"
-		// Query(termQuery).             // specify the query
-		Query(stringQuery).      // specify the query
-		Pretty(true).            // pretty print request and response JSON
-		Do(context.Background()) // execute
+	// //samplesesarch
+	// // termQuery := elastic.NewTermQuery("title", "school laptops")
+	// stringQuery := elastic.NewQueryStringQuery("lion king series 1")
+	// searchResult, err := client.Search().
+	// 	Index("sample_product_list"). // search in index "tweets"
+	// 	// Query(termQuery).             // specify the query
+	// 	Query(stringQuery).      // specify the query
+	// 	Pretty(true).            // pretty print request and response JSON
+	// 	Do(context.Background()) // execute
 
-	if err != nil {
-		fmt.Println("error from search", err)
-	}
+	// if err != nil {
+	// 	fmt.Println("error from search", err)
+	// }
 
-	var product []model.ElasticSearchProductSample
+	// var product []model.ElasticSearchProductSample
 
-	for _, hit := range searchResult.Hits.Hits {
+	// for _, hit := range searchResult.Hits.Hits {
 
-		var t model.ElasticSearchProductSample
+	// 	var t model.ElasticSearchProductSample
 
-		if err := json.Unmarshal(hit.Source, &t); err != nil {
-			// log.Errorf("ERROR UNMARSHALLING ES SUGGESTION RESPONSE: %v", err)
-			continue
-		}
-		if err != nil {
-			// Deserialization failed
-			fmt.Println("error unmarshaling json", err)
+	// 	if err := json.Unmarshal(hit.Source, &t); err != nil {
+	// 		// log.Errorf("ERROR UNMARSHALLING ES SUGGESTION RESPONSE: %v", err)
+	// 		continue
+	// 	}
+	// 	if err != nil {
+	// 		// Deserialization failed
+	// 		fmt.Println("error unmarshaling json", err)
 
-		}
-		product = append(product, t)
+	// 	}
+	// 	product = append(product, t)
 
-	}
+	// }
 
-	fmt.Println(product)
+	// fmt.Println(product)
 	//start on rasy's code again
 
 	go func() {

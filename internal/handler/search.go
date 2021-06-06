@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"goRent/internal/model"
@@ -9,6 +10,13 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	// "github.com/olivere/elastic/aws"
+	// "github.com/olivere/elastic"
+	"github.com/olivere/elastic/v7"
+
+	aws "github.com/olivere/elastic/aws/v4"
 )
 
 func (m *Repository) Search(w http.ResponseWriter, r *http.Request) {
@@ -24,6 +32,16 @@ func (m *Repository) Search(w http.ResponseWriter, r *http.Request) {
 }
 
 func (m *Repository) SearchResult(w http.ResponseWriter, r *http.Request) {
+
+	awsSigningFn := awsSigning(m.App.AwsAccessKey, m.App.AwsSecretKey, m.App.AwsRegion)
+	awsClient, err := awsCreateClient(m.App.AwsUrl, m.App.AwsSniff, awsSigningFn)
+
+	trialSearchQuery(awsClient)
+
+	if err != nil {
+		m.App.Error.Println(err)
+	}
+
 	var data = make(map[string]interface{})
 	var product []model.Product
 	var urlquery string
@@ -152,16 +170,68 @@ func (m *Repository) SearchResult(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// func newElasticClient(creds *credentials.Credentials) (*elastic.Client, error) {
-// 	signer := v4.NewSigner(creds)
-// 	awsClient, err := aws_signing_client.New(signer, nil, "es", "us-east-1")
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	return elastic.NewClient(
-// 		elastic.SetURL("https://my-aws-endpoint.us-east-1.es.amazonaws.com"),
-// 		elastic.SetScheme("https"),
-// 		elastic.SetHttpClient(awsClient),
-// 		elastic.SetSniff(false), // See note below
-// 	)
-// }
+func awsSigning(awsAccesKey, awsSecretKey, awsRegoin string) *http.Client {
+
+	signingClient := aws.NewV4SigningClient(credentials.NewStaticCredentials(
+		awsAccesKey,
+		awsSecretKey,
+		"",
+	), awsRegoin)
+
+	return signingClient
+
+}
+
+func awsCreateClient(url string, sniff bool, signingClient *http.Client) (*elastic.Client, error) {
+
+	client, err := elastic.NewClient(
+		elastic.SetURL(url),
+		elastic.SetSniff(sniff),
+		elastic.SetHealthcheck(false),
+		elastic.SetHttpClient(signingClient),
+	)
+	if err != nil {
+		// log.Fatal(err)
+		return client, err
+	}
+
+	return client, nil
+
+}
+
+func trialSearchQuery(client *elastic.Client) {
+
+	stringQuery := elastic.NewQueryStringQuery("wedding dress")
+	searchResult, err := client.Search().
+		Index("sample_product_list"). // search in index "tweets"
+		// Query(termQuery).             // specify the query
+		Query(stringQuery).      // specify the query
+		Pretty(true).            // pretty print request and response JSON
+		Do(context.Background()) // execute
+
+	if err != nil {
+		fmt.Println("error from search", err)
+	}
+
+	var product []model.ElasticSearchProductSample
+
+	for _, hit := range searchResult.Hits.Hits {
+
+		var t model.ElasticSearchProductSample
+
+		if err := json.Unmarshal(hit.Source, &t); err != nil {
+			// log.Errorf("ERROR UNMARSHALLING ES SUGGESTION RESPONSE: %v", err)
+			continue
+		}
+		if err != nil {
+			// Deserialization failed
+			fmt.Println("error unmarshaling json", err)
+
+		}
+		product = append(product, t)
+
+	}
+
+	fmt.Println(product)
+
+}
