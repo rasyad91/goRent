@@ -30,11 +30,7 @@ func New(r *Repository) {
 }
 
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
-	if f := m.App.Session.Get(r.Context(), "flash"); f != nil {
-		m.App.Session.Put(r.Context(), "warning", nil)
-	} else {
-		m.App.Session.Put(r.Context(), "warning", "hello")
-	}
+
 	// m.App.Session.Put(r.Context(), "flash", "let's see")
 	data := make(map[string]interface{})
 

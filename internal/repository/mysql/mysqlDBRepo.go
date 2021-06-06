@@ -28,27 +28,62 @@ func (m *DBrepo) GetUser(username string) (model.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	row := m.QueryRowContext(ctx, "SELECT * FROM goRent.Users where username=?", username)
-
 	u := model.User{}
-	err := row.Scan(
-		&u.ID,
-		&u.Username,
-		&u.Email,
-		&u.Password,
-		&u.AccessLevel,
-		&u.Rating,
-		&u.Address.PostalCode,
-		&u.Address.StreetName,
-		&u.Address.Block,
-		&u.Address.UnitNumber,
-		&u.CreatedAt,
-		&u.UpdatedAt,
-	)
-	fmt.Println(u)
+	tx, err := m.DB.BeginTx(ctx, nil)
 	if err != nil {
 		return model.User{}, fmt.Errorf("db GetUser: %v", err)
 	}
+	if err := tx.QueryRowContext(ctx, "SELECT * FROM goRent.Users where username=?", username).
+		Scan(
+			&u.ID,
+			&u.Username,
+			&u.Email,
+			&u.Password,
+			&u.AccessLevel,
+			&u.Rating,
+			&u.Address.PostalCode,
+			&u.Address.StreetName,
+			&u.Address.Block,
+			&u.Address.UnitNumber,
+			&u.CreatedAt,
+			&u.UpdatedAt,
+		); err != nil {
+		return model.User{}, fmt.Errorf("db GetUser: %v", err)
+	}
+
+	// get rents
+	query := `select 
+	id, owner_id, renter_id, product_id, restriction_id, processed, start_date, end_date, created_at, updated_at
+		from rents
+		where renter_id = ?`
+	rows, err := tx.QueryContext(ctx, query, u.ID)
+	if err != nil {
+		return model.User{}, fmt.Errorf("db GetUser: %v", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		r := model.Rent{}
+		if err := rows.Scan(
+			&r.ID,
+			&r.OwnerID,
+			&r.RenterID,
+			&r.ProductID,
+			&r.RestrictionID,
+			&r.Processed,
+			&r.StartDate,
+			&r.EndDate,
+			&r.CreatedAt,
+			&r.UpdatedAt,
+		); err != nil {
+			return model.User{}, fmt.Errorf("db GetUser: %v", err)
+		}
+		u.Rents = append(u.Rents, r)
+	}
+	if err := rows.Err(); err != nil {
+		return model.User{}, fmt.Errorf("db GetUser: %v", err)
+	}
+
 	return u, nil
 }
 

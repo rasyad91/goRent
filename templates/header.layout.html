@@ -1,5 +1,5 @@
 {{define "header"}}
-{{$res := index .Data "user"}}
+{{$u := index .User}}
 <header class="header">
   <nav class="navbar navbar-expand-lg navbar-light bg-white px-lg-5"><a class="navbar-brand" href="/"><i
         class="fab fa-renren fa-lg"></i> GoRent</a>
@@ -43,6 +43,12 @@
             </div>
           </a>
         </li>
+        <li class="list-inline-item position-relative mr-3">
+          <a class="text-dark text-hover-primary" href="#" data-toggle="modal" data-target="#sidebarCart">
+            <i class="fa fas fa-book mr-2 fa-lg"></i>
+            <div class="navbar-icon-badge">{{ len (unprocessedRents $u.Rents) }}</div>
+          </a>
+        </li>
         {{else}}
         <li class="mr-5 nav-item dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <a class="text-dark text-hover-primary" href="/login" data-toggle="modal" data-target="#loginModal">
@@ -51,14 +57,14 @@
             </div>
           </a>
         </li>
-        {{end}}
-
         <li class="list-inline-item position-relative mr-3">
           <a class="text-dark text-hover-primary" href="#" data-toggle="modal" data-target="#sidebarCart">
             <i class="fa fas fa-book mr-2 fa-lg"></i>
-            <div class="navbar-icon-badge">5</div>
           </a>
         </li>
+        {{end}}
+
+
       </ul>
     </div>
   </nav>
