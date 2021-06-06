@@ -1,41 +1,5 @@
 {{define "header"}}
 {{$res := index .Data "user"}}
-<!-- {{$res := index .Data "user"}}
-{{if $res.Username}}
-
-<div class="mx-5">
-    <nav>
-        <div class="dropdown">
-            <button class="btn btn-danger  dropdown-toggle fs-4 mx-3" type="button" id="dropdownMenuButton1"
-                data-bs-toggle="dropdown" aria-expanded="false">
-                {{$res.Username}}
-            </button>
-            <ul class="dropdown-menu dropdown-menu-dark" style="z-index: 1000;" aria-labelledby="dropdownMenuButton1">
-                <li><a class="dropdown-item fs-5" href="/logout"><strong>Logout</strong></a></li>
-            </ul>
-        </div>
-    </nav>
-</div>
-</nav>
-</div>
-
-{{else}}
-
-<div class="mx-5">
-    <nav>
-        <a class="btn btn-dark login" style="transform: skew(-10deg)" href="/login">
-            <span class="fs-4">Sign In</span>
-        </a>
-        <a class="btn btn-danger" style="transform: skew(-10deg);" href="/register">
-            <span class="fs-4">Register</span>
-        </a>
-    </nav>
-</div>
-
-
-
-{{end}} -->
-
 <header class="header">
   <nav class="navbar navbar-expand-lg navbar-light bg-white px-lg-5"><a class="navbar-brand" href="/"><i
         class="fab fa-renren fa-lg"></i> GoRent</a>
@@ -67,16 +31,27 @@
             </li>
           </ul> -->
       <ul class="navbar-nav mt-3 mt-lg-0">
+        {{with .IsAuthenticated}}
         <li class="mr-5 nav-item dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <a class="text-dark text-hover-primary" href="#" data-toggle="modal" data-target="#loginModal">
             <div class="navbar-icon">
               <i class="fas fa-user fa-lg"></i>
             </div>
             <div class="dropdown-menu" aria-labelledby="homeDropdown" style="transform: translateY(30px);">
-              <a class="dropdown-item dropleft" href="docs/index.html">Introduction </a>
+              <a class="dropdown-item dropleft" href="/v1/user/account">Account</a>
+              <a class="dropdown-item dropleft" href="/user/logout">Log out</a>
             </div>
           </a>
         </li>
+        {{else}}
+        <li class="mr-5 nav-item dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <a class="text-dark text-hover-primary" href="/login" data-toggle="modal" data-target="#loginModal">
+            <div class="navbar-icon">
+              <i class="fas fa-user fa-lg"></i>
+            </div>
+          </a>
+        </li>
+        {{end}}
 
         <li class="list-inline-item position-relative mr-3">
           <a class="text-dark text-hover-primary" href="#" data-toggle="modal" data-target="#sidebarCart">

@@ -13,4 +13,7 @@ type DatabaseRepo interface {
 
 	// Rents
 	GetRentsByProductID(id int) ([]model.Rent, error)
+
+	// Reviews
+	AddProductReview(pr model.ProductReview) error
 }

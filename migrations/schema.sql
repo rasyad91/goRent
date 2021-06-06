@@ -49,7 +49,6 @@ CREATE TABLE `product_reviews` (
   `reviewer_id` int NOT NULL,
   `reviewer_name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `product_id` int NOT NULL,
-  `title` varchar(60) COLLATE utf8mb4_general_ci NOT NULL,
   `body` varchar(500) COLLATE utf8mb4_general_ci NOT NULL,
   `rating` float(2,1) NOT NULL,
   `created_at` datetime NOT NULL,
@@ -99,6 +98,7 @@ CREATE TABLE `rents` (
   `renter_id` int NOT NULL,
   `product_id` int NOT NULL,
   `restriction_id` int NOT NULL,
+  `processed` tinyint(1) NOT NULL DEFAULT '0',
   `total_cost` float(12,2) NOT NULL,
   `duration` int NOT NULL,
   `start_date` datetime NOT NULL,
@@ -174,7 +174,6 @@ CREATE TABLE `user_reviews` (
   `reviewer_id` int NOT NULL,
   `reviewer_name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `receiver_id` int NOT NULL,
-  `title` varchar(60) COLLATE utf8mb4_general_ci NOT NULL,
   `body` varchar(500) COLLATE utf8mb4_general_ci NOT NULL,
   `rating` float(2,1) NOT NULL,
   `created_at` datetime NOT NULL,
@@ -222,4 +221,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-06-05 18:19:50
+-- Dump completed on 2021-06-06 13:38:16

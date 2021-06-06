@@ -94,7 +94,6 @@
             <input type="hidden" name="owner_id" value="{{$res.OwnerID}}">
             <input type="hidden" name="price" value="{{$res.Price}}">
 
-
             <div class="form-row mt-5 mb-5">
               <div class="row" id="date">
                 <div class="col">
@@ -109,8 +108,8 @@
             </div>
             <div class="input-group w-100 mb-4">
               <div class="input-group-append flex-grow-1">
-                <button id="button1" value="1" class="btn btn-outline-dark btn-block" type="button"><i
-                    class="fa fas fa-book mr-2"></i> Add to
+                <button id="button1" value="1" class="btn btn-outline-dark btn-block" type="button">
+                  <i class="fa fas fa-book mr-2"></i> Add to
                   Booking</button>
               </div>
             </div>
@@ -140,7 +139,6 @@
               <div class="media-body">
                 <h5 class="mt-2 mb-1">{{.ReviewerName}}</h5>
                 <span class="float-right">{{shortDate .UpdatedAt}}</span>
-                <h6 class="mt-2 mb-1">{{.Title}}</h5>
                 <div class="mb-2">
                   {{range $index := iterate (floatToInt .Rating)}}
                   <li class="list-inline-item mr-0"><i class="fa fa-star text-danger"></i></li>
@@ -156,7 +154,7 @@
           </div>
         </div>
       </div>
-      <form class="form" id="reviewForm" method="post" action="">
+      <form class="form" id="reviewForm" method="post" action="/v1/products/{{$res.ID}}/review">
         <input type="hidden" name="csrf_token" value="{{.CSRFToken }}">
         <input type="hidden" name="product_id" value="{{$res.ID}}">
         {{with .IsAuthenticated}}
@@ -182,11 +180,6 @@
                   </select>
                 </div>
               </div>
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="name">Title *</label>
-              <input class="form-control" type="text" name="title" id="title" required="required"
-                placeholder="Enter your review title">
             </div>
             <div class="form-group">
               <label class="form-label" for="reviewReview">Review text *</label>

@@ -45,11 +45,11 @@ func listBlockedDates(rents []model.Rent) []string {
 	blockedDates := []string{}
 	for _, r := range rents {
 		x := r.StartDate
-		start :=r.StartDate.Format(config.DateLayout)
-		end :=r.EndDate.Format(config.DateLayout)
+		start := r.StartDate.Format(config.DateLayout)
+		end := r.EndDate.Format(config.DateLayout)
 		blockedDates = append(blockedDates, start)
 		for start != end {
-			x = x.AddDate(0,0,1)
+			x = x.AddDate(0, 0, 1)
 			start = x.Format(config.DateLayout)
 			blockedDates = append(blockedDates, start)
 			fmt.Println(x)
@@ -60,7 +60,8 @@ func listBlockedDates(rents []model.Rent) []string {
 }
 
 func (m *Repository) PostReview(w http.ResponseWriter, r *http.Request) {
-	u := m.App.Session.Get(r.Context(),"user").(model.User)
+
+	u := m.App.Session.Get(r.Context(), "user").(model.User)
 	productID, err := strconv.Atoi(mux.Vars(r)["productID"])
 	if err != nil {
 		m.App.Error.Println(err)
@@ -69,14 +70,13 @@ func (m *Repository) PostReview(w http.ResponseWriter, r *http.Request) {
 
 	if err := r.ParseForm(); err != nil {
 		m.App.Error.Println(err)
-		render.ServerError(w,r, err)
+		render.ServerError(w, r, err)
 		return
 	}
 
 	form := form.New(r.Form)
-	form.Required("title", "body")
+	form.Required("body")
 
-	form.CheckLength("title", 0, 60)
 	form.CheckLength("body", 0, 500)
 	rating, err := strconv.Atoi(r.PostFormValue("rating"))
 	if err != nil {
@@ -88,12 +88,15 @@ func (m *Repository) PostReview(w http.ResponseWriter, r *http.Request) {
 		ReviewerID:   u.ID,
 		ReviewerName: u.Username,
 		ProductID:    productID,
-		Title:        r.PostFormValue("title"),
 		Body:         r.PostFormValue("body"),
 		Rating:       float32(rating),
 	}
 
-	println(pr)
-	
+	if err := m.DB.AddProductReview(pr); err != nil {
+		m.App.Error.Println(err)
+	}
 
+	m.App.Session.Put(r.Context(), "flash", "You have posted a review!")
+
+	http.Redirect(w, r, fmt.Sprintf("/v1/products/%d", pr.ProductID), http.StatusSeeOther)
 }

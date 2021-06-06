@@ -18,8 +18,8 @@ func SessionLoad(next http.Handler) http.Handler {
 func Auth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if !helper.IsAuthenticated(r) {
-			url := r.URL.Path
-			http.Redirect(w, r, fmt.Sprintf("/?target=%s", url), http.StatusFound)
+			app.Session.Put(r.Context(), "warning", "Please login first")
+			http.Redirect(w, r, "/login", http.StatusFound)
 			return
 		}
 		w.Header().Add("Cache-Control", "no-store")
