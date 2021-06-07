@@ -153,62 +153,6 @@ func main() {
 
 	}
 
-	// signingClient := aws.NewV4SigningClient(credentials.NewStaticCredentials(
-	// 	*accessKey,
-	// 	*secretKey,
-	// 	"",
-	// ), *region)
-
-	// ctx := context.Background()
-
-	// client, err := elastic.NewClient(
-	// 	elastic.SetURL(*esUrl),
-	// 	elastic.SetSniff(*sniff),
-	// 	elastic.SetHealthcheck(false),
-	// 	elastic.SetHttpClient(signingClient),
-	// )
-	// if err != nil {
-	// 	// log.Fatal(err)
-	// 	app.Error.Println(err)
-	// }
-	// // _ = client
-
-	// //samplesesarch
-	// // termQuery := elastic.NewTermQuery("title", "school laptops")
-	// stringQuery := elastic.NewQueryStringQuery("lion king series 1")
-	// searchResult, err := client.Search().
-	// 	Index("sample_product_list"). // search in index "tweets"
-	// 	// Query(termQuery).             // specify the query
-	// 	Query(stringQuery).      // specify the query
-	// 	Pretty(true).            // pretty print request and response JSON
-	// 	Do(context.Background()) // execute
-
-	// if err != nil {
-	// 	fmt.Println("error from search", err)
-	// }
-
-	// var product []model.ElasticSearchProductSample
-
-	// for _, hit := range searchResult.Hits.Hits {
-
-	// 	var t model.ElasticSearchProductSample
-
-	// 	if err := json.Unmarshal(hit.Source, &t); err != nil {
-	// 		// log.Errorf("ERROR UNMARSHALLING ES SUGGESTION RESPONSE: %v", err)
-	// 		continue
-	// 	}
-	// 	if err != nil {
-	// 		// Deserialization failed
-	// 		fmt.Println("error unmarshaling json", err)
-
-	// 	}
-	// 	product = append(product, t)
-
-	// }
-
-	// fmt.Println(product)
-	//start on rasy's code again
-
 	go func() {
 		app.Info.Printf("Listening on port:%s\n", *port)
 		if err := server.ListenAndServe(); err != nil {

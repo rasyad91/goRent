@@ -30,8 +30,8 @@ type Address struct {
 type Product struct {
 	ID          int             `json:"ID"`
 	OwnerID     int             `json:"owner_id"`
-	Brand       string          `json:"owner_id"`
-	Category    string          `json:"brand_name"`
+	Brand       string          `json:"brand_name"`
+	Category    string          `json:"category_name"`
 	Title       string          `json:"title"`
 	Rating      float32         `json:"rating"`
 	Description string          `json:"description"`
