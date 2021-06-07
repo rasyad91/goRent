@@ -2,13 +2,13 @@
 
 {{define "content"}}
 
-<section class="pb-6">
+<section class="pb-4 py-3">
       <div class="container">
       {{$res := index .Data "editUser"}}
       {{$form := index .Form}}
         <div class="row">
                   <!-- Customer Sidebar-->
-          <div class="col-xl-3 col-lg-4 mb-5">
+          <div class="col-lg-3 col-xl-3 mb-3">
             <div class="customer-sidebar card border-0"> 
               <div class="customer-profile"><a class="d-inline-block" href="#"><img class="img-fluid rounded-circle customer-image" src="https://d19m59y37dris4.cloudfront.net/varkala/1-2-1/img/avatar/avatar-0.jpg" alt=""></a>
                 <h5>Jane Doe</h5>
@@ -35,11 +35,14 @@
             </div>
           </div>
           <!-- /Customer Sidebar-->
-          <div class="col-lg-8 col-xl-9 mb-5 mb-lg-0">
+          <div class="col-lg-9 col-xl-9 mb-5 mb-lg-0">
             <h3 class="mb-5">Profile</h3>
+                {{with .Form.Errors.Get "login"}}
+                  <label class="text-danger">{{.}}</label>
+                {{end}}
                   <form method="POST" novalidate>
                     <input type="hidden" name="csrf_token" value="{{.CSRFToken }}">
- 
+                    <input type="hidden" name="action" value="profile">
                       <div class="row">
                         <div class="col-sm-6">
                           <div class="form-group">
@@ -67,12 +70,17 @@
             <hr class="mb-5">
             <div class="mb-5">
               <h3 class="mb-5">Change your password</h3>
-              <form>
+              <form method="POST" novalidate>
+                <input type="hidden" name="csrf_token" value="{{.CSRFToken }}">
+                <input type="hidden" name="action" value="password">
                 <div class="row">
                   <div class="col-sm-6">
                     <div class="form-group">
-                      <label class="form-label" for="password_old">Old password</label>
-                      <input class="form-control" id="password_old" type="password">
+                      <label class="form-label" name = "password_old" for="password_old">Old password</label>
+                      {{with $form.Errors.Get "password_old"}}
+                      <span for="password_old"  class="text-danger float-right">{{.}}</span>
+                      {{end}}
+                      <input class="form-control" name = "password_old" id="password_old" type="password">
                     </div>
                   </div>
                 </div>
@@ -80,13 +88,16 @@
                   <div class="col-sm-6">
                     <div class="form-group">
                       <label class="form-label" for="password_1">New password</label>
-                      <input class="form-control" id="password_1" type="password">
+                      {{with $form.Errors.Get "password"}}
+                      <span for="password"  class="text-danger float-right">{{.}}</span>
+                      {{end}}
+                      <input class="form-control" name = "password_1"  id="password_1" type="password">
                     </div>
                   </div>
                   <div class="col-sm-6">
                     <div class="form-group">
                       <label class="form-label" for="password_2">Retype new password</label>
-                      <input class="form-control" id="password_2" type="password">
+                      <input class="form-control" name = "password_2" id="password_2" type="password">
                     </div>
                   </div>
                 </div>
@@ -97,8 +108,9 @@
             </div>
             <hr class="mb-5">
             <h3 class="mb-5">Address</h3>
-                <form method="POST" novalidate>
-                    <input type="hidden" name="csrf_token" value="{{.CSRFToken }}">
+              <form method="POST" novalidate>
+                <input type="hidden" name="csrf_token" value="{{.CSRFToken }}">
+                <input type="hidden" name="action" value="address">
                     <div class="form-group row mb-3">
                         <div class="form-group col mb-3  ">
                             <label class="form-label"for="block">Block</label>
