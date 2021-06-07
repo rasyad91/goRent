@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"goRent/internal/form"
+	"goRent/internal/model"
 	"goRent/internal/render"
 	"net/http"
 )
@@ -8,8 +10,15 @@ import (
 func (m *Repository) UserAccount(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
 
+	data["editUser"] = model.User{
+		Username: "",
+		Email:    "",
+		Password: "",
+		Address:  model.Address{},
+	}
 	if err := render.Template(w, r, "account.page.html", &render.TemplateData{
 		Data: data,
+		Form: &form.Form{},
 	}); err != nil {
 		m.App.Error.Println(err)
 	}
@@ -22,8 +31,15 @@ func (m *Repository) GetCart(w http.ResponseWriter, r *http.Request) {
 func (m *Repository) EditUserAccount(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
 
+	data["editUser"] = model.User{
+		Username: "",
+		Email:    "",
+		Password: "",
+		Address:  model.Address{},
+	}
 	if err := render.Template(w, r, "profile.page.html", &render.TemplateData{
 		Data: data,
+		Form: &form.Form{},
 	}); err != nil {
 		m.App.Error.Println(err)
 	}

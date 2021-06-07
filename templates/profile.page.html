@@ -4,6 +4,8 @@
 
 <section class="pb-6">
       <div class="container">
+      {{$res := index .Data "editUser"}}
+      {{$form := index .Form}}
         <div class="row">
                   <!-- Customer Sidebar-->
           <div class="col-xl-3 col-lg-4 mb-5">
@@ -66,78 +68,47 @@
             </div>
             <hr class="mb-5">
             <h3 class="mb-5">Personal details</h3>
-            <form>
-              <div class="row">
-                <div class="col-sm-6">
-                  <div class="form-group">
-                    <label class="form-label" for="firstname">Firstname</label>
-                    <input class="form-control" id="firstname" type="text">
-                  </div>
-                </div>
-                <div class="col-sm-6">
-                  <div class="form-group">
-                    <label class="form-label" for="lastname">Lastname</label>
-                    <input class="form-control" id="lastname" type="text">
-                  </div>
-                </div>
-              </div>
-              <!-- /.row-->
-              <div class="row">
-                <div class="col-sm-6">
-                  <div class="form-group">
-                    <label class="form-label" for="company">Company</label>
-                    <input class="form-control" id="company" type="text">
-                  </div>
-                </div>
-                <div class="col-sm-6">
-                  <div class="form-group">
-                    <label class="form-label" for="street">Street</label>
-                    <input class="form-control" id="street" type="text">
-                  </div>
-                </div>
-              </div>
-              <!-- /.row-->
-              <div class="row">
-                <div class="col-sm-6 col-md-3">
-                  <div class="form-group">
-                    <label class="form-label" for="city">Company</label>
-                    <input class="form-control" id="city" type="text">
-                  </div>
-                </div>
-                <div class="col-sm-6 col-md-3">
-                  <div class="form-group">
-                    <label class="form-label" for="zip">ZIP</label>
-                    <input class="form-control" id="zip" type="text">
-                  </div>
-                </div>
-                <div class="col-sm-6 col-md-3">
-                  <div class="form-group">
-                    <label class="form-label" for="state">State</label>
-                    <select class="form-control" id="state"></select>
-                  </div>
-                </div>
-                <div class="col-sm-6 col-md-3">
-                  <div class="form-group">
-                    <label class="form-label" for="country">Country</label>
-                    <select class="form-control" id="country"></select>
-                  </div>
-                </div>
-                <div class="col-sm-6">
-                  <div class="form-group">
-                    <label class="form-label" for="phone">Telephone</label>
-                    <input class="form-control" id="phone" type="text">
-                  </div>
-                </div>
-                <div class="col-sm-6">
-                  <div class="form-group">
-                    <label class="form-label" for="emailAccount">Email</label>
-                    <input class="form-control" id="emailAccount" type="text">
-                  </div>
-                </div>
-              </div>
-              <!-- /.row-->
-              <div class="mt-4"></div>
-              <button class="btn btn-dark" type="submit"><i class="far fa-save mr-2"></i>Save changes</button>
+                <form method="POST" novalidate>
+                    <input type="hidden" name="csrf_token" value="{{.CSRFToken }}">
+                    <div class="form-group row mb-3">
+                        <div class="form-group col mb-3  ">
+                            <label class="form-label"for="block">Block</label>
+                            {{with $form.Errors.Get "block"}}
+                                <span for="block"  class="text-danger float-right">{{.}}</span>
+                            {{end}}
+                            <input type="text" class="form-control {{with .Form.Errors.Get "block"}} is-invalid{{end}}" name="block" placeholder=" 246" value="{{$res.Address.Block}}">
+
+                        </div>
+                        <div class="form-group col mb-3 ">
+                            <label class="form-label"for="streetname">Street Name</label>
+                            {{with $form.Errors.Get "streetName"}}
+                                <span for="streetName"  class="text-danger float-right">{{.}}</span>
+                            {{end}}
+                            <input type="text" class="form-control {{with .Form.Errors.Get "streetName"}} is-invalid{{end}}" name="streetName" placeholder=" 1234 Main St" value="{{$res.Address.StreetName}}">
+
+                        </div>
+                    </div>
+
+                    <div class="form-group row mb-3">
+                        <div class="form-group col mb-3 ">
+                            <label class="form-label" for="unitnumber">Unit Number</label>
+                            {{with $form.Errors.Get "unitNumber"}}
+                                <span for="unitNumber"  class="text-danger float-right">{{.}}</span>
+                            {{end}}
+                            <input type="text" class="form-control {{with .Form.Errors.Get "unitNumber"}} is-invalid{{end}}" name="unitNumber" placeholder=" #04-23" value="{{$res.Address.UnitNumber}}">
+                        </div>
+                        <div class="form-group col mb-3 ">
+                            <label class="form-label" for="postalCode">Postal Code</label>
+                            {{with $form.Errors.Get "postalCode"}}
+                                <span for="postalCode"  class="text-danger float-right">{{.}}</span>
+                            {{end}}
+                            <input type="text" class="form-control {{with .Form.Errors.Get "postalCode"}} is-invalid{{end}}" name="postalCode" placeholder=" 519231" value="{{$res.Address.PostalCode}}">
+                        </div>
+                    </div>
+    
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-outline-dark btn-lg">Create account</button>
+                    </div>
             </form>
           </div>
         </div>
