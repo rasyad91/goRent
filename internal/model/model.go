@@ -1,6 +1,8 @@
 package model
 
-import "time"
+import (
+	"time"
+)
 
 type User struct {
 	ID          int
@@ -26,18 +28,18 @@ type Address struct {
 }
 
 type Product struct {
-	ID          int
-	OwnerID     int
-	Brand       string
-	Category    string
-	Title       string
-	Rating      float32
-	Description string
-	Price       float32
+	ID          int             `json:"ID"`
+	OwnerID     int             `json:"owner_id"`
+	Brand       string          `json:"brand_name"`
+	Category    string          `json:"category_name"`
+	Title       string          `json:"title"`
+	Rating      float32         `json:"rating"`
+	Description string          `json:"description"`
+	Price       float32         `json:"price"`
 	Reviews     []ProductReview // where ID = ProductReview.ProductID from reviews table
-	Images      []string
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	Images      []string        `json:"img1_url"`
+	CreatedAt   time.Time       `json:"create_at"`
+	UpdatedAt   time.Time       `json:"updated_at`
 }
 
 type Restriction struct {
@@ -84,4 +86,18 @@ type ProductReview struct {
 	Rating       float32
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
+}
+
+type ElasticSearchProductSample struct {
+	ID          int       `json:"ID"`
+	OwnerID     int       `json:"owner_id"`
+	Brand       string    `json:"brand_name"`
+	Category    string    `json:"category"`
+	Title       string    `json:"title"`
+	Rating      float32   `json:"rating"`
+	Description string    `json:"description"`
+	Price       float32   `json:"price"`
+	CreatedAt   time.Time `json:"create_at"`
+	UpdatedAt   time.Time `json:"updated_at`
+	Images      []string  `json:"img1_url"`
 }

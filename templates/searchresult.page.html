@@ -1,26 +1,6 @@
 {{template "base" .}}
 
 {{define "content"}}
-{{$res := index .Data "user"}}
-{{if $res.Username}}
-
-<article class="mt-5" style="display: grid; place-items: center;">
-    <h1>
-        Welcome, {{$res.Username}}
-    </h1>
-    <a title="Sofia Lucas, CC BY-SA 4.0 &lt;https://creativecommons.org/licenses/by-sa/4.0&gt;, via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:Scottish_fold_cat.jpg"><img width="512" alt="Scottish fold cat" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Scottish_fold_cat.jpg/512px-Scottish_fold_cat.jpg"></a>
-
-</article>
-
-{{else}}
-
-<div class="mt-5" style="display: grid; place-items: center;">
-    <h1>
-        Sign in to see content
-    </h1>
-</div>
-
-{{end}}
 
 
 <div class="container pb-5"></div> 
@@ -44,6 +24,8 @@
 </div></div>
 
 <div class="container">
+
+
 
 <div class="row">
 
@@ -106,7 +88,13 @@
 
 {{end}}
 
+
 </div> <!-- row.// -->
+
+
+
+
+
 
 
 </div> 
