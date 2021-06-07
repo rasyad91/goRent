@@ -39,7 +39,7 @@ type Product struct {
 	Reviews     []ProductReview // where ID = ProductReview.ProductID from reviews table
 	Images      []string        `json:"img1_url"`
 	CreatedAt   time.Time       `json:"create_at"`
-	UpdatedAt   time.Time       `json:"updated_at`
+	UpdatedAt   time.Time       `json:"updated_at"`
 }
 
 type Restriction struct {
@@ -98,6 +98,6 @@ type ElasticSearchProductSample struct {
 	Description string    `json:"description"`
 	Price       float32   `json:"price"`
 	CreatedAt   time.Time `json:"create_at"`
-	UpdatedAt   time.Time `json:"updated_at`
+	UpdatedAt   time.Time `json:"updated_at"`
 	Images      []string  `json:"img1_url"`
 }

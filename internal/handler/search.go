@@ -10,12 +10,9 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/aws/aws-sdk-go/aws/credentials"
 	// "github.com/olivere/elastic/aws"
 	// "github.com/olivere/elastic"
 	"github.com/olivere/elastic/v7"
-
-	aws "github.com/olivere/elastic/aws/v4"
 )
 
 func (m *Repository) Search(w http.ResponseWriter, r *http.Request) {
@@ -30,17 +27,7 @@ func (m *Repository) Search(w http.ResponseWriter, r *http.Request) {
 
 func (m *Repository) SearchResult(w http.ResponseWriter, r *http.Request) {
 
-	awsSigningFn := awsSigning(m.App.AwsAccessKey, m.App.AwsSecretKey, m.App.AwsRegion)
-	awsClient, err := awsCreateClient(m.App.AwsUrl, m.App.AwsSniff, awsSigningFn)
-
-	trialMultiSearchQuery(awsClient)
-
-	fmt.Printf("\n\n\n\n\n")
-
-	if err != nil {
-		m.App.Error.Println(err)
-	}
-
+	trialMultiSearchQuery(m.App.AWSClient)
 	var data = make(map[string]interface{})
 	var product []model.Product
 	// var urlquery string
@@ -50,9 +37,9 @@ func (m *Repository) SearchResult(w http.ResponseWriter, r *http.Request) {
 	searchkeywords := strings.ToLower(url.QueryEscape(x["q"][0])) //hockey+sticks
 
 	if len(searchkeywords) == 0 {
-		product = searchEmptyQuery(awsClient)
+		product = searchEmptyQuery(m.App.AWSClient)
 	} else {
-		product = searchQuery(awsClient, searchkeywords)
+		product = searchQuery(m.App.AWSClient, searchkeywords)
 	}
 
 	data["product"] = product
@@ -62,35 +49,6 @@ func (m *Repository) SearchResult(w http.ResponseWriter, r *http.Request) {
 	}); err != nil {
 		m.App.Error.Println(err)
 	}
-
-}
-
-func awsSigning(awsAccesKey, awsSecretKey, awsRegoin string) *http.Client {
-
-	signingClient := aws.NewV4SigningClient(credentials.NewStaticCredentials(
-		awsAccesKey,
-		awsSecretKey,
-		"",
-	), awsRegoin)
-
-	return signingClient
-
-}
-
-func awsCreateClient(url string, sniff bool, signingClient *http.Client) (*elastic.Client, error) {
-
-	client, err := elastic.NewClient(
-		elastic.SetURL(url),
-		elastic.SetSniff(sniff),
-		elastic.SetHealthcheck(false),
-		elastic.SetHttpClient(signingClient),
-	)
-	if err != nil {
-		// log.Fatal(err)
-		return client, err
-	}
-
-	return client, nil
 
 }
 

@@ -80,6 +80,7 @@ func (m *Repository) PostReview(w http.ResponseWriter, r *http.Request) {
 		Rating:       float32(rating),
 	}
 
+	// Add to mutex
 	if err := m.DB.CreateProductReview(pr); err != nil {
 		m.App.Error.Println(err)
 	}
