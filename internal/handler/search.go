@@ -112,12 +112,9 @@ func searchEmptyQuery(client *elastic.Client) []model.Product {
 		if err != nil {
 			// Deserialization failed
 			fmt.Println("error unmarshaling json", err)
-
 		}
 		product = append(product, t)
-
 	}
-
 	fmt.Println(product)
 	return product
 
