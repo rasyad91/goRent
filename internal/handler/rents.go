@@ -119,6 +119,6 @@ func (m *Repository) DeleteRent(w http.ResponseWriter, r *http.Request) {
 	eu, _ := m.DB.GetUser(u.Username)
 	m.App.Session.Put(r.Context(), "user", eu)
 
-	m.App.Session.Put(r.Context(), "flash", "Rent removed from cart!")
+	m.App.Session.Put(r.Context(), "flash", fmt.Sprintf("Rent #%d removed from cart!", rentID))
 	http.Redirect(w, r, "/v1/user/cart", http.StatusSeeOther)
 }
