@@ -35,7 +35,9 @@ var (
 
 func init() {
 	gob.Register(model.User{})
+	gob.Register(model.Product{})
 	gob.Register([]model.Product{})
+	gob.Register([]model.Rent{})
 
 }
 

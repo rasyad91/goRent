@@ -65,43 +65,43 @@ func (t *Trie) GetSuggestion2(query string, total int, c chan []string) { //edit
 		switch r[i] {
 		case 32: //represents value space on the keyboard
 			r[i] = 123
-			break
+
 		case 39:
 			r[i] = 124 //represents value ' on the keyboard
-			break
+
 		case 45: // represents value - on the keyboard
 			r[i] = 125
-			break
+
 		case 48: //represents value 0 on the keyboard
 			r[i] = 126
-			break
+
 		case 49: //represents value 1 on the keyboard
 			r[i] = 127
-			break
+
 		case 50: //represents value 2 on the keyboard
 			r[i] = 128
-			break
+
 		case 51: //represents value 3 on the keyboard
 			r[i] = 129
-			break
+
 		case 52: //represents value 4 on the keyboard
 			r[i] = 130
-			break
+
 		case 53: //represents value 5 on the keyboard
 			r[i] = 131
-			break
+
 		case 54: //represents value 6 on the keyboard
 			r[i] = 132
-			break
+
 		case 55: //represents value 7 on the keyboard
 			r[i] = 133
-			break
+
 		case 56: //represents value 8 on the keyboard
 			r[i] = 134
-			break
+
 		case 57: //represents value 9 on the keyboard
 			r[i] = 135
-			break
+
 		}
 		charIndex := r[i] - 'a'
 		if currentNode.children[charIndex] == nil {
@@ -133,7 +133,6 @@ func (t *Trie) GetSuggestion2(query string, total int, c chan []string) { //edit
 	}
 
 	c <- result
-	return
 }
 
 func Suggestion(prefix string, wordList []string, repeat int, currentNode *Node) (int, []string) { //edit

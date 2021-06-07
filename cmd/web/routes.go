@@ -20,10 +20,6 @@ func routes() http.Handler {
 	mux.HandleFunc("/search", handler.Repo.Search).Methods("GET")
 	mux.HandleFunc("/searchresult", handler.Repo.SearchResult).Methods("GET")
 
-	mux.PathPrefix("/user").Subrouter().Use(Auth)
-
-	mux.HandleFunc("/logout", handler.Repo.Logout).Methods("GET")
-
 	mux.HandleFunc("/login", handler.Repo.Login).Methods("GET")
 	mux.HandleFunc("/login", handler.Repo.LoginPost).Methods("POST")
 
@@ -37,11 +33,17 @@ func routes() http.Handler {
 	mux.HandleFunc("/user/{userID}/products", handler.Repo.UserProducts).Methods("GET")
 
 	mux.HandleFunc("/user/logout", handler.Repo.Logout).Methods("GET")
+	mux.HandleFunc("/v1/user/account", handler.Repo.UserAccount).Methods("GET")
 
-	// sub := mux.NewRoute().Subrouter()
-	// sub.Use(handler.ValidationAPIMiddleware)
+	mux.PathPrefix("/auth").Subrouter().Use(Auth)
 
-	mux.HandleFunc("/v1/products/{productId}", handler.Repo.ShowProductByID).Methods("GET")
+	mux.HandleFunc("/v1/products/{productID}", handler.Repo.ShowProductByID).Methods("GET")
+	mux.HandleFunc("/v1/products/addRent", handler.Repo.PostRent).Methods("POST")
+	mux.HandleFunc("/v1/products/removeRent", handler.Repo.DeleteRent).Methods("POST")
+
+	mux.HandleFunc("/v1/products/{productID}/review", handler.Repo.PostReview).Methods("POST")
+
+	mux.HandleFunc("/v1/user/cart", handler.Repo.GetCart).Methods("GET")
 
 	fileServer := http.FileServer(http.Dir("./static/"))
 	mux.PathPrefix("/static/").Handler(http.StripPrefix("/static", fileServer))

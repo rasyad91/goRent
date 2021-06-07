@@ -3,7 +3,6 @@ create_table("user_reviews") {
   t.Column("reviewer_id", "integer", {})
   t.Column("reviewer_name", "string", {})
   t.Column("receiver_id", "integer", {})
-  t.Column("title", "string", {"size": 60})
   t.Column("body", "string", {"size": 500})
   t.Column("rating", "float", {"scale": 1, "precision": 2})
 }
@@ -26,7 +25,6 @@ create_table("product_reviews") {
   t.Column("reviewer_id", "integer", {})
   t.Column("reviewer_name", "string", {})
   t.Column("product_id", "integer", {})
-  t.Column("title", "string", {"size": 60})
   t.Column("body", "string", {"size": 500})
   t.Column("rating", "float", {"scale": 1, "precision": 2})
 }

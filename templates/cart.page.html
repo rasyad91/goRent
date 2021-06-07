@@ -1,0 +1,125 @@
+{{template "base" .}}
+
+{{define "content"}}
+{{$u := index .User}}
+{{$csrf := index .CSRFToken}}
+
+
+<section class="hero py-6">
+    <div class="container">
+        <!-- Breadcrumbs -->
+        <ol class="breadcrumb pl-0 ">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item active">Booking cart </li>
+        </ol>
+        <!-- Hero Content-->
+        <div class="hero-content">
+            <h1 class="hero-heading">Booking cart</h1>
+            <div>
+                <p class="lead text-muted">You have {{ len (unprocessedRents $u.Rents) }} items in your cart.</p>
+            </div>
+        </div>
+    </div>
+</section>
+<section>
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-lg-8 pr-xl-5">
+                <div class="cart mb-5">
+                    <div class="cart-body">
+                        <!-- Product-->
+                        {{range $index := (unprocessedRents $u.Rents)}}
+
+
+                        <div class="cart-item">
+                            <div class="row d-flex align-items-center text-left text-md-center">
+                                <div class="col-12 col-md-5"><a class="cart-remove close mt-3 d-md-none" href="#"><i
+                                            class="fa fa-times"> </i></a>
+                                    <div class="d-flex align-items-center"><a href=""><img class="cart-item-img" src=""
+                                                alt="..."></a>
+                                        <div class="cart-title text-left"><a class="text-dark link-animated"
+                                                href="/v1/products/{{.Product.ID}}"><strong>{{.Product.Title}}</strong></a>
+                                            <br><span class="text-muted text-sm">Brand: {{.Product.Brand}}</span>
+                                            <br><span class="text-muted text-sm">Category: {{.Product.Category}}</span>
+                                            <br><span class="text-muted text-sm">Price: {{.Product.Price}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-7 mt-4 mt-md-0">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-7">
+                                            <div class="row">
+                                                <div class="col-6 d-md-none text-muted">Start Date</div>
+                                                <div class="col-6 col-md-12 text-right text-md-center">
+                                                    <span><strong>Start: </strong></span>
+                                                    {{shortDate .StartDate}}
+                                                </div>
+                                                <div class="col-6 col-md-12 text-right text-md-center">
+                                                    <span><strong>End: </strong></span>
+                                                    {{shortDate .EndDate}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="row">
+                                                <div class="col-6 d-md-none text-muted">Total price </div>
+                                                <div class="col-6 col-md-12 text-right text-md-center">${{.TotalCost}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-2 d-none d-md-block text-center">
+                                            <form action="/v1/products/removeRent" method="POST">
+                                                <input type="hidden" name="csrf_token" value="{{$csrf}}">
+                                                <input type="hidden" name="rent_id" value="{{.ID}}">
+
+                                                <button class="btn" action="submit">
+                                                    <i class="far fa-times-circle fa-2x"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{end}}
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between flex-column flex-lg-row mb-5 mb-lg-0">
+                    <a class="btn btn-outline-dark btn-block" href="#">
+                        Checkout </a>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card mb-5">
+                    <div class="card-header">
+                        <h6 class="mb-0">Order Summary</h6>
+                    </div>
+                    <div class="card-body py-4">
+                        <p class="text-muted text-sm">Shipping and additional costs are calculated based on values you
+                            have entered.</p>
+                        <table class="table card-text">
+                            <tbody>
+                                <tr>
+                                    <th class="py-4">Order Subtotal </th>
+                                    <td class="py-4 text-right text-muted">
+                                        ${{format2DP (totalCostInCart (unprocessedRents $u.Rents))}}</td>
+                                </tr>
+                                <tr>
+                                    <th class="py-4">Self-delivery</th>
+                                    <td class="py-4 text-right text-muted"> - </td>
+                                </tr>
+                                <tr>
+                                    <th class="pt-4">Total</th>
+                                    <td class="pt-4 text-right h3 font-weight-normal">
+                                        ${{format2DP (add (totalCostInCart (unprocessedRents $u.Rents)))}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{{end}}

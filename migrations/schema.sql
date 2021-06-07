@@ -49,7 +49,6 @@ CREATE TABLE `product_reviews` (
   `reviewer_id` int NOT NULL,
   `reviewer_name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `product_id` int NOT NULL,
-  `title` varchar(60) COLLATE utf8mb4_general_ci NOT NULL,
   `body` varchar(500) COLLATE utf8mb4_general_ci NOT NULL,
   `rating` float(2,1) NOT NULL,
   `created_at` datetime NOT NULL,
@@ -83,7 +82,7 @@ CREATE TABLE `products` (
   PRIMARY KEY (`id`),
   KEY `products_users_id_fk` (`owner_id`),
   CONSTRAINT `products_users_id_fk` FOREIGN KEY (`owner_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -99,6 +98,7 @@ CREATE TABLE `rents` (
   `renter_id` int NOT NULL,
   `product_id` int NOT NULL,
   `restriction_id` int NOT NULL,
+  `processed` tinyint(1) NOT NULL DEFAULT '0',
   `total_cost` float(12,2) NOT NULL,
   `duration` int NOT NULL,
   `start_date` datetime NOT NULL,
@@ -114,7 +114,7 @@ CREATE TABLE `rents` (
   CONSTRAINT `rents_restrictions_id_fk` FOREIGN KEY (`restriction_id`) REFERENCES `restrictions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `rents_users_owner_id_fk` FOREIGN KEY (`owner_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `rents_users_renter_id_fk` FOREIGN KEY (`renter_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -130,7 +130,7 @@ CREATE TABLE `restrictions` (
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -174,7 +174,6 @@ CREATE TABLE `user_reviews` (
   `reviewer_id` int NOT NULL,
   `reviewer_name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `receiver_id` int NOT NULL,
-  `title` varchar(60) COLLATE utf8mb4_general_ci NOT NULL,
   `body` varchar(500) COLLATE utf8mb4_general_ci NOT NULL,
   `rating` float(2,1) NOT NULL,
   `created_at` datetime NOT NULL,
@@ -210,7 +209,7 @@ CREATE TABLE `users` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_username_idx` (`username`),
   UNIQUE KEY `users_email_idx` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -222,4 +221,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-06-04  9:21:35
+-- Dump completed on 2021-06-06 13:38:16
