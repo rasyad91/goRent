@@ -19,6 +19,15 @@ func (m *Repository) GetCart(w http.ResponseWriter, r *http.Request) {
 
 	// data := make(map[string]interface{})
 }
+func (m *Repository) EditUserAccount(w http.ResponseWriter, r *http.Request) {
+	data := make(map[string]interface{})
+
+	if err := render.Template(w, r, "profile.page.html", &render.TemplateData{
+		Data: data,
+	}); err != nil {
+		m.App.Error.Println(err)
+	}
+}
 
 // func (m *Repository) UserAccount(w http.ResponseWriter, r *http.Request) {
 // 	if f := m.App.Session.Get(r.Context(), "flash"); f != nil {
