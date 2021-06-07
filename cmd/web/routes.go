@@ -30,6 +30,8 @@ func routes() http.Handler {
 	mux.HandleFunc("/register", handler.Repo.Register).Methods("GET")
 	mux.HandleFunc("/register", handler.Repo.RegisterPost).Methods("POST")
 
+	mux.HandleFunc("/user/{userID}/account", handler.Repo.UserAccount).Methods("GET")
+
 	mux.HandleFunc("/user/{userID}/bookings", handler.Repo.UserBookings).Methods("GET")
 	mux.HandleFunc("/user/{userID}/rents", handler.Repo.UserRents).Methods("GET")
 	mux.HandleFunc("/user/{userID}/products", handler.Repo.UserProducts).Methods("GET")
