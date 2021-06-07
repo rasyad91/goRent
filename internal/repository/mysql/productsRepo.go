@@ -61,46 +61,6 @@ func (m *DBrepo) GetProductByID(id int) (model.Product, error) {
 	return p, nil
 }
 
-func (m *DBrepo) GetRentsByProductID(id int) ([]model.Rent, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
-
-	rents := []model.Rent{}
-
-	query := `select 
-	id, owner_id, renter_id, product_id, restriction_id, start_date, end_date, created_at, updated_at
-		from rents
-		where product_id = ? and processed = true`
-
-	rows, err := m.DB.QueryContext(ctx, query, id)
-	if err != nil {
-		return nil, fmt.Errorf("db line76 getrentbyproductid: %v", err)
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		r := model.Rent{}
-		if err := rows.Scan(
-			&r.ID,
-			&r.OwnerID,
-			&r.RenterID,
-			&r.ProductID,
-			&r.RestrictionID,
-			&r.StartDate,
-			&r.EndDate,
-			&r.CreatedAt,
-			&r.UpdatedAt,
-		); err != nil {
-			return nil, fmt.Errorf("db getrentbyproductid: %v", err)
-		}
-		rents = append(rents, r)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("db getrentbyproductid: %v", err)
-	}
-	return rents, nil
-}
-
 func (m *DBrepo) CreateProductReview(pr model.ProductReview) error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -156,29 +116,42 @@ func (m *DBrepo) CreateProductReview(pr model.ProductReview) error {
 	return nil
 }
 
-func (m *DBrepo) CreateRent(r model.Rent) error {
+func (m *DBrepo) GetAllProducts() ([]model.Product, error) {
+
+	var products []model.Product
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	query := `INSERT INTO rents (owner_id, renter_id, product_id, restriction_id, processed,duration, total_cost, start_date, end_date, created_at, updated_at)
-				VALUES (?,?,?,?,?,?,?,?,?,?,?)`
+	query := `select id, owner_id, brand, title, rating, description, price, created_at, updated_at from products`
 
-	if _, err := m.DB.ExecContext(ctx, query,
-		r.OwnerID,
-		r.RenterID,
-		r.ProductID,
-		1,
-		false,
-		r.Duration,
-		r.TotalCost,
-		r.StartDate,
-		r.EndDate,
-		time.Now(),
-		time.Now(),
-	); err != nil {
-		return fmt.Errorf("db createrent: %v", err)
+	rows, err := m.QueryContext(ctx, query)
+	if err != nil {
+		return nil, err
 	}
+	defer rows.Close()
 
-	return nil
+	for rows.Next() {
+		p := model.Product{}
+		err := rows.Scan(
+			&p.ID,
+			&p.OwnerID,
+			&p.Brand,
+			&p.Title,
+			&p.Rating,
+			&p.Description,
+			&p.Price,
+			&p.CreatedAt,
+			&p.UpdatedAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+		// RentalProductsList = append(RentalProductsList, strings.ToLower(title)+" - "+strings.ToLower(brand))
+		products = append(products, p)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return products, nil
 }

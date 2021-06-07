@@ -15,6 +15,10 @@ var function = template.FuncMap{
 	"floatToInt":       FloatToInt,
 	"substract":        Substract,
 	"unprocessedRents": UnprocessedRents,
+	"multiply":         Multiply,
+	"add":              Add,
+	"totalCostInCart":  TotalCostInCart,
+	"format2DP":        Format2DP,
 }
 
 // returns a slice of ints, starting at 1 going to count
@@ -41,6 +45,14 @@ func Substract(x, y int) int {
 	return x - y
 }
 
+func Add(x ...float32) float32 {
+	var result float32
+	for _, v := range x {
+		result = result + v
+	}
+	return result
+}
+
 func UnprocessedRents(rents []model.Rent) []model.Rent {
 	unprocessed := []model.Rent{}
 	for _, r := range rents {
@@ -48,6 +60,22 @@ func UnprocessedRents(rents []model.Rent) []model.Rent {
 			unprocessed = append(unprocessed, r)
 		}
 	}
-	fmt.Println(unprocessed)
 	return unprocessed
+}
+
+func Multiply(x int, y float32) float32 {
+	result := float32(x) * y
+	return result
+}
+
+func TotalCostInCart(rents []model.Rent) float32 {
+	var total float32
+	for _, x := range rents {
+		total = total + x.TotalCost
+	}
+	return total
+}
+
+func Format2DP(x float32) string {
+	return fmt.Sprintf("%.2f", x)
 }

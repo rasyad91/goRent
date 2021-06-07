@@ -53,9 +53,15 @@ func (m *DBrepo) GetUser(username string) (model.User, error) {
 
 	// get rents
 	query := `select 
-	id, owner_id, renter_id, product_id, restriction_id, processed, start_date, end_date, created_at, updated_at
-		from rents
-		where renter_id = ?`
+			r.id, r.owner_id, r.renter_id, r.product_id, r.restriction_id, r.processed, r.start_date, r.end_date, r.duration, r.total_cost, r.created_at, r.updated_at,
+			p.id, p.owner_id, p.brand, p.category, p.title, p.rating, p.description, p.price, p.created_at, p.updated_at
+		from 
+			rents r 
+		left join 
+			products p on (p.id = r.product_id)
+		where 
+			r.renter_id = ?`
+
 	rows, err := tx.QueryContext(ctx, query, u.ID)
 	if err != nil {
 		return model.User{}, fmt.Errorf("db GetUser: %v", err)
@@ -73,8 +79,20 @@ func (m *DBrepo) GetUser(username string) (model.User, error) {
 			&r.Processed,
 			&r.StartDate,
 			&r.EndDate,
+			&r.Duration,
+			&r.TotalCost,
 			&r.CreatedAt,
 			&r.UpdatedAt,
+			&r.Product.ID,
+			&r.Product.OwnerID,
+			&r.Product.Brand,
+			&r.Product.Category,
+			&r.Product.Title,
+			&r.Product.Rating,
+			&r.Product.Description,
+			&r.Product.Price,
+			&r.Product.CreatedAt,
+			&r.Product.UpdatedAt,
 		); err != nil {
 			return model.User{}, fmt.Errorf("db GetUser: %v", err)
 		}
@@ -98,44 +116,4 @@ func (m *DBrepo) InsertUser(u model.User) error {
 		return fmt.Errorf("db InsertUser: %v", err)
 	}
 	return nil
-}
-
-func (m *DBrepo) GetAllProducts() ([]model.Product, error) {
-
-	var products []model.Product
-
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
-
-	query := `select id, owner_id, brand, title, rating, description, price, created_at, updated_at from products`
-
-	rows, err := m.QueryContext(ctx, query)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		p := model.Product{}
-		err := rows.Scan(
-			&p.ID,
-			&p.OwnerID,
-			&p.Brand,
-			&p.Title,
-			&p.Rating,
-			&p.Description,
-			&p.Price,
-			&p.CreatedAt,
-			&p.UpdatedAt,
-		)
-		if err != nil {
-			return nil, err
-		}
-		// RentalProductsList = append(RentalProductsList, strings.ToLower(title)+" - "+strings.ToLower(brand))
-		products = append(products, p)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return products, nil
 }

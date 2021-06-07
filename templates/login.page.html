@@ -22,14 +22,14 @@
                             {{with $form.Errors.Get "username"}}
                             <span for="username"  class="text-danger float-right">{{.}}</span>
                             {{end}}
-                            <input type="username" class="form-control  {{with .Form.Errors.Get "username"}} is-invalid{{end}}" name="username" placeholder="Username" value="{{$res.Username}}">
+                            <input type="username" class="form-control  {{with .Form.Errors.Get "login"}} is-invalid{{end}}" name="username" placeholder="Username" value="{{$res.Username}}">
                     </div>
                     <div class="form-group mb-3 ">
                             <label class="form-label"for="password">Password</label> 
                             {{with $form.Errors.Get "password"}}
                             <span for="password"  class="text-danger float-right">{{.}}</span>
                             {{end}}
-                            <input type="password" class="form-control  {{with .Form.Errors.Get "password"}} is-invalid{{end}}" name="password" placeholder="password" value="{{$res.Password}}">
+                            <input type="password" class="form-control  {{with .Form.Errors.Get "login"}} is-invalid{{end}}" name="password" placeholder="password" value="{{$res.Password}}">
                     </div>
                     <button type="submit" class="btn btn-outline-dark btn-lg">Sign in</button>
                 </form>
