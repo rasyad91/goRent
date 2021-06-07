@@ -119,21 +119,21 @@ func (m *DBrepo) InsertUser(u model.User) error {
 }
 
 func (m *DBrepo) EditUser(u model.User, editType string) error {
-	// ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	// defer cancel()
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
 	err := error(nil)
 	if editType == "address" {
-		// _, err = m.ExecContext(ctx, "UPDATE goRent.users SET block = ?, street_name = ?, unit_number = ?, postal_code = ? WHERE id = ?", u.Address.Block, u.Address.StreetName, u.Address.UnitNumber, u.Address.PostalCode, u.ID)
+		_, err = m.ExecContext(ctx, "UPDATE goRent.users SET block = ?, street_name = ?, unit_number = ?, postal_code = ? WHERE id = ?", u.Address.Block, u.Address.StreetName, u.Address.UnitNumber, u.Address.PostalCode, u.ID)
 		fmt.Println("AddressChange test:", u)
 	} else if editType == "profile" {
-		// _, err = m.ExecContext(ctx, "UPDATE goRent.users SET username = ?, email = ? WHERE id = ?", u.Username, u.Email, u.ID)
+		_, err = m.ExecContext(ctx, "UPDATE goRent.users SET username = ?, email = ? WHERE id = ?", u.Username, u.Email, u.ID)
 		fmt.Println("ProfileChange test:", u)
 	} else {
-		// _, err = m.ExecContext(ctx, "UPDATE goRent.users SET password = ? WHERE id = ?", u.Password, u.ID)
+		_, err = m.ExecContext(ctx, "UPDATE goRent.users SET password = ? WHERE id = ?", u.Password, u.ID)
 		fmt.Println("PassWordChange test:", u)
 	}
 	if err != nil {
-		return fmt.Errorf("db InsertUser: %v", err)
+		return fmt.Errorf("db EditUser: %v", err)
 	}
 	return nil
 }

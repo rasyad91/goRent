@@ -11,26 +11,31 @@
           <div class="col-lg-3 col-xl-3 mb-3">
             <div class="customer-sidebar card border-0"> 
               <div class="customer-profile"><a class="d-inline-block" href="#"><img class="img-fluid rounded-circle customer-image" src="https://d19m59y37dris4.cloudfront.net/varkala/1-2-1/img/avatar/avatar-0.jpg" alt=""></a>
-                <h5>Jane Doe</h5>
+                <h5>{{$res.Username}}</h5>
                 <p class="text-muted text-sm mb-0">Los Angeles, CA</p>
               </div>
-              <nav class="list-group customer-nav"><a class="list-group-item d-flex justify-content-between align-items-center" href="customer-orders.html"><span>
+              <nav class="list-group customer-nav">
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/account">
+                  <span>
                     <svg class="svg-icon svg-icon-heavy mr-2">
-                      <use xlink:href="#paper-bag-1"> </use>
-                    </svg>Orders</span>
-                  <div class="badge badge-pill badge-dark font-weight-normal px-3">5</div></a><a class="active list-group-item d-flex justify-content-between align-items-center" href="customer-account.html"><span>
+                    </svg>Account</span>
+                </a>
+                <a class="active list-group-item d-flex justify-content-between align-items-center" href="/v1/user/account/profile"><span>
                     <svg class="svg-icon svg-icon-heavy mr-2">
-                      <use xlink:href="#male-user-1"> </use>
-                    </svg>Profile</span></a><a class="list-group-item d-flex justify-content-between align-items-center" href="customer-addresses.html"><span>
+                    </svg>Edit Profile</span>
+                </a>
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/account/payment"><span>
                     <svg class="svg-icon svg-icon-heavy mr-2">
                       <use xlink:href="#real-estate-1"> </use>
-                    </svg>Addresses</span></a><a class="list-group-item d-flex justify-content-between align-items-center" href="customer-wishlist.html"><span>
+                    </svg>Payment</span></a>
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/cart"><span>
                     <svg class="svg-icon svg-icon-heavy mr-2">
                       <use xlink:href="#heart-1"> </use>
-                    </svg>Wishlist</span></a><a class="list-group-item d-flex justify-content-between align-items-center" href="customer-login.html"><span>
+                    </svg>Cart</span></a>
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/user/logout"><span>
                     <svg class="svg-icon svg-icon-heavy mr-2">
-                      <use xlink:href="#exit-1"> </use>
-                    </svg>Log out</span></a>
+                    </svg>Log out</span>
+                </a>
               </nav>
             </div>
           </div>

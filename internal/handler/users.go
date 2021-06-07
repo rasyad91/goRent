@@ -12,7 +12,13 @@ import (
 
 func (m *Repository) UserAccount(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
-
+	u := m.App.Session.Get(r.Context(), "user").(model.User)
+	data["user"] = model.User{
+		Username: u.Username,
+		Email:    u.Email,
+		Password: "",
+		Address:  u.Address,
+	}
 	if err := render.Template(w, r, "account.page.html", &render.TemplateData{
 		Data: data,
 	}); err != nil {
@@ -99,16 +105,24 @@ func (m *Repository) EditUserAccountPost(w http.ResponseWriter, r *http.Request)
 	}
 	m.DB.EditUser(u, action)
 	fmt.Println("SUCCESSFULLY TRIGGERED DB")
-	// form := form.New(r.PostForm)
-	// fmt.Println("FORM:", form)
-	// form.Required("block", "streetName", "unitNumber", "postalCode")
-	// form.CheckLength("block", 1, 10)
-	// form.CheckLength("streetName", 1, 255)
-	// form.CheckLength("unitNumber", 1, 10)
-	// form.CheckLength("postalCode", 1, 10)
-	// fmt.Println(newUser)
+	if action == "address" {
+		m.App.Session.Put(r.Context(), "flash", "Address Updated!")
+	} else if action == "profile" {
+		m.App.Session.Put(r.Context(), "flash", "Profile Name Updated!")
+	} else {
+		m.App.Session.Put(r.Context(), "flash", "Password Updated!")
+	}
 	http.Redirect(w, r, "/v1/user/account/profile", http.StatusSeeOther)
 
+}
+func (m *Repository) Payment(w http.ResponseWriter, r *http.Request) {
+	data := make(map[string]interface{})
+
+	if err := render.Template(w, r, "payment.page.html", &render.TemplateData{
+		Data: data,
+	}); err != nil {
+		m.App.Error.Println(err)
+	}
 }
 
 func (m *Repository) GetCart(w http.ResponseWriter, r *http.Request) {
