@@ -90,7 +90,11 @@
             <li>
               <strong>Category:</strong>
               <a class="text-muted" href="/searchresult?q={{$res.Category}}">{{$res.Category}}</a></li>
-          </ul>
+            </ul>
+            <li>
+              <strong>User:</strong>
+              <a class="text-muted" href="/searchresult?q={{$res.Category}}">{{$res.Category}}</a></li>
+            </ul>
 
           <form id="addRent" action="/v1/products/addRent" method="POST">
             <input type="hidden" name="csrf_token" value="{{.CSRFToken }}">

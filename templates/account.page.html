@@ -50,38 +50,96 @@
           <!-- /Customer Sidebar-->
           <div class="col-lg-9 col-xl-9 mb-5 mb-lg-0">
             <div class = "container" style = "height:80%">
-                <h5>My Products</h5>
+                <h5><a href="#">My Products</a></h5>
+                {{$products := $res.Products}}
                 <div class="swiper-container swiper-container-initialized swiper-container-horizontal swiper-container-pointer-events">
                     <div class="swiper-wrapper" id="swiper-wrapper-dde3f11d71d76b66" aria-live="polite" style="transition-duration: 0ms; transform: translate3d(-685.333px, 0px, 0px);">
-                      <div class="swiper-slide" role="group" style="width: 30%;">Resize me!</div>
-                      <div class="swiper-slide swiper-slide-prev" role="group" style="width: 30%;">Resize me!</div>
-                      <div class="swiper-slide swiper-slide-active" role="group"  style="width: 30%;">Resize me!</div>
-                      <div class="swiper-slide swiper-slide-next" role="group"  style="width: 30%;">Resize me!</div>
-                      <div class="swiper-slide" role="group"  style="width: 30%;">Resize me!</div>
-                      <div class="swiper-slide" role="group"  style="width: 30%;">Resize me!</div>
-                      <div class="swiper-slide" role="group"  style="width: 30%;">Resize me!</div>
-                      <div class="swiper-slide" role="group"  style="width: 30%;">Resize me!</div>
-                      <div class="swiper-slide" role="group"  style="width: 30%;">Resize me!</div>
-                      <div class="swiper-slide" role="group"  style="width: 30%;">Resize me!</div>
+                      {{range $p := $products}}
+                        <div class="swiper-slide" role="group" style="width: 30%;">
+                          <figure class="card card-product">
+                              <div class="card">
+                                  <a href="/v1/products/{{$p.ID}}"><img src="https://miro.medium.com/max/2400/1*mk1-6aYaf_Bes1E3Imhc0A.jpeg" class="card-img-top" style='height: 100%; width: 100%; object-fit: contain'></a>
+                                  <figcaption class="info-wrap">
+                                      <!--- passed 1 ---->
+                                          <div class="card-body pt-0 px-0">
+                                              <hr class="mt-2 mx-3">
+                                              <div class="d-flex flex-row justify-content-between px-3 pb-4">
+                                                  <div class="d-flex flex-column">
+                                                      <span class="text-dark">{{$p.Title}}</span>
+                                                      <small class="text-dark">Brand: {{$p.Brand}}</small>
+                                                  </div>
+                                              </div>
+                                      <!-----end passed 1 ---->
+                                  </figcaption>
+                              </div>
+                          </figure>
+                        </div>
+                      {{end}}
+                      {{/* <div class="swiper-slide" role="group"  style="width: 30%;">Resize me!</div> */}}
                     </div>
                     <div class="swiper-button-next" tabindex="0" role="button" aria-label="Next slide" aria-controls="swiper-wrapper-dde3f11d71d76b66" aria-disabled="false"></div>
                     <div class="swiper-button-prev" tabindex="0" role="button" aria-label="Previous slide" aria-controls="swiper-wrapper-dde3f11d71d76b66" aria-disabled="false"></div>
                   <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span>
                 </div>
                 <hr>
-                <h5>My Rented Products</h5>
+                <h5><a href="#">My Rented Products</a></h5>
+                {{$rents := $res.Rents}}
                 <div class="swiper-container swiper-container-initialized swiper-container-horizontal swiper-container-pointer-events">
                     <div class="swiper-wrapper" id="swiper-wrapper-dde3f11d71d76b66" aria-live="polite" style="transition-duration: 0ms; transform: translate3d(-685.333px, 0px, 0px);">
-                      <div class="swiper-slide" role="group" style="width: 30%;">Resize me!</div>
-                      <div class="swiper-slide swiper-slide-prev" role="group" style="width: 30%;">Resize me!</div>
-                      <div class="swiper-slide swiper-slide-active" role="group"  style="width: 30%;">Resize me!</div>
-                      <div class="swiper-slide swiper-slide-next" role="group"  style="width: 30%;">Resize me!</div>
-                      <div class="swiper-slide" role="group"  style="width: 30%;">Resize me!</div>
-                      <div class="swiper-slide" role="group"  style="width: 30%;">Resize me!</div>
-                      <div class="swiper-slide" role="group"  style="width: 30%;">Resize me!</div>
-                      <div class="swiper-slide" role="group"  style="width: 30%;">Resize me!</div>
-                      <div class="swiper-slide" role="group"  style="width: 30%;">Resize me!</div>
-                      <div class="swiper-slide" role="group"  style="width: 30%;">Resize me!</div>
+                      {{range $r := $rents}}
+                        <div class="swiper-slide" role="group" style="width: 30%;">
+                          <figure class="card card-product">
+                              <div class="card">
+                                  <a href="/v1/products/{{$r.ProductID}}"><img src="https://miro.medium.com/max/2400/1*mk1-6aYaf_Bes1E3Imhc0A.jpeg" class="card-img-top" style='height: 100%; width: 100%; object-fit: contain'></a>
+                                  <figcaption class="info-wrap">
+                                      <!--- passed 1 ---->
+                                          <div class="card-body pt-0 px-0">
+                                              <hr class="mt-2 mx-3">
+                                              <div class="d-flex flex-row justify-content-between px-3 pb-4">
+                                                  <div class="d-flex flex-column">
+                                                      <span class="text-dark">{{$r.Product.Title}}</span>
+                                                      <small class="text-dark">Brand: {{$r.Product.Brand}}</small>
+                                                  </div>
+                                              </div>
+                                      <!-----end passed 1 ---->
+                                  </figcaption>
+                              </div>
+                          </figure>
+                        </div>
+                      {{end}}
+                      {{/* <div class="swiper-slide" role="group"  style="width: 30%;">Resize me!</div> */}}
+                    </div>
+                    <div class="swiper-button-next" tabindex="0" role="button" aria-label="Next slide" aria-controls="swiper-wrapper-dde3f11d71d76b66" aria-disabled="false"></div>
+                    <div class="swiper-button-prev" tabindex="0" role="button" aria-label="Previous slide" aria-controls="swiper-wrapper-dde3f11d71d76b66" aria-disabled="false"></div>
+                  <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span>
+                </div>
+                <hr>
+                <h5><a href="#">My Bookings</a></h5>
+                {{$books := $res.Bookings}}
+                <div class="swiper-container swiper-container-initialized swiper-container-horizontal swiper-container-pointer-events">
+                    <div class="swiper-wrapper" id="swiper-wrapper-dde3f11d71d76b66" aria-live="polite" style="transition-duration: 0ms; transform: translate3d(-685.333px, 0px, 0px);">
+                      {{range $b := $books}}
+                        <div class="swiper-slide" role="group" style="width: 30%;">
+                          <figure class="card card-product">
+                              <div class="card">
+                                  <a href="/v1/products/{{$b.ProductID}}"><img src="https://miro.medium.com/max/2400/1*mk1-6aYaf_Bes1E3Imhc0A.jpeg" class="card-img-top" style='height: 100%; width: 100%; object-fit: contain'></a>
+                                  <figcaption class="info-wrap">
+                                      <!--- passed 1 ---->
+                                          <div class="card-body pt-0 px-0">
+                                              <hr class="mt-2 mx-3">
+                                              <div class="d-flex flex-row justify-content-between px-3 pb-4">
+                                                  <div class="d-flex flex-column">
+                                                      <span class="text-dark">{{$b.Product.Title}}</span>
+                                                      <small class="text-dark">Brand: {{$b.Product.Brand}}</small>
+                                                  </div>
+                                              </div>
+                                      <!-----end passed 1 ---->
+                                  </figcaption>
+                              </div>
+                          </figure>
+                        </div>
+                      {{end}}
+                      {{/* <div class="swiper-slide" role="group"  style="width: 30%;">Resize me!</div> */}}
                     </div>
                     <div class="swiper-button-next" tabindex="0" role="button" aria-label="Next slide" aria-controls="swiper-wrapper-dde3f11d71d76b66" aria-disabled="false"></div>
                     <div class="swiper-button-prev" tabindex="0" role="button" aria-label="Previous slide" aria-controls="swiper-wrapper-dde3f11d71d76b66" aria-disabled="false"></div>
@@ -92,4 +150,32 @@
         </div>
       </div>
     </section>
+{{end}}
+{{define "script"}}
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+
+<script>
+var swiper = new Swiper('.swiper-container', {
+  autoHeight: true,
+  spaceBetween: 20,
+  slidesPerView: 3,
+  direction: getDirection(),
+  navigation: {
+    nextEl: '.swiper-button-next',
+    prevEl: '.swiper-button-prev',
+  },
+  on: {
+    resize: function () {
+      swiper.changeDirection(getDirection());
+    },
+  },
+});
+
+function getDirection() {
+  var windowWidth = window.innerWidth;
+  var direction = window.innerWidth <= 760 ? 'vertical' : 'horizontal';
+
+  return direction;
+}
+</script>
 {{end}}
