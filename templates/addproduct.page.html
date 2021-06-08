@@ -22,7 +22,8 @@
                        <label for="firstimage">
                        <img src="https://i.ibb.co/Mp4mmmG/add-image.png" width="85px">
                        </label>
-                    <input type ="file" name="" id="firstimage" style="display: none;visibility: none;">   
+                    <input type ="file" name="" id="firstimage" style="display: none;visibility: none;" onchange="getImage(this.value);">   
+                    <div id="display-image"></div>
                     </div>
                     <div class="col-sm text-center mb-3">
                        <img src="https://i.ibb.co/Mp4mmmG/add-image.png" width="85px">
@@ -140,5 +141,11 @@
 
     </div>
 </div>
+
+{{end}}
+
+{{define "script"}}
+
+
 
 {{end}}
