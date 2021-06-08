@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"goRent/internal/config"
+	"goRent/internal/helper"
 	"goRent/internal/model"
 	"goRent/internal/render"
 	"net/http"
@@ -54,13 +55,13 @@ func (m *Repository) PostRent(w http.ResponseWriter, r *http.Request) {
 	}
 
 	blockedDates := strings.Split(strings.Trim(strings.Trim(blocked, "["), "]"), " ")
-	rentDates, err := listDates(start, end)
+	rentDates, err := helper.ListDates(start, end)
 	if err != nil {
 		m.App.Error.Println(err)
 		return
 	}
 
-	if includes(blockedDates, rentDates...) {
+	if helper.Includes(blockedDates, rentDates...) {
 		m.App.Session.Put(r.Context(), "warning", "Dates selected are already booked! Please select another date")
 		http.Redirect(w, r, fmt.Sprintf("/v1/products/%d", productID), http.StatusSeeOther)
 		return

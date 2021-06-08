@@ -8,6 +8,7 @@ import (
 	"goRent/internal/render"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 
 	// "github.com/olivere/elastic/aws"
@@ -27,22 +28,42 @@ func (m *Repository) Search(w http.ResponseWriter, r *http.Request) {
 
 func (m *Repository) SearchResult(w http.ResponseWriter, r *http.Request) {
 
-	trialMultiSearchQuery(m.App.AWSClient)
 	var data = make(map[string]interface{})
 	var product []model.Product
+	//var priceFilter bool
 	// var urlquery string
 	x := r.URL.Query()
 	fmt.Println(x)
 
 	searchkeywords := strings.ToLower(url.QueryEscape(x["q"][0])) //hockey+sticks
 
-	if len(searchkeywords) == 0 {
-		product = searchEmptyQuery(m.App.AWSClient)
+	//check if minprice/ map exists
+
+	_, okMin := x["minprice"]
+	_, okMax := x["maxprice"]
+	err := fmt.Errorf("")
+	fmt.Println(err)
+	if okMin && okMax {
+		//please use multiseach instead.
+		fmt.Println("multi search functon got fired")
+		product, err = trialMultiSearchQuery(m.App.AWSClient, x["minprice"][0], x["maxprice"][0], searchkeywords)
+		if err != nil {
+			m.App.Error.Println(err)
+		}
+
 	} else {
-		product = searchQuery(m.App.AWSClient, searchkeywords)
+
+		if len(searchkeywords) == 0 {
+			product = searchEmptyQuery(m.App.AWSClient)
+		} else {
+			fmt.Println("single function got fired")
+			product = searchQuery(m.App.AWSClient, searchkeywords)
+		}
+
 	}
 
 	data["product"] = product
+	data["query"] = searchkeywords
 
 	if err := render.Template(w, r, "searchresult.page.html", &render.TemplateData{
 		Data: data,
@@ -112,36 +133,52 @@ func searchEmptyQuery(client *elastic.Client) []model.Product {
 		if err != nil {
 			// Deserialization failed
 			fmt.Println("error unmarshaling json", err)
-
 		}
 		product = append(product, t)
-
 	}
-
 	fmt.Println(product)
 	return product
 
 }
 
-func trialMultiSearchQuery(client *elastic.Client) {
+func trialMultiSearchQuery(client *elastic.Client, min, max, searchKeywords string) ([]model.Product, error) {
 
-	sreq3 := elastic.NewTermQuery("brand_name", "nike")
-	sreq4 := elastic.NewRangeQuery("price").From(0).To(49.99)
-	sreq5 := elastic.NewRangeQuery("rating").From(0).To(0)
+	var product []model.Product
 
-	query := elastic.NewBoolQuery().Must(sreq3, sreq4, sreq5)
+	minPrice, err := strconv.ParseFloat(min, 32)
+	if err != nil {
+		return product, err
+	}
+
+	maxPrice, err := strconv.ParseFloat(max, 32)
+	if err != nil {
+		return product, err
+	}
+
+	stringQuery := elastic.NewQueryStringQuery(searchKeywords)
+
+	// sreq3 := elastic.NewTermQuery("brand_name", "nike")
+
+	// searchResult, err := client.Search().
+	// 	Index("sample_product_list"). // search in index "tweets"
+	// 	Query(stringQuery).           // specify the query
+	// 	Pretty(true).                 // pretty print request and response JSON
+	// 	Do(context.Background())      // execute
+
+	priceQuery := elastic.NewRangeQuery("price").From(minPrice).To(maxPrice)
+	// sreq5 := elastic.NewRangeQuery("rating").From(0).To(0)
+
+	query := elastic.NewBoolQuery().Must(stringQuery, priceQuery)
 
 	searchResult, err := client.Search().
 		Index("sample_product_list").
-		Type("sampleproducttype"). // search in type
+		// Type("sampleproducttype"). // search in type
 		Query(query).
 		Do(context.Background()) // execute
 
 	if err != nil {
 		fmt.Println("error from multi search request", err)
 	}
-
-	var product []model.Product
 
 	sres := searchResult
 
@@ -161,7 +198,6 @@ func trialMultiSearchQuery(client *elastic.Client) {
 
 	}
 
-	// return product
 	fmt.Println(product)
-
+	return product, nil
 }

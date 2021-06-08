@@ -75,9 +75,10 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 	for _, v := range eu.Rents {
 		fmt.Printf("%#v\n", v)
 	}
+	for _, v := range eu.Bookings {
+		fmt.Println(v)
+	}
 
-	kk := render.UnprocessedRents(eu.Rents)
-	fmt.Println("kk: ", kk)
 	m.App.Session.Put(r.Context(), "userID", eu.ID)
 	m.App.Session.Put(r.Context(), "flash", fmt.Sprintf("Welcome, %s", eu.Username))
 	m.App.Session.Put(r.Context(), "user", eu)

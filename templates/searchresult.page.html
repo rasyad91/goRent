@@ -2,11 +2,12 @@
 
 {{define "content"}}
 
-
 <div class="container pb-5"></div> 
 <div class="container bg-light ml-10 mr-10 rounded-lg shadow-sm pt-2 pl-5 pr-6 mb-3 bg-white">
 <div class="container">
 <h3>What would you like to rent today?</h3>
+
+
 <!-- <h1>IN SEARCH RESULT</h1> -->
 
 <form method="GET" action="/searchresult"> 
@@ -21,15 +22,187 @@
 
 </form>
 
-</div></div>
-
-<div class="container">
-
+</div>
+</div>
+{{/* <div class="container"> */}}
+{{/* <div class="container-fluid container-fluid-px py-6"> */}}
+{{/* <div class="container-fluid pl-4 py-6"> */}}
+<div class="container pl-4 py-6">
 
 
 <div class="row">
 
-    {{range $res := index .Data "product"}}
+<div class="sidebar col-xl-3 col-lg-4 pr-xl-5 order-lg-1">
+          <div class="sidebar-block px-3 px-lg-0"><a class="d-lg-none block-toggler" data-toggle="collapse" href="#categoriesMenu" aria-expanded="false" aria-controls="categoriesMenu">Product Categories<span class="block-toggler-icon"></span></a>
+            <div class="expand-lg collapse" id="categoriesMenu" role="menu">
+              <h5 class="sidebar-heading d-none d-lg-block">Browse Categories</h5>
+              <div class="sidebar-icon-menu mt-4 mt-lg-0"> 
+                <div class="sidebar-icon-menu-item active" data-toggle="collapse" data-target="#subcategories_0" aria-expanded="" aria-controls="subcategories_0" role="menuitem"> 
+                  <div class="d-flex align-items-center">
+                    <svg class="svg-icon sidebar-icon">
+                      <use xlink:href="#trousers-1"> </use>
+                    </svg><a class="sidebar-icon-menu-link font-weight-bold mr-2" href="#">Sports & Equipment</a><span class="sidebar-icon-menu-count"></span>
+                  </div>
+                  <div class="collapse show" id="subcategories_0">
+                    <ul class="sidebar-icon-menu sidebar-icon-submenu">
+                      <li class="sidebar-icon-submenu-item"><a class="sidebar-icon-submenu-link link-animated link-animated-light" href="#">Badminton Equipment</a></li>
+                      <li class="sidebar-icon-submenu-item"><a class="sidebar-icon-submenu-link link-animated link-animated-light" href="#">Hockey Equipment</a></li>
+                      <li class="sidebar-icon-submenu-item"><a class="sidebar-icon-submenu-link link-animated link-animated-light" href="#">sports3</a></li>
+                      <li class="sidebar-icon-submenu-item"><a class="sidebar-icon-submenu-link link-animated link-animated-light" href="#">sports4</a></li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="sidebar-icon-menu-item" data-toggle="collapse" data-target="#subcategories_1" aria-controls="subcategories_1" role="menuitem"> 
+                  <div class="d-flex align-items-center">
+                    <svg class="svg-icon sidebar-icon">
+                      <use xlink:href="#suit-1"> </use>
+                    </svg><a class="sidebar-icon-menu-link font-weight-bold mr-2" href="#">Gaming Electronics</a><span class="sidebar-icon-menu-count"> 55</span>
+                  </div>
+                  <div class="collapse" id="subcategories_1">
+                    <ul class="sidebar-icon-menu sidebar-icon-submenu">
+                      <li class="sidebar-icon-submenu-item"><a class="sidebar-icon-submenu-link link-animated link-animated-light" href="#">Playstation devices</a></li>
+                      <li class="sidebar-icon-submenu-item"><a class="sidebar-icon-submenu-link link-animated link-animated-light" href="#">Wii Console</a></li>
+                      <li class="sidebar-icon-submenu-item"><a class="sidebar-icon-submenu-link link-animated link-animated-light" href="#">Nintendo Consoles</a></li>
+                      
+                    </ul>
+                  </div>
+                </div>
+                <div class="sidebar-icon-menu-item" data-toggle="collapse" data-target="#subcategories_2" aria-controls="subcategories_2" role="menuitem"> 
+                  <div class="d-flex align-items-center">
+                    <svg class="svg-icon sidebar-icon">
+                      <use xlink:href="#shirt5-1"> </use>
+                    </svg><a class="sidebar-icon-menu-link font-weight-bold mr-2" href="#">Books</a><span class="sidebar-icon-menu-count"> 33</span>
+                  </div>
+                  <div class="collapse" id="subcategories_2">
+                    <ul class="sidebar-icon-menu sidebar-icon-submenu">
+                      <li class="sidebar-icon-submenu-item"><a class="sidebar-icon-submenu-link link-animated link-animated-light" href="#">Programming Books</a></li>
+                      <li class="sidebar-icon-submenu-item"><a class="sidebar-icon-submenu-link link-animated link-animated-light" href="#">Non Fiction Books</a></li>
+                      <li class="sidebar-icon-submenu-item"><a class="sidebar-icon-submenu-link link-animated link-animated-light" href="#">Fairy Tales</a></li>
+    
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {{/* <div class="sidebar-block px-3 px-lg-0"><a class="d-lg-none block-toggler" data-toggle="collapse" href="#priceFilterMenu" aria-expanded="false" aria-controls="priceFilterMenu">Filter by price<span class="block-toggler-icon"></span></a>
+            <div class="expand-lg collapse" id="priceFilterMenu">
+              <h5 class="sidebar-heading d-none d-lg-block">Price  </h5>
+              <div class="mt-4 mt-lg-0 noUi-target noUi-ltr noUi-horizontal" id="slider-snap"> <div class="noUi-base"><div class="noUi-connects"><div class="noUi-connect" style="transform: translate(16%, 0px) scale(0.28, 1);"></div></div><div class="noUi-origin" style="transform: translate(-84%, 0px); z-index: 5;"><div class="noUi-handle noUi-handle-lower" data-handle="0" tabindex="0" role="slider" aria-orientation="horizontal" aria-valuemin="0.0" aria-valuemax="110.0" aria-valuenow="40.0" aria-valuetext="40.00"><div class="noUi-touch-area"></div></div></div><div class="noUi-origin" style="transform: translate(-56%, 0px); z-index: 6;"><div class="noUi-handle noUi-handle-upper" data-handle="1" tabindex="0" role="slider" aria-orientation="horizontal" aria-valuemin="40.0" aria-valuemax="250.0" aria-valuenow="110.0" aria-valuetext="110.00"><div class="noUi-touch-area"></div></div></div></div></div>
+              <div class="nouislider-values">
+                <div class="min">From $<span id="slider-snap-value-lower">40.00</span></div>
+                <div class="max">To $<span id="slider-snap-value-upper">110.00</span></div>
+                <input class="slider-snap-input" type="hidden" name="pricefrom" id="slider-snap-input-lower" value="40">
+                <input class="slider-snap-input" type="hidden" name="priceto" id="slider-snap-input-upper" value="110">
+              </div>
+            </div>
+          </div> */}}
+
+            <!--Adding forms for min and max-->
+           <div class="sidebar-block px-3 px-lg-0"><a class="d-lg-none block-toggler" data-toggle="collapse" href="#priceFilterMenu" aria-expanded="false" aria-controls="priceFilterMenu">Filter by price<span class="block-toggler-icon"></span></a>
+           
+            <h5 class="sidebar-heading d-none d-lg-block">Price Range</h5>
+            <form method="GET" action="/searchresult">
+                <div class="row pt-2">
+                    <div class="col">
+                    <input type="number" min="1" step="any" class="form-control" name = "minprice" placeholder="$ MIN">
+                    </div>
+                    <div class="col">
+                    <input type="number" min="1" step="any" class="form-control" name = "maxprice" placeholder="$ MAX">
+                    <input type="hidden" name = "q" value = {{index .Data "query"}}>
+                    </div>
+                </div>
+                <button  class="btn btn-danger btn-block mt-3"><small>Refine Search</small></button>
+                </form>
+
+
+          </div>
+            <!--End forms for min and max-->
+
+
+
+          <div class="sidebar-block px-3 px-lg-0"><a class="d-lg-none block-toggler" data-toggle="collapse" href="#brandFilterMenu" aria-expanded="true" aria-controls="brandFilterMenu">Filter by brand<span class="block-toggler-icon"></span></a>
+            <!-- Brand filter menu - this menu has .show class, so is expanded by default-->
+            <div class="expand-lg collapse show" id="brandFilterMenu">
+              <h5 class="sidebar-heading d-none d-lg-block">Popular Brands </h5>
+              <form class="mt-4 mt-lg-0" action="#"> 
+                <div class="form-group mb-1">
+                  <div class="custom-control custom-checkbox">
+                    <input class="custom-control-input" id="brand0" type="checkbox" name="clothes-brand" checked="">
+                    <label class="custom-control-label" for="brand0">Nike<small>(18)</small></label>
+                  </div>
+                </div>
+                <div class="form-group mb-1">
+                  <div class="custom-control custom-checkbox">
+                    <input class="custom-control-input" id="brand1" type="checkbox" name="clothes-brand" checked="">
+                    <label class="custom-control-label" for="brand1">Canon<small>(30)</small></label>
+                  </div>
+                </div>
+                <div class="form-group mb-1">
+                  <div class="custom-control custom-checkbox">
+                    <input class="custom-control-input" id="brand2" type="checkbox" name="clothes-brand">
+                    <label class="custom-control-label" for="brand2">Adidas<small>(120)</small></label>
+                  </div>
+                </div>
+                <div class="form-group mb-1">
+                  <div class="custom-control custom-checkbox">
+                    <input class="custom-control-input" id="brand3" type="checkbox" name="clothes-brand">
+                    <label class="custom-control-label" for="brand3">Chanel<small>(70)</small></label>
+                  </div>
+                </div>
+                <div class="form-group mb-1">
+                  <div class="custom-control custom-checkbox">
+                    <input class="custom-control-input" id="brand4" type="checkbox" name="clothes-brand">
+                    <label class="custom-control-label" for="brand4">PrettyBride<small>(110)</small></label>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+          {{/* <div class="sidebar-block px-3 px-lg-0"> <a class="d-lg-none block-toggler" data-toggle="collapse" href="#sizeFilterMenu" aria-expanded="false" aria-controls="sizeFilterMenu">Filter by size<span class="block-toggler-icon"></span></a>
+            <!-- Size filter menu-->
+            <div class="expand-lg collapse" id="sizeFilterMenu"> 
+              <h5 class="sidebar-heading d-none d-lg-block">Size </h5>
+              <form class="mt-4 mt-lg-0" action="#">  
+                <div class="form-group mb-1">
+                  <div class="custom-control custom-radio">
+                    <input class="custom-control-input" id="size0" type="radio" name="size" checked="">
+                    <label class="custom-control-label" for="size0">Small</label>
+                  </div>
+                </div>
+                <div class="form-group mb-1">
+                  <div class="custom-control custom-radio">
+                    <input class="custom-control-input" id="size1" type="radio" name="size">
+                    <label class="custom-control-label" for="size1">Medium</label>
+                  </div>
+                </div>
+                <div class="form-group mb-1">
+                  <div class="custom-control custom-radio">
+                    <input class="custom-control-input" id="size2" type="radio" name="size">
+                    <label class="custom-control-label" for="size2">Large</label>
+                  </div>
+                </div>
+                <div class="form-group mb-1">
+                  <div class="custom-control custom-radio">
+                    <input class="custom-control-input" id="size3" type="radio" name="size">
+                    <label class="custom-control-label" for="size3">X-Large</label>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div> */}}
+          <div class="sidebar-block px-3 px-lg-0"><a class="d-lg-none block-toggler" data-toggle="collapse" href="#colourFilterMenu" aria-expanded="false" aria-controls="colourFilterMenu">Filter by colour<span class="block-toggler-icon"></span></a>
+            <!-- Size filter menu-->
+
+
+            //end of side bar here
+            
+          </div>
+        </div>
+
+<div class ="row col-xl-9 col-lg-8 order-lg-2">
+
+{{range $res := index .Data "product"}}
 
 {{/* {{(index .Data 0).SysID}} */}}
 <div class="col-md-4">
@@ -86,17 +259,52 @@
 
 </div> <!-- col // -->
 
-{{end}}
 
+{{end}}
+</end>
 
 </div> <!-- row.// -->
-
-
-
-
-
-
 
 </div> 
 
 {{end}}
+
+{{define "script"}}
+<script>
+    var snapSlider = document.getElementById('slider-snap');
+    var snapValues = [
+        document.getElementById('slider-snap-value-lower'),
+        document.getElementById('slider-snap-value-upper')
+    ];
+    var range = {
+      'min': 0,
+      '10%': 50,
+      '10.1%': 51,
+      '10.2%': 52,
+      '10.25%': 52.5,
+      '20%': 100,
+      '30%': 150,
+      '35%': 160,
+      '40%': 500,
+      '42.3%': 666,
+      '50%': 800,
+      'max': 1000
+    };
+    
+    
+    noUiSlider.create(snapSlider, {
+        start: [ 0, 500 ],
+        snap: true,
+        connect: true,
+      tooltips: true,
+        range: range
+    });
+    
+    snapSlider.noUiSlider.on('update', function( values, handle ) {
+        snapValues[handle].innerHTML = values[handle];
+    });
+    
+    $('#range').text(JSON.stringify(range, null, '\t'));
+    
+    </script>
+    {{end}}

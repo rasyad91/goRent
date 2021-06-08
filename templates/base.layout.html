@@ -308,6 +308,46 @@ function Prompt() {
         toast: toast,
     };
 }
+
+
+//script for searchresult product slider
+var snapSlider = document.getElementById('slider-snap');
+var snapValues = [
+	document.getElementById('slider-snap-value-lower'),
+	document.getElementById('slider-snap-value-upper')
+];
+var range = {
+  'min': 0,
+  '10%': 50,
+  '10.1%': 51,
+  '10.2%': 52,
+  '10.25%': 52.5,
+  '20%': 100,
+  '30%': 150,
+  '35%': 160,
+  '40%': 500,
+  '42.3%': 666,
+  '50%': 800,
+  'max': 1000
+};
+
+
+
+noUiSlider.create(snapSlider, {
+	start: [ 0, 500 ],
+	snap: true,
+	connect: true,
+  tooltips: true,
+	range: range
+});
+
+snapSlider.noUiSlider.on('update', function( values, handle ) {
+	snapValues[handle].innerHTML = values[handle];
+});
+
+$('#range').text(JSON.stringify(range, null, '\t'));
+
+
 </script>
 
 
