@@ -82,7 +82,7 @@ func (m *DBrepo) GetUser(username string) (model.User, error) {
 	defer rent_rows.Close()
 	for rent_rows.Next() {
 		r := model.Rent{}
-		if err := rows.Scan(
+		if err := rent_rows.Scan(
 			&r.ID,
 			&r.OwnerID,
 			&r.RenterID,
@@ -111,45 +111,72 @@ func (m *DBrepo) GetUser(username string) (model.User, error) {
 		u.Rents = append(u.Rents, r)
 	}
 	//booking_query
-	booking_rows, err := tx.QueryContext(ctx, rent_query, u.ID)
+	booking_rows, err := tx.QueryContext(ctx, booking_query, u.ID)
 	if err != nil {
 		return model.User{}, fmt.Errorf("db GetUser: %v", err)
 	}
 	defer rent_rows.Close()
 	for booking_rows.Next() {
-		r := model.Rent{}
-		if err := rows.Scan(
-			&r.ID,
-			&r.OwnerID,
-			&r.RenterID,
-			&r.ProductID,
-			&r.RestrictionID,
-			&r.Processed,
-			&r.StartDate,
-			&r.EndDate,
-			&r.Duration,
-			&r.TotalCost,
-			&r.CreatedAt,
-			&r.UpdatedAt,
-			&r.Product.ID,
-			&r.Product.OwnerID,
-			&r.Product.Brand,
-			&r.Product.Category,
-			&r.Product.Title,
-			&r.Product.Rating,
-			&r.Product.Description,
-			&r.Product.Price,
-			&r.Product.CreatedAt,
-			&r.Product.UpdatedAt,
+		b := model.Rent{}
+		if err := booking_rows.Scan(
+			&b.ID,
+			&b.OwnerID,
+			&b.RenterID,
+			&b.ProductID,
+			&b.RestrictionID,
+			&b.Processed,
+			&b.StartDate,
+			&b.EndDate,
+			&b.Duration,
+			&b.TotalCost,
+			&b.CreatedAt,
+			&b.UpdatedAt,
+			&b.Product.ID,
+			&b.Product.OwnerID,
+			&b.Product.Brand,
+			&b.Product.Category,
+			&b.Product.Title,
+			&b.Product.Rating,
+			&b.Product.Description,
+			&b.Product.Price,
+			&b.Product.CreatedAt,
+			&b.Product.UpdatedAt,
 		); err != nil {
 			return model.User{}, fmt.Errorf("db GetUser: %v", err)
 		}
-		u.Rents = append(u.Rents, r)
+		u.Bookings = append(u.Bookings, b)
 	}
+
+	//product query
+	product_rows, err := tx.QueryContext(ctx, product_query, u.ID)
+	if err != nil {
+		return model.User{}, fmt.Errorf("db GetUser: %v", err)
+	}
+	defer product_rows.Close()
+	for product_rows.Next() {
+		p := model.Product{}
+		if err := product_rows.Scan(
+			&p.ID,
+			&p.OwnerID,
+			&p.Brand,
+			&p.Category,
+			&p.Title,
+			&p.Rating,
+			&p.Description,
+			&p.Price,
+			&p.Images,
+			&p.CreatedAt,
+			&p.UpdatedAt,
+		); err != nil {
+			return model.User{}, fmt.Errorf("db GetUser: %v", err)
+		}
+		u.Products = append(u.Products, p)
+	}
+
 	if err := booking_rows.Err(); err != nil {
 		return model.User{}, fmt.Errorf("db GetUser: %v", err)
 	}
-
+	fmt.Println("PRODUCTS QUERY:", u)
 	return u, nil
 }
 

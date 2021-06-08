@@ -24,6 +24,7 @@ func (m *Repository) UserAccount(w http.ResponseWriter, r *http.Request) {
 	}); err != nil {
 		m.App.Error.Println(err)
 	}
+	m.DB.GetUser(u.Username)
 }
 func (m *Repository) EditUserAccount(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
