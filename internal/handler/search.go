@@ -130,7 +130,7 @@ func trialMultiSearchQuery(client *elastic.Client) {
 
 	searchResult, err := client.Search().
 		Index("sample_product_list").
-		Type("sampleproducttype"). // search in type
+		// Type("sampleproducttype"). // search in type
 		Query(query).
 		Do(context.Background()) // execute
 

@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"goRent/internal/form"
+	"goRent/internal/helper"
 	"goRent/internal/model"
 	"goRent/internal/render"
 	"net/http"
@@ -34,7 +35,7 @@ func (m *Repository) ShowProductByID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// append dates that are already booked and processed in system and dates that user has rent but not yet processed for that user
-	dates := append(listDatesFromRents(rents), listDatesFromRents(user.Rents)...)
+	dates := append(helper.ListDatesFromRents(rents), helper.ListDatesFromRents(user.Rents)...)
 
 	data := make(map[string]interface{})
 	data["product"] = p
