@@ -71,6 +71,7 @@ func (m *DBrepo) GetUser(username string) (model.User, error) {
 		products p on (p.id = r.product_id)
 	where 
 		r.owner_id = ?`
+	//initializing concurrency
 
 	// rent_query
 	rent_rows, err := tx.QueryContext(ctx, rent_query, u.ID)
