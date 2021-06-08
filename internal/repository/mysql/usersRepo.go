@@ -114,7 +114,7 @@ func (m *DBrepo) GetUser(username string) (model.User, error) {
 	}
 
 	// get rents
-	query = `select 
+	query := `select 
 		r.id, r.owner_id, r.renter_id, r.product_id, r.restriction_id, r.processed, r.start_date, r.end_date, r.duration, r.total_cost, r.created_at, r.updated_at,
 		p.id, p.owner_id, p.brand, p.category, p.title, p.rating, p.description, p.price, p.created_at, p.updated_at
 	from 
