@@ -43,6 +43,10 @@ func (m *Repository) SearchResult(w http.ResponseWriter, r *http.Request) {
 	_, okMax := x["maxprice"]
 	err := fmt.Errorf("")
 	fmt.Println(err)
+
+	// owner_id := 1
+	// imagequery(m.App.AWSClient, owner_id)
+
 	if okMin && okMax {
 		//please use multiseach instead.
 		fmt.Println("multi search functon got fired")
@@ -199,5 +203,42 @@ func trialMultiSearchQuery(client *elastic.Client, min, max, searchKeywords stri
 	}
 
 	fmt.Println(product)
+	return product, nil
+}
+
+//for rachel.
+func imagequery(client *elastic.Client, owner_id int) ([]model.Product, error) {
+
+	var product []model.Product
+
+	req := elastic.NewTermQuery("owner_id", owner_id) //maybe change "1"  to ownder_id , received frum functoin
+
+	searchResult, err := client.Search().
+		Index("sample_product_list"). // search in index "tweets"
+		Query(req).                   // specify the query
+		Pretty(true).                 // pretty print request and response JSON
+		Do(context.Background())      // execute
+
+	if err != nil {
+		fmt.Println("error from querying image", err)
+	}
+
+	for _, hit := range searchResult.Hits.Hits {
+
+		var t model.Product
+
+		if err := json.Unmarshal(hit.Source, &t); err != nil {
+			// log.Errorf("ERROR UNMARSHALLING ES SUGGESTION RESPONSE: %v", err)
+			continue
+		}
+		if err != nil {
+			fmt.Println("error unmarshaling json", err)
+
+		}
+		product = append(product, t)
+
+	}
+
+	fmt.Println("these are the products image query.")
 	return product, nil
 }

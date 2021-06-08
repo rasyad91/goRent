@@ -6,6 +6,7 @@ import (
 	"goRent/internal/helper"
 	"goRent/internal/model"
 	"goRent/internal/render"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 
@@ -96,3 +97,57 @@ func (m *Repository) PostReview(w http.ResponseWriter, r *http.Request) {
 // 		retun
 // 	}
 // }
+
+func (m *Repository) AddProduct(w http.ResponseWriter, r *http.Request) {
+
+	data := make(map[string]interface{})
+
+	if err := render.Template(w, r, "addproduct.page.html", &render.TemplateData{
+		Data: data,
+	}); err != nil {
+		m.App.Error.Println(err)
+	}
+}
+
+func (m *Repository) UploadImages(w http.ResponseWriter, r *http.Request) {
+
+	// data := make(map[string]interface{})
+	fmt.Fprintf(w, "Uploading File \n")
+
+	r.ParseMultipartForm(7 << 10)
+
+	file, handler, err := r.FormFile("productImage")
+	if err != nil {
+		m.App.Error.Println("Error retriveving file from form-data/ frontend:", err)
+		return
+	}
+
+	defer file.Close()
+
+	fmt.Printf("Uploaded File: %+v\n", handler.Filename)
+	fmt.Printf("File Size: %+v\n", handler.Size)
+	fmt.Printf("MINE Header: %+v\n", handler.Header)
+
+	tempFile, err := ioutil.TempFile("temp-images", "upload-*.png")
+
+	if err != nil {
+		m.App.Error.Println("Error writing the image upload to the temp images directory", err)
+	}
+
+	defer tempFile.Close()
+
+	fileBytes, err := ioutil.ReadAll(file)
+	if err != nil {
+		m.App.Error.Println("Error writing the image upload to the temp images directory", err)
+	}
+
+	tempFile.Write(fileBytes)
+
+	fmt.Fprintf(w, "successfully uploaded file to server")
+
+	// if err := render.Template(w, r, "addproduct.page.html", &render.TemplateData{
+	// 	Data: data,
+	// }); err != nil {
+	// 	m.App.Error.Println(err)
+	// }
+}

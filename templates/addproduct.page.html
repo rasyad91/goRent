@@ -1,0 +1,144 @@
+{{template "base" .}}
+
+{{define "content"}}
+
+
+<div class="container">
+
+    <div class="row mt-5">
+        <div class="mb-3">
+
+            <div class="col-9">
+                {{/* <p>Already have an account? <a href="/login"> Sign in</a></p> */}}
+                <hr class="mb-3" style="color:gray">
+                <h2 class="mb-3">Create a new product to rent out</h2>
+
+                <div class="container">
+                
+               <div class="row">
+                 <div class="col-8">
+                  <div class="row">
+                    <div class="col-sm text-center mb-3">
+                       <label for="firstimage">
+                       <img src="https://i.ibb.co/Mp4mmmG/add-image.png" width="85px">
+                       </label>
+                    <input type ="file" name="" id="firstimage" style="display: none;visibility: none;">   
+                    </div>
+                    <div class="col-sm text-center mb-3">
+                       <img src="https://i.ibb.co/Mp4mmmG/add-image.png" width="85px">
+                    </div>
+                    <div class="col-sm text-center mb-3">
+                       <img src="https://i.ibb.co/Mp4mmmG/add-image.png" width="85px">
+                    </div>
+                    <div class="col-sm text-center mb-3">
+                       <img src="https://i.ibb.co/Mp4mmmG/add-image.png" width="85px">
+                    </div>
+                    </div>
+
+                </div> <div class="col-4"></div></div>
+
+
+                  </div>
+                </div>
+
+
+                <form method="POST" novalidate>
+                    <input type="hidden" name="csrf_token" value="{{.CSRFToken }}">
+                    <div class="form-group row mb-3">
+                        <div class="form-group col ml-3">
+
+                            <label class="form-label"for="username">Product Name</label> 
+                            <span for="username"  class="text-danger float-right"></span>
+                            <input type="Product Name" class="form-control" name="username" placeholder="Badminton Rackets">
+                            <div class="form-text">Remember that a good product name attracts the most renters!</div>
+                        </div>
+                         <div class="form-group col ">
+                             <label class="form-label"for="password">$ Price/Day</label>
+                             <span for="password"  class="text-danger float-right"></span>
+                             <input type="number" step="0.01" class="form-control" name="priceperday" placeholder="$">
+
+                             <div class="form-text">Price refers to the amount it costs to rent your item <strong>per</strong> day</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group row mb-3 ml-1">
+                        <div class="form-group col">
+
+                            <label class="form-label"for="username">Brand</label> 
+                            <span for="username"  class="text-danger float-right"></span>
+                            <input type="Product Name" class="form-control" name="username" placeholder="Yonex">
+                            <div class="form-text">Enter Yonex, if it's a yonex badminton racket. Canon, for a canon camera etc</div>
+                        </div>
+                         <div class="form-group col">
+                             {{/* <label class="form-label"for="password">$ Price/Day</label>
+                             <span for="password"  class="text-danger float-right"></span>
+                             <input type="number" step="0.01" class="form-control" name="priceperday" placeholder="$"> */}}
+                              <label for="exampleFormControlSelect2">Select your product's category</label>
+                              <select multiple class="form-control" id="exampleFormControlSelect2">
+                                <option>Books > Programming</option>
+                                <option>Sports > Hockey</option>
+                                <option>Sports > Badminton</option>
+                                <option>Sports > Roller Blades</option>
+                                <option>Home & Office >> Monitors</option>
+                                <option>Wedding > Wedding Dress</option>
+                                <option>Wedding > Wedding Decoration</option>
+                                <option>Outdoor > Camping Equipment</option>
+                                <option>Outdoor > Glamping Equipment</option>
+                              </select>
+
+                             <div class="form-text">Please select a category that is closest to your product.</div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group mb-3 ml-3">
+                        <label class="form-label"for="description">Product Description</label>
+                             <span for="email"  class="text-danger float-right"></span>
+                        {{/* <input type="email" class="form-control" name="email" placeholder="A pair of badminton rackets with 2 completely new shuttlecocks for every rent package!" value="" rows="3"> */}}
+                        <textarea class="form-control" id="productdescription" rows="3"></textarea>
+                        <div class="form-text">A good description will help you rent out your items faster. You may want to include as many details as possible. For example, if you are renting badminton rackets, you may also want include how many shuttlecocks are included in the rent etc.</div>
+
+                    </div>
+                    {{/* <div class="form-group row mb-3">
+                        <div class="form-group col mb-3  ">
+                            <label class="form-label"for="block">Block</label>
+                                <span for="block"  class="text-danger float-right"></span>
+
+                            <input type="text" class="form-control" name="block" placeholder=" 246" value="Address Block">
+
+                        </div>
+                        <div class="form-group col mb-3 ">
+                            <label class="form-label"for="streetname">Street Name</label>
+                                <span for="streetName"  class="text-danger float-right"></span>
+                            <input type="text" class="form-control" name="streetName" placeholder=" 1234 Main St" value="Street Name">
+
+                        </div>
+                    </div> */}}
+
+                    {{/* <div class="form-group row mb-3">
+                        <div class="form-group col mb-3 ">
+                            <label class="form-label" for="unitnumber">Unit Number</label>
+                                <span for="unitNumber"  class="text-danger float-right"></span>
+
+                            <input type="text" class="form-control {{with .Form.Errors.Get "unitNumber"}} is-invalid{{end}}" name="unitNumber" placeholder=" #04-23" value="Address1">
+                        </div>
+                        <div class="form-group col mb-3 ">
+                            <label class="form-label" for="postalCode">Postal Code</label>
+                                <span for="postalCode"  class="text-danger float-right"></span>
+                            <input type="text" class="form-control" name="postalCode" placeholder=" 519231" value="Address Postal Code">
+                        </div>
+                    </div>
+     */}}
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-outline-dark btn-lg ml-3">Create Product</button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{{end}}
