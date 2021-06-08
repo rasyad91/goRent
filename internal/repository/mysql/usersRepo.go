@@ -71,7 +71,9 @@ func (m *DBrepo) GetUser(username string) (model.User, error) {
 		products p on (p.id = r.product_id)
 	where 
 		r.owner_id = ?`
-	rows, err := tx.QueryContext(ctx, query, u.ID)
+	fmt.Println(product_query)
+	fmt.Println(booking_query)
+	rows, err := tx.QueryContext(ctx, rent_query, u.ID)
 	if err != nil {
 		return model.User{}, fmt.Errorf("db GetUser: %v", err)
 	}
