@@ -15,13 +15,26 @@ import (
 func (m *Repository) PostRent(w http.ResponseWriter, r *http.Request) {
 
 	m.App.Info.Println("postRent")
-	u := m.App.Session.Get(r.Context(), "user").(model.User)
-
 	if err := r.ParseForm(); err != nil {
 		m.App.Error.Println(err)
 		render.ServerError(w, r, err)
 		return
 	}
+	productID, err := strconv.Atoi(r.PostFormValue("product_id"))
+	if err != nil {
+		m.App.Error.Println(err)
+		return
+	}
+
+	if !helper.IsAuthenticated(r) {
+		m.App.Session.Put(r.Context(), "url", fmt.Sprintf("/v1/products/%d", productID))
+		m.App.Session.Put(r.Context(), "warning", "Sorry! You have to login first to make a booking.")
+		m.App.Info.Println("user not logged in to make rent, redirecting to login")
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	u := m.App.Session.Get(r.Context(), "user").(model.User)
 
 	start := r.PostFormValue("start_date")
 	startDate, err := time.Parse(config.DateLayout, start)
@@ -38,11 +51,6 @@ func (m *Repository) PostRent(w http.ResponseWriter, r *http.Request) {
 	productTitle := r.PostFormValue("product_title")
 	blocked := r.PostFormValue("blocked")
 
-	productID, err := strconv.Atoi(r.PostFormValue("product_id"))
-	if err != nil {
-		m.App.Error.Println(err)
-		return
-	}
 	ownerID, err := strconv.Atoi(r.PostFormValue("owner_id"))
 	if err != nil {
 		m.App.Error.Println(err)
