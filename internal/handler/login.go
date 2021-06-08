@@ -85,7 +85,7 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 	url := m.App.Session.GetString(r.Context(), "url")
 	fmt.Println(url)
 	if url != "" {
-		http.Redirect(w, r, m.App.Session.GetString(r.Context(), "url"), http.StatusSeeOther)
+		http.Redirect(w, r, m.App.Session.PopString(r.Context(), "url"), http.StatusSeeOther)
 		return
 	}
 

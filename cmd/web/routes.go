@@ -51,6 +51,7 @@ func routes() http.Handler {
 	mux.HandleFunc("/v1/products/{productID}/review", handler.Repo.PostReview).Methods("POST")
 
 	mux.HandleFunc("/v1/user/cart", handler.Repo.GetCart).Methods("GET")
+	mux.HandleFunc("/v1/user/cart/checkout", handler.Repo.GetCheckout).Methods("GET")
 
 	fileServer := http.FileServer(http.Dir("./static/"))
 	mux.PathPrefix("/static/").Handler(http.StripPrefix("/static", fileServer))
