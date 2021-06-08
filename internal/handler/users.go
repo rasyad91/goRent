@@ -13,18 +13,21 @@ import (
 func (m *Repository) UserAccount(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
 	u := m.App.Session.Get(r.Context(), "user").(model.User)
+	fmt.Println(u)
 	data["user"] = model.User{
 		Username: u.Username,
 		Email:    u.Email,
 		Password: "",
 		Address:  u.Address,
+		Products: u.Products,
+		Rents:    u.Rents,
+		Bookings: u.Bookings,
 	}
 	if err := render.Template(w, r, "account.page.html", &render.TemplateData{
 		Data: data,
 	}); err != nil {
 		m.App.Error.Println(err)
 	}
-	m.DB.GetUser(u.Username)
 }
 func (m *Repository) EditUserAccount(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})

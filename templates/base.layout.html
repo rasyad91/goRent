@@ -20,7 +20,7 @@
     <style>
       .swiper-container {
         width: 80%;
-        height: 50%;
+        height: auto;
       }
 
       .swiper-slide {
@@ -91,6 +91,8 @@
 
 <script>
     var swiper = new Swiper('.swiper-container', {
+        autoHeight: true,
+        spaceBetween: 20,
         slidesPerView: 3,
         direction: getDirection(),
         navigation: {
