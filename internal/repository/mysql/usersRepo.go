@@ -61,18 +61,18 @@ func (m *DBrepo) GetUser(username string) (model.User, error) {
 			products p on (p.id = r.product_id)
 		where 
 			r.renter_id = ?`
-	product_query := `select * from products p where p.owner_id = ?`
-	booking_query := `select 
-		r.id, r.owner_id, r.renter_id, r.product_id, r.restriction_id, r.processed, r.start_date, r.end_date, r.duration, r.total_cost, r.created_at, r.updated_at,
-		p.id, p.owner_id, p.brand, p.category, p.title, p.rating, p.description, p.price, p.created_at, p.updated_at
-	from 
-		rents r 
-	left join 
-		products p on (p.id = r.product_id)
-	where 
-		r.owner_id = ?`
-	fmt.Println(product_query)
-	fmt.Println(booking_query)
+	// product_query := `select * from products p where p.owner_id = ?`
+	// booking_query := `select
+	// 	r.id, r.owner_id, r.renter_id, r.product_id, r.restriction_id, r.processed, r.start_date, r.end_date, r.duration, r.total_cost, r.created_at, r.updated_at,
+	// 	p.id, p.owner_id, p.brand, p.category, p.title, p.rating, p.description, p.price, p.created_at, p.updated_at
+	// from
+	// 	rents r
+	// left join
+	// 	products p on (p.id = r.product_id)
+	// where
+	// 	r.owner_id = ?`
+	// fmt.Println(product_query)
+	// fmt.Println(booking_query)
 	rows, err := tx.QueryContext(ctx, rent_query, u.ID)
 	if err != nil {
 		return model.User{}, fmt.Errorf("db GetUser: %v", err)
