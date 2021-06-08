@@ -33,7 +33,7 @@
       <ul class="navbar-nav mt-3 mt-lg-0">
         {{with .IsAuthenticated}}
         <li class="mr-5 nav-item dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <a class="text-dark text-hover-primary" href="#" data-toggle="modal" data-target="#loginModal">
+          <a class="text-dark text-hover-primary" href="#">
             <div class="navbar-icon">
               <i class="fas fa-user fa-lg"></i>
             </div>
@@ -44,21 +44,21 @@
           </a>
         </li>
         <li class="list-inline-item position-relative mr-3">
-          <a class="text-dark text-hover-primary" href="/v1/user/cart" data-toggle="modal" data-target="#sidebarCart">
+          <a class="text-dark text-hover-primary" href="/v1/user/cart">
             <i class="fas fa-shopping-cart mr-2 fa-lg"></i>
             <div class="navbar-icon-badge">{{ len (unprocessedRents $u.Rents) }}</div>
           </a>
         </li>
         {{else}}
         <li class="mr-5 nav-item dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <a class="text-dark text-hover-primary" href="/login" data-toggle="modal" data-target="#loginModal">
+          <a class="text-dark text-hover-primary" href="/login">
             <div class="navbar-icon">
               <i class="fas fa-user fa-lg"></i>
             </div>
           </a>
         </li>
         <li class="list-inline-item position-relative mr-3">
-          <a class="text-dark text-hover-primary" href="#" data-toggle="modal" data-target="#sidebarCart">
+          <a class="text-dark text-hover-primary" href="#">
             <i class="fas fa-shopping-cart mr-2 fa-lg"></i>
           </a>
         </li>

@@ -82,6 +82,12 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 	m.App.Session.Put(r.Context(), "userID", eu.ID)
 	m.App.Session.Put(r.Context(), "flash", fmt.Sprintf("Welcome, %s", eu.Username))
 	m.App.Session.Put(r.Context(), "user", eu)
+	url := m.App.Session.GetString(r.Context(), "url")
+	fmt.Println(url)
+	if url != "" {
+		http.Redirect(w, r, m.App.Session.GetString(r.Context(), "url"), http.StatusSeeOther)
+		return
+	}
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

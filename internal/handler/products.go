@@ -16,8 +16,6 @@ import (
 func (m *Repository) ShowProductByID(w http.ResponseWriter, r *http.Request) {
 
 	m.App.Info.Println("showProduct")
-
-	user := m.App.Session.Get(r.Context(), "user").(model.User)
 	params := mux.Vars(r)
 	productID, err := strconv.Atoi(params["productID"])
 	if err != nil {
@@ -35,8 +33,14 @@ func (m *Repository) ShowProductByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// append dates that are already booked and processed in system and dates that user has rent but not yet processed for that user
-	dates := append(helper.ListDatesFromRents(rents), helper.ListDatesFromRents(user.Rents)...)
+	var user model.User
+	dates := helper.ListDatesFromRents(rents)
+
+	if helper.IsAuthenticated(r) {
+		user = m.App.Session.Get(r.Context(), "user").(model.User)
+		// append dates that are already booked and processed in system and dates that user has rent but not yet processed for that user
+		dates = append(helper.ListDatesFromRents(rents), helper.ListDatesFromRents(user.Rents)...)
+	}
 
 	data := make(map[string]interface{})
 	data["product"] = p

@@ -7,23 +7,48 @@
 
 <section class="hero py-6">
     <div class="container">
-        <!-- Breadcrumbs -->
         <ol class="breadcrumb pl-0 ">
             <li class="breadcrumb-item"><a href="/">Home</a></li>
-            <li class="breadcrumb-item active">Booking cart </li>
+            <li class="breadcrumb-item active">Cart </li>
         </ol>
         <!-- Hero Content-->
+        {{with $u.Rents}}
+        <!-- Breadcrumbs -->
+
         <div class="hero-content">
-            <h1 class="hero-heading">Booking cart</h1>
+            <h1 class="hero-heading">Cart</h1>
             <div>
                 <p class="lead text-muted">You have {{ len (unprocessedRents $u.Rents) }} items in your cart.</p>
             </div>
         </div>
+
+        {{else}}
+        <div class="hero-content">
+            <div class="row">
+            <div class="col"></div>
+
+            <div class="col mt-5">
+                <div class="">
+                    <i class="fas fa-ghost fa-3x d-flex justify-content-center"></i>
+                    <p class="lead text-muted d-flex justify-content-center mt-3">Cart is empty</p>
+                    <a class="btn btn-outline-dark d-flex justify-content-center btn-lg mt-3" href="/">
+                        Go Rent!</a>
+                </div>
+            </div>
+            <div class="col"></div>
+            </div>
+
+
+        </div>
+
+        {{end}}
+
     </div>
 </section>
 <section>
     <div class="container">
         <div class="row mb-5">
+            {{with $u.Rents}}
             <div class="col-lg-8 pr-xl-5">
                 <div class="cart mb-5">
                     <div class="cart-body">
@@ -35,7 +60,8 @@
                             <div class="row d-flex align-items-center text-left text-md-center">
                                 <div class="col-12 col-md-5"><a class="cart-remove close mt-3 d-md-none" href="#"><i
                                             class="fa fa-times"> </i></a>
-                                    <div class="d-flex align-items-center"></a>#{{.ID}}<a href="/v1/products/{{.Product.ID}}"><img class="cart-item-img" src=""
+                                    <div class="d-flex align-items-center"></a>#{{.ID}}<a
+                                            href="/v1/products/{{.Product.ID}}"><img class="cart-item-img" src=""
                                                 alt="..."></a>
                                         <div class="cart-title text-left"><a class="text-dark link-animated"
                                                 href="/v1/products/{{.Product.ID}}"><strong>{{.Product.Title}}</strong></a>
@@ -118,6 +144,7 @@
                     </div>
                 </div>
             </div>
+            {{end}}
         </div>
     </div>
 </section>
