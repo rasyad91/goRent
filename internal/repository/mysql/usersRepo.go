@@ -71,8 +71,6 @@ func (m *DBrepo) GetUser(username string) (model.User, error) {
 		products p on (p.id = r.product_id)
 	where 
 		r.owner_id = ?`
-	fmt.Println(product_query)
-	fmt.Println(booking_query)
 
 	// rent_query
 	rent_rows, err := tx.QueryContext(ctx, rent_query, u.ID)
@@ -115,7 +113,7 @@ func (m *DBrepo) GetUser(username string) (model.User, error) {
 	if err != nil {
 		return model.User{}, fmt.Errorf("db GetUser: %v", err)
 	}
-	defer rent_rows.Close()
+	defer booking_rows.Close()
 	for booking_rows.Next() {
 		b := model.Rent{}
 		if err := booking_rows.Scan(
@@ -164,7 +162,7 @@ func (m *DBrepo) GetUser(username string) (model.User, error) {
 			&p.Rating,
 			&p.Description,
 			&p.Price,
-			&p.Images,
+			// &p.Images,
 			&p.CreatedAt,
 			&p.UpdatedAt,
 		); err != nil {
@@ -176,7 +174,19 @@ func (m *DBrepo) GetUser(username string) (model.User, error) {
 	if err := booking_rows.Err(); err != nil {
 		return model.User{}, fmt.Errorf("db GetUser: %v", err)
 	}
-	fmt.Println("PRODUCTS QUERY:", u)
+	fmt.Println("PRODUCTS QUERY:")
+	for _, item := range u.Products {
+		fmt.Println(item.Title)
+	}
+	fmt.Println("Rents QUERY:")
+	for _, item := range u.Rents {
+		fmt.Println(item.Product.Title)
+	}
+
+	fmt.Println("Bookings QUERY:")
+	for _, item := range u.Bookings {
+		fmt.Println(item.Product.Title)
+	}
 	return u, nil
 }
 
