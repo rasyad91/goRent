@@ -103,7 +103,7 @@ func (m *Repository) Logout(w http.ResponseWriter, r *http.Request) {
 	_ = m.App.Session.RenewToken(r.Context())
 	_ = m.App.Session.Destroy(r.Context())
 	_ = m.App.Session.RenewToken(r.Context())
-	fmt.Println("LOGOUT Session", m.App.Session.Get(r.Context(), "user"))
+	// fmt.Println("LOGOUT Session", m.App.Session.Get(r.Context(), "user"))
 	m.App.Session.Put(r.Context(), "flash", "You've been logged out successfully!")
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

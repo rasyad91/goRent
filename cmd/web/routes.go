@@ -26,10 +26,18 @@ func routes() http.Handler {
 	mux.HandleFunc("/register", handler.Repo.Register).Methods("GET")
 	mux.HandleFunc("/register", handler.Repo.RegisterPost).Methods("POST")
 
-	mux.PathPrefix("/user").Subrouter().Use(Auth)
+	mux.HandleFunc("/user/{userID}/account", handler.Repo.UserAccount).Methods("GET")
+
+	// mux.HandleFunc("/user/{userID}/bookings", handler.Repo.UserBookings).Methods("GET")
+	// mux.HandleFunc("/user/{userID}/rents", handler.Repo.UserRents).Methods("GET")
+	// mux.HandleFunc("/user/{userID}/products", handler.Repo.UserProducts).Methods("GET")
 
 	mux.HandleFunc("/user/logout", handler.Repo.Logout).Methods("GET")
 	mux.HandleFunc("/v1/user/account", handler.Repo.UserAccount).Methods("GET")
+	mux.HandleFunc("/v1/user/account/profile", handler.Repo.EditUserAccount).Methods("GET")
+	mux.HandleFunc("/v1/user/account/profile", handler.Repo.EditUserAccountPost).Methods("POST")
+	mux.HandleFunc("/v1/user/account/payment", handler.Repo.Payment).Methods("GET")
+	mux.HandleFunc("/v1/user/cart", handler.Repo.GetCart).Methods("GET")
 
 	mux.PathPrefix("/auth").Subrouter().Use(Auth)
 

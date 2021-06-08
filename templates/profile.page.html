@@ -1,0 +1,172 @@
+{{template "base" .}}
+
+{{define "content"}}
+
+<section class="pb-4 py-3">
+      <div class="container">
+      {{$res := index .Data "editUser"}}
+      {{$form := index .Form}}
+        <div class="row">
+                  <!-- Customer Sidebar-->
+          <div class="col-lg-3 col-xl-3 mb-3">
+            <div class="customer-sidebar card border-0"> 
+              <div class="customer-profile"><a class="d-inline-block" href="#"><img class="img-fluid rounded-circle customer-image" src="https://d19m59y37dris4.cloudfront.net/varkala/1-2-1/img/avatar/avatar-0.jpg" alt=""></a>
+                <h5>{{$res.Username}}</h5>
+                <p class="text-muted text-sm mb-0">Los Angeles, CA</p>
+              </div>
+              <nav class="list-group customer-nav">
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/account">
+                  <span>
+                    <svg class="svg-icon svg-icon-heavy mr-2">
+                    </svg>Account</span>
+                </a>
+                <a class="active list-group-item d-flex justify-content-between align-items-center" href="/v1/user/account/profile"><span>
+                    <svg class="svg-icon svg-icon-heavy mr-2">
+                    </svg>Edit Profile</span>
+                </a>
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/account/payment"><span>
+                    <svg class="svg-icon svg-icon-heavy mr-2">
+                      <use xlink:href="#real-estate-1"> </use>
+                    </svg>Payment</span></a>
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/cart"><span>
+                    <svg class="svg-icon svg-icon-heavy mr-2">
+                      <use xlink:href="#heart-1"> </use>
+                    </svg>Products</span></a>
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/cart"><span>
+                    <svg class="svg-icon svg-icon-heavy mr-2">
+                      <use xlink:href="#heart-1"> </use>
+                    </svg>Rentals</span></a>
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/cart"><span>
+                    <svg class="svg-icon svg-icon-heavy mr-2">
+                      <use xlink:href="#heart-1"> </use>
+                    </svg>Bookings</span></a>
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/user/logout"><span>
+                    <svg class="svg-icon svg-icon-heavy mr-2">
+                    </svg>Log out</span>
+                </a>
+              </nav>
+            </div>
+          </div>
+          <!-- /Customer Sidebar-->
+          <div class="col-lg-9 col-xl-9 mb-5 mb-lg-0">
+            <h3 class="mb-5">Profile</h3>
+                {{with .Form.Errors.Get "login"}}
+                  <label class="text-danger">{{.}}</label>
+                {{end}}
+                  <form method="POST" novalidate>
+                    <input type="hidden" name="csrf_token" value="{{.CSRFToken }}">
+                    <input type="hidden" name="action" value="profile">
+                      <div class="row">
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                              <label class="form-label"for="username">Username</label> 
+                              {{with $form.Errors.Get "username"}}
+                              <span for="username"  class="text-danger float-right">{{.}}</span>
+                              {{end}}
+                              <input type="username" class="form-control  {{with .Form.Errors.Get "username"}} is-invalid{{end}}" name="username" placeholder="Username" value="{{$res.Username}}">
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="form-group">
+                            <label class="form-label"for="email">Email</label>
+                            {{with $form.Errors.Get "email"}}
+                                <span for="email"  class="text-danger float-right">{{.}}</span>
+                            {{end}}
+                            <input type="email" class="form-control {{with .Form.Errors.Get "email"}} is-invalid{{end}}" name="email" placeholder=" john@gmail.com" value="{{$res.Email}}">
+                          </div>
+                        </div>
+                      </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-outline-dark btn-lg">Change Profile Name</button>
+                    </div>
+            </form>
+            <hr class="mb-5">
+            <div class="mb-5">
+              <h3 class="mb-5">Change your password</h3>
+              <form method="POST" novalidate>
+                <input type="hidden" name="csrf_token" value="{{.CSRFToken }}">
+                <input type="hidden" name="action" value="password">
+                <div class="row">
+                  <div class="col-sm-6">
+                    <div class="form-group">
+                      <label class="form-label" name = "password_old" for="password_old">Old password</label>
+                      {{with $form.Errors.Get "password_old"}}
+                      <span for="password_old"  class="text-danger float-right">{{.}}</span>
+                      {{end}}
+                      <input class="form-control" name = "password_old" id="password_old" type="password">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-6">
+                    <div class="form-group">
+                      <label class="form-label" for="password_1">New password</label>
+                      {{with $form.Errors.Get "password"}}
+                      <span for="password"  class="text-danger float-right">{{.}}</span>
+                      {{end}}
+                      <input class="form-control" name = "password_1"  id="password_1" type="password">
+                    </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="form-group">
+                      <label class="form-label" for="password_2">Retype new password</label>
+                      <input class="form-control" name = "password_2" id="password_2" type="password">
+                    </div>
+                  </div>
+                </div>
+                <div class="mt-4">
+                  <button class="btn btn-dark" type="submit"><i class="far fa-save mr-2"></i>Change password</button>
+                </div>
+              </form>
+            </div>
+            <hr class="mb-5">
+            <h3 class="mb-5">Address</h3>
+              <form method="POST" novalidate>
+                <input type="hidden" name="csrf_token" value="{{.CSRFToken }}">
+                <input type="hidden" name="action" value="address">
+                    <div class="form-group row mb-3">
+                        <div class="form-group col mb-3  ">
+                            <label class="form-label"for="block">Block</label>
+                            {{with $form.Errors.Get "block"}}
+                                <span for="block"  class="text-danger float-right">{{.}}</span>
+                            {{end}}
+                            <input type="text" class="form-control {{with .Form.Errors.Get "block"}} is-invalid{{end}}" name="block" placeholder=" 246" value="{{$res.Address.Block}}">
+
+                        </div>
+                        <div class="form-group col mb-3 ">
+                            <label class="form-label"for="streetname">Street Name</label>
+                            {{with $form.Errors.Get "streetName"}}
+                                <span for="streetName"  class="text-danger float-right">{{.}}</span>
+                            {{end}}
+                            <input type="text" class="form-control {{with .Form.Errors.Get "streetName"}} is-invalid{{end}}" name="streetName" placeholder=" 1234 Main St" value="{{$res.Address.StreetName}}">
+
+                        </div>
+                    </div>
+
+                    <div class="form-group row mb-3">
+                        <div class="form-group col mb-3 ">
+                            <label class="form-label" for="unitnumber">Unit Number</label>
+                            {{with $form.Errors.Get "unitNumber"}}
+                                <span for="unitNumber"  class="text-danger float-right">{{.}}</span>
+                            {{end}}
+                            <input type="text" class="form-control {{with .Form.Errors.Get "unitNumber"}} is-invalid{{end}}" name="unitNumber" placeholder=" #04-23" value="{{$res.Address.UnitNumber}}">
+                        </div>
+                        <div class="form-group col mb-3 ">
+                            <label class="form-label" for="postalCode">Postal Code</label>
+                            {{with $form.Errors.Get "postalCode"}}
+                                <span for="postalCode"  class="text-danger float-right">{{.}}</span>
+                            {{end}}
+                            <input type="text" class="form-control {{with .Form.Errors.Get "postalCode"}} is-invalid{{end}}" name="postalCode" placeholder=" 519231" value="{{$res.Address.PostalCode}}">
+                        </div>
+                    </div>
+    
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-outline-dark btn-lg">Change Address</button>
+                    </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+{{end}}

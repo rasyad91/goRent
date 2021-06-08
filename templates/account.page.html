@@ -2,105 +2,94 @@
 
 {{define "content"}}
 
-<section class="pt-7 pb-12">
-    <div class="container">
-      <div class="row">
-        <div class="col-12 text-center">
-          <!-- Heading -->
-          <h3 class="mb-10">My Account</h3>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12 col-md-3">
-
-        <!-- Nav -->
-          <nav class="mb-10 mb-md-0">
-            <div class="list-group list-group-sm list-group-strong list-group-flush-x">
-              <a class="list-group-item list-group-item-action dropright-toggle " href="account-orders.html">
-                Orders
-              </a>
-              <a class="list-group-item list-group-item-action dropright-toggle " href="account-wishlist.html">
-                Widhlist
-              </a>
-              <a class="list-group-item list-group-item-action dropright-toggle " href="account-personal-info.html">
-                Personal Info
-              </a>
-              <a class="list-group-item list-group-item-action dropright-toggle " href="account-address.html">
-                Addresses
-              </a>
-              <a class="list-group-item list-group-item-action dropright-toggle active" href="account-payment.html">
-                Payment Methods
-              </a>
-              <a class="list-group-item list-group-item-action dropright-toggle" href="#!">
-                Logout
-              </a>
-            </div>
-          </nav>
-        </div>
-
-
-        <div class="col-12 col-md-9 col-lg-8 offset-lg-1">
-          <div class="row">
-            <div class="col-12 col-lg-6">
-
-              <!-- Card -->
-              <div class="card card-lg bg-light mb-8">
-                <div class="card-body">
-
-                  <!-- Heading -->
-                  <h6 class="mb-6">
-                    Debit / Credit Card
-                  </h6>
-
-                  <!-- Text -->
-                  <p class="mb-5">
-                    <strong>Card Number:</strong> <br>
-                    <span class="text-muted">4242 ∙∙∙∙ ∙∙∙∙ 7856 (Mastercard)</span>
-                  </p>
-
-                  <!-- Text -->
-                  <p class="mb-5">
-                    <strong>Expiry Date:</strong> <br>
-                    <span class="text-muted">Feb 2022</span>
-                  </p>
-
-                  <!-- Text -->
-                  <p class="mb-0">
-                    <strong>Name on Card:</strong> <br>
-                    <span class="text-muted">Daniel Robinson</span>
-                  </p>
-
-                  <!-- Action -->
-                  <div class="card-action card-action-right">
-
-                    <!-- Button -->
-                    <a class="btn btn-xs btn-circle btn-white-primary" href="account-payment-edit.html">
-                      <i class="fe fe-edit-2"></i>
-                    </a>
-
-                    <!-- Button -->
-                    <button class="btn btn-xs btn-circle btn-white-primary">
-                      <i class="fe fe-x"></i>
-                    </button>
-
-                  </div>
-
-                </div>
+<section class="pb-4 py-3">
+      <div class="container">
+            
+        {{$res := index .Data "user"}}
+        <div class="row">
+                  <!-- Customer Sidebar-->
+          <div class="col-lg-3 col-xl-3 mb-3">
+            <div class="customer-sidebar card border-0"> 
+              <div class="customer-profile"><a class="d-inline-block" href="#"><img class="img-fluid rounded-circle customer-image" src="https://d19m59y37dris4.cloudfront.net/varkala/1-2-1/img/avatar/avatar-0.jpg" alt=""></a>
+                <h5>{{$res.Username}}</h5>
+                <p class="text-muted text-sm mb-0">Los Angeles, CA</p>
               </div>
-
+              <nav class="list-group customer-nav">
+                <a class="active list-group-item d-flex justify-content-between align-items-center" href="/v1/user/account">
+                  <span>
+                    <svg class="svg-icon svg-icon-heavy mr-2">
+                    </svg>Account</span>
+                </a>
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/account/profile"><span>
+                    <svg class="svg-icon svg-icon-heavy mr-2">
+                    </svg>Edit Profile</span>
+                </a>
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/account/payment"><span>
+                    <svg class="svg-icon svg-icon-heavy mr-2">
+                      <use xlink:href="#real-estate-1"> </use>
+                    </svg>Payment</span></a>
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/cart"><span>
+                    <svg class="svg-icon svg-icon-heavy mr-2">
+                      <use xlink:href="#heart-1"> </use>
+                    </svg>Products</span></a>
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/cart"><span>
+                    <svg class="svg-icon svg-icon-heavy mr-2">
+                      <use xlink:href="#heart-1"> </use>
+                    </svg>Rentals</span></a>
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/cart"><span>
+                    <svg class="svg-icon svg-icon-heavy mr-2">
+                      <use xlink:href="#heart-1"> </use>
+                    </svg>Bookings</span></a>
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/user/logout"><span>
+                    <svg class="svg-icon svg-icon-heavy mr-2">
+                    </svg>Log out</span>
+                </a>
+              </nav>
             </div>
-            <div class="col-12">
-
-              <!-- Button -->
-              <a class="btn btn-block btn-lg btn-outline-border" href="account-payment-edit.html">
-                Add Payment Method <i class="fe fe-plus"></i>
-              </a>
-
+          </div>
+          <!-- /Customer Sidebar-->
+          <div class="col-lg-9 col-xl-9 mb-5 mb-lg-0">
+            <div class = "container" style = "height:80%">
+                <h5>My Products</h5>
+                <div class="swiper-container swiper-container-initialized swiper-container-horizontal swiper-container-pointer-events">
+                    <div class="swiper-wrapper" id="swiper-wrapper-dde3f11d71d76b66" aria-live="polite" style="transition-duration: 0ms; transform: translate3d(-685.333px, 0px, 0px);">
+                      <div class="swiper-slide" role="group" style="width: 30%;">Resize me!</div>
+                      <div class="swiper-slide swiper-slide-prev" role="group" style="width: 30%;">Resize me!</div>
+                      <div class="swiper-slide swiper-slide-active" role="group"  style="width: 30%;">Resize me!</div>
+                      <div class="swiper-slide swiper-slide-next" role="group"  style="width: 30%;">Resize me!</div>
+                      <div class="swiper-slide" role="group"  style="width: 30%;">Resize me!</div>
+                      <div class="swiper-slide" role="group"  style="width: 30%;">Resize me!</div>
+                      <div class="swiper-slide" role="group"  style="width: 30%;">Resize me!</div>
+                      <div class="swiper-slide" role="group"  style="width: 30%;">Resize me!</div>
+                      <div class="swiper-slide" role="group"  style="width: 30%;">Resize me!</div>
+                      <div class="swiper-slide" role="group"  style="width: 30%;">Resize me!</div>
+                    </div>
+                    <div class="swiper-button-next" tabindex="0" role="button" aria-label="Next slide" aria-controls="swiper-wrapper-dde3f11d71d76b66" aria-disabled="false"></div>
+                    <div class="swiper-button-prev" tabindex="0" role="button" aria-label="Previous slide" aria-controls="swiper-wrapper-dde3f11d71d76b66" aria-disabled="false"></div>
+                  <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span>
+                </div>
+                <hr>
+                <h5>My Rented Products</h5>
+                <div class="swiper-container swiper-container-initialized swiper-container-horizontal swiper-container-pointer-events">
+                    <div class="swiper-wrapper" id="swiper-wrapper-dde3f11d71d76b66" aria-live="polite" style="transition-duration: 0ms; transform: translate3d(-685.333px, 0px, 0px);">
+                      <div class="swiper-slide" role="group" style="width: 30%;">Resize me!</div>
+                      <div class="swiper-slide swiper-slide-prev" role="group" style="width: 30%;">Resize me!</div>
+                      <div class="swiper-slide swiper-slide-active" role="group"  style="width: 30%;">Resize me!</div>
+                      <div class="swiper-slide swiper-slide-next" role="group"  style="width: 30%;">Resize me!</div>
+                      <div class="swiper-slide" role="group"  style="width: 30%;">Resize me!</div>
+                      <div class="swiper-slide" role="group"  style="width: 30%;">Resize me!</div>
+                      <div class="swiper-slide" role="group"  style="width: 30%;">Resize me!</div>
+                      <div class="swiper-slide" role="group"  style="width: 30%;">Resize me!</div>
+                      <div class="swiper-slide" role="group"  style="width: 30%;">Resize me!</div>
+                      <div class="swiper-slide" role="group"  style="width: 30%;">Resize me!</div>
+                    </div>
+                    <div class="swiper-button-next" tabindex="0" role="button" aria-label="Next slide" aria-controls="swiper-wrapper-dde3f11d71d76b66" aria-disabled="false"></div>
+                    <div class="swiper-button-prev" tabindex="0" role="button" aria-label="Previous slide" aria-controls="swiper-wrapper-dde3f11d71d76b66" aria-disabled="false"></div>
+                  <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span>
+                </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
-
+    </section>
 {{end}}

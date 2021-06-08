@@ -50,9 +50,9 @@ func (m *DBrepo) GetUser(username string) (model.User, error) {
 		); err != nil {
 		return model.User{}, fmt.Errorf("db GetUser: %v", err)
 	}
-
+	// add in concurrency here - 1 get Rent 1 get Product
 	// get rents
-	query := `select 
+	rent_query := `select 
 			r.id, r.owner_id, r.renter_id, r.product_id, r.restriction_id, r.processed, r.start_date, r.end_date, r.duration, r.total_cost, r.created_at, r.updated_at,
 			p.id, p.owner_id, p.brand, p.category, p.title, p.rating, p.description, p.price, p.created_at, p.updated_at
 		from 
@@ -61,7 +61,16 @@ func (m *DBrepo) GetUser(username string) (model.User, error) {
 			products p on (p.id = r.product_id)
 		where 
 			r.renter_id = ?`
-
+	product_query := `select * from products p where p.owner_id = ?`
+	booking_query := `select 
+		r.id, r.owner_id, r.renter_id, r.product_id, r.restriction_id, r.processed, r.start_date, r.end_date, r.duration, r.total_cost, r.created_at, r.updated_at,
+		p.id, p.owner_id, p.brand, p.category, p.title, p.rating, p.description, p.price, p.created_at, p.updated_at
+	from 
+		rents r 
+	left join 
+		products p on (p.id = r.product_id)
+	where 
+		r.owner_id = ?`
 	rows, err := tx.QueryContext(ctx, query, u.ID)
 	if err != nil {
 		return model.User{}, fmt.Errorf("db GetUser: %v", err)
@@ -165,6 +174,26 @@ func (m *DBrepo) InsertUser(u model.User) error {
 		time.Now(), time.Now())
 	if err != nil {
 		return fmt.Errorf("db InsertUser: %v", err)
+	}
+	return nil
+}
+
+func (m *DBrepo) EditUser(u model.User, editType string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	err := error(nil)
+	if editType == "address" {
+		_, err = m.ExecContext(ctx, "UPDATE goRent.users SET block = ?, street_name = ?, unit_number = ?, postal_code = ? WHERE id = ?", u.Address.Block, u.Address.StreetName, u.Address.UnitNumber, u.Address.PostalCode, u.ID)
+		fmt.Println("AddressChange test:", u)
+	} else if editType == "profile" {
+		_, err = m.ExecContext(ctx, "UPDATE goRent.users SET username = ?, email = ? WHERE id = ?", u.Username, u.Email, u.ID)
+		fmt.Println("ProfileChange test:", u)
+	} else {
+		_, err = m.ExecContext(ctx, "UPDATE goRent.users SET password = ? WHERE id = ?", u.Password, u.ID)
+		fmt.Println("PassWordChange test:", u)
+	}
+	if err != nil {
+		return fmt.Errorf("db EditUser: %v", err)
 	}
 	return nil
 }

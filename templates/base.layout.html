@@ -15,6 +15,46 @@
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/notie/dist/notie.min.css">
     <link rel="stylesheet" type="text/css" href="/static/css/style.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.10.0/css/all.css">
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.css" />
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+    <style>
+      .swiper-container {
+        width: 80%;
+        height: 50%;
+      }
+
+      .swiper-slide {
+        text-align: center;
+        font-size: 18px;
+        background: #fff;
+
+        /* Center slide text vertically */
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        -webkit-box-pack: center;
+        -ms-flex-pack: center;
+        -webkit-justify-content: center;
+        justify-content: center;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        -webkit-align-items: center;
+        align-items: center;
+      }
+
+      @media (max-width: 760px) {
+        .swiper-button-next {
+          right: 20px;
+          transform: rotate(90deg);
+        }
+
+        .swiper-button-prev {
+          left: 20px;
+          transform: rotate(90deg);
+        }
+      }
+    </style>
     <title>GoRent</title>
 </head>
 
@@ -47,8 +87,29 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 <script src="https://cdn.jsdelivr.net/npm/notie@4.3.1/dist/notie.min.js"></script>
 <script src="https://unpkg.com/notie"></script>
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 
 <script>
+    var swiper = new Swiper('.swiper-container', {
+        slidesPerView: 3,
+        direction: getDirection(),
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev',
+        },
+        on: {
+          resize: function () {
+            swiper.changeDirection(getDirection());
+          },
+        },
+      });
+
+      function getDirection() {
+        var windowWidth = window.innerWidth;
+        var direction = window.innerWidth <= 760 ? 'vertical' : 'horizontal';
+
+        return direction;
+      }
     let attention = Prompt();
     {{with .Flash}}
         successAlert("{{.}}")
