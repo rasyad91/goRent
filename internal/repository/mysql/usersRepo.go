@@ -73,13 +73,14 @@ func (m *DBrepo) GetUser(username string) (model.User, error) {
 		r.owner_id = ?`
 	fmt.Println(product_query)
 	fmt.Println(booking_query)
-	rows, err := tx.QueryContext(ctx, rent_query, u.ID)
+
+	// rent_query
+	rent_rows, err := tx.QueryContext(ctx, rent_query, u.ID)
 	if err != nil {
 		return model.User{}, fmt.Errorf("db GetUser: %v", err)
 	}
-	defer rows.Close()
-
-	for rows.Next() {
+	defer rent_rows.Close()
+	for rent_rows.Next() {
 		r := model.Rent{}
 		if err := rows.Scan(
 			&r.ID,
@@ -109,7 +110,43 @@ func (m *DBrepo) GetUser(username string) (model.User, error) {
 		}
 		u.Rents = append(u.Rents, r)
 	}
-	if err := rows.Err(); err != nil {
+	//booking_query
+	booking_rows, err := tx.QueryContext(ctx, rent_query, u.ID)
+	if err != nil {
+		return model.User{}, fmt.Errorf("db GetUser: %v", err)
+	}
+	defer rent_rows.Close()
+	for booking_rows.Next() {
+		r := model.Rent{}
+		if err := rows.Scan(
+			&r.ID,
+			&r.OwnerID,
+			&r.RenterID,
+			&r.ProductID,
+			&r.RestrictionID,
+			&r.Processed,
+			&r.StartDate,
+			&r.EndDate,
+			&r.Duration,
+			&r.TotalCost,
+			&r.CreatedAt,
+			&r.UpdatedAt,
+			&r.Product.ID,
+			&r.Product.OwnerID,
+			&r.Product.Brand,
+			&r.Product.Category,
+			&r.Product.Title,
+			&r.Product.Rating,
+			&r.Product.Description,
+			&r.Product.Price,
+			&r.Product.CreatedAt,
+			&r.Product.UpdatedAt,
+		); err != nil {
+			return model.User{}, fmt.Errorf("db GetUser: %v", err)
+		}
+		u.Rents = append(u.Rents, r)
+	}
+	if err := booking_rows.Err(); err != nil {
 		return model.User{}, fmt.Errorf("db GetUser: %v", err)
 	}
 
