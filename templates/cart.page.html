@@ -5,16 +5,15 @@
 {{$csrf := index .CSRFToken}}
 
 
-<section class="hero py-6">
+<section class="hero py-2">
     <div class="container">
         <ol class="breadcrumb pl-0 ">
             <li class="breadcrumb-item"><a href="/">Home</a></li>
             <li class="breadcrumb-item active">Cart </li>
         </ol>
         <!-- Hero Content-->
-        {{with $u.Rents}}
+        {{with unprocessedRents $u.Rents}}
         <!-- Breadcrumbs -->
-
         <div class="hero-content">
             <h1 class="hero-heading">Cart</h1>
             <div>
@@ -23,6 +22,7 @@
         </div>
 
         {{else}}
+
         <div class="hero-content">
             <div class="row">
             <div class="col"></div>
@@ -37,8 +37,6 @@
             </div>
             <div class="col"></div>
             </div>
-
-
         </div>
 
         {{end}}
@@ -48,7 +46,7 @@
 <section>
     <div class="container">
         <div class="row mb-5">
-            {{with $u.Rents}}
+            {{with (unprocessedRents $u.Rents)}}
             <div class="col-lg-8 pr-xl-5">
                 <div class="cart mb-5">
                     <div class="cart-body">
@@ -111,7 +109,7 @@
                     </div>
                 </div>
                 <div class="d-flex justify-content-between flex-column flex-lg-row mb-5 mb-lg-0">
-                    <a class="btn btn-outline-dark btn-block" href="#">
+                    <a class="btn btn-outline-dark btn-block" href="/v1/user/cart/checkout" >
                         Checkout </a>
                 </div>
             </div>

@@ -54,16 +54,10 @@ func (m *Repository) SearchResult(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			m.App.Error.Println(err)
 		}
-
 	} else {
-
-		if len(searchkeywords) == 0 {
-			product = searchEmptyQuery(m.App.AWSClient)
-		} else {
-			fmt.Println("single function got fired")
-			product = searchQuery(m.App.AWSClient, searchkeywords)
-		}
-
+		fmt.Println("call search Query")
+		product = searchQuery(m.App.AWSClient, searchkeywords)
+		fmt.Println("single function got fired")
 	}
 
 	data["product"] = product
@@ -77,35 +71,18 @@ func (m *Repository) SearchResult(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func searchQuery(client *elastic.Client, searchKewords string) []model.Product {
+func searchQuery(client *elastic.Client, searchKeywords ...string) []model.Product {
 
-	stringQuery := elastic.NewQueryStringQuery(searchKewords)
+	var searchResult *elastic.SearchResult
+	var query elastic.Query
+	fmt.Println("length of searchKeywords", len(searchKeywords))
+	fmt.Printf("whats in searchKeywords %#v", searchKeywords)
 
-	searchResult, err := client.Search().
-		Index("sample_product_list"). // search in index "tweets"
-		Query(stringQuery).           // specify the query
-		Pretty(true).                 // pretty print request and response JSON
-		Do(context.Background())      // execute
-
-	if err != nil {
-		fmt.Println("error from search", err)
-	}
-
-	var product []model.Product
-
-	for _, hit := range searchResult.Hits.Hits {
-
-		var t model.Product
-
-		if err := json.Unmarshal(hit.Source, &t); err != nil {
-			// log.Errorf("ERROR UNMARSHALLING ES SUGGESTION RESPONSE: %v", err)
-			continue
-		}
-		if err != nil {
-			// Deserialization failed
-			fmt.Println("error unmarshaling json", err)
-		}
-		product = append(product, t)
+	if searchKeywords[0] != "" {
+		query = elastic.NewQueryStringQuery(searchKeywords[0])
+	} else {
+		query = elastic.NewMatchAllQuery()
+		fmt.Printf("query is matchallquery %#v", query)
 	}
 	// fmt.Println(product)
 	return product
@@ -116,20 +93,16 @@ func searchEmptyQuery(client *elastic.Client) []model.Product {
 
 	searchResult, err := client.Search().
 		Index("sample_product_list"). // search in index "tweets"
-		Query(elastic.NewMatchAllQuery()).
-		Pretty(true).            // pretty print request and response JSON
-		Do(context.Background()) // execute
-
+		Query(query).                 // specify the query
+		Pretty(true).                 // pretty print request and response JSON
+		Do(context.Background())      // execute
 	if err != nil {
 		fmt.Println("error from search", err)
 	}
 
 	var product []model.Product
-
 	for _, hit := range searchResult.Hits.Hits {
-
 		var t model.Product
-
 		if err := json.Unmarshal(hit.Source, &t); err != nil {
 			// log.Errorf("ERROR UNMARSHALLING ES SUGGESTION RESPONSE: %v", err)
 			continue
@@ -145,22 +118,24 @@ func searchEmptyQuery(client *elastic.Client) []model.Product {
 
 }
 
-func trialMultiSearchQuery(client *elastic.Client, min, max, searchKeywords string) ([]model.Product, error) {
+func trialMultiSearchQuery(client *elastic.Client, min, max string, searchKeywords ...string) ([]model.Product, error) {
 
 	var product []model.Product
-
 	minPrice, err := strconv.ParseFloat(min, 32)
 	if err != nil {
 		return product, err
 	}
-
 	maxPrice, err := strconv.ParseFloat(max, 32)
 	if err != nil {
 		return product, err
 	}
-
-	stringQuery := elastic.NewQueryStringQuery(searchKeywords)
-
+	var stringQuery elastic.Query
+	if searchKeywords[0] != "" {
+		stringQuery = elastic.NewQueryStringQuery(searchKeywords[0])
+	} else {
+		stringQuery = elastic.NewMatchAllQuery()
+		fmt.Printf("query is matchallquery %#v", stringQuery)
+	}
 	// sreq3 := elastic.NewTermQuery("brand_name", "nike")
 
 	// searchResult, err := client.Search().
@@ -185,21 +160,16 @@ func trialMultiSearchQuery(client *elastic.Client, min, max, searchKeywords stri
 	}
 
 	sres := searchResult
-
 	for _, hit := range sres.Hits.Hits {
-
 		var t model.Product
-
 		if err := json.Unmarshal(hit.Source, &t); err != nil {
 			// log.Errorf("ERROR UNMARSHALLING ES SUGGESTION RESPONSE: %v", err)
 			continue
 		}
 		if err != nil {
 			fmt.Println("error unmarshaling json", err)
-
 		}
 		product = append(product, t)
-
 	}
 
 	// fmt.Println(product)

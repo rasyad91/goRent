@@ -4,9 +4,11 @@
 
 {{$res := index .Data "product"}}
 {{$user := index .User}}
+{{$csrf := index .CSRFToken}}
+
 
 <section>
-  <div class="container-fluid px-xl-7 pt-5 pb-3 pb-lg-6">
+  <div class="container-fluid px-xl-7 py-2 pb-lg-6">
     <ul class="breadcrumb undefined">
       <li class="breadcrumb-item"><a href="/">Home</a></li>
       <li class="breadcrumb-item"><a href="/searchresult?q=">Products</a></li>
@@ -90,11 +92,10 @@
             <li>
               <strong>Category:</strong>
               <a class="text-muted" href="/searchresult?q={{$res.Category}}">{{$res.Category}}</a></li>
-            </ul>
             <li>
-              <strong>User:</strong>
-              <a class="text-muted" href="/searchresult?q={{$res.Category}}">{{$res.Category}}</a></li>
-            </ul>
+              <strong>Owner:</strong>
+              <a class="text-muted" href="/searchresult?q={{$res.Category}}">{{$res.OwnerName}}</a></li>
+          </ul>
 
           <form id="addRent" action="/v1/products/addRent" method="POST">
             <input type="hidden" name="csrf_token" value="{{.CSRFToken }}">
@@ -122,7 +123,7 @@
               <div class="input-group-append flex-grow-1">
                 <button id="addRent" value="1" class="btn btn-outline-dark btn-block" type="submit">
                   <i class="fas fa-shopping-cart mr-2"></i>Add to Cart</button>
-                  
+
               </div>
             </div>
           </form>
@@ -171,12 +172,12 @@
           </div>
         </div>
       </div>
-      <form class="form" id="reviewForm" method="post" action="/v1/products/{{$res.ID}}/review">
-        <input type="hidden" name="csrf_token" value="{{.CSRFToken }}">
-        <input type="hidden" name="product_id" value="{{$res.ID}}">
+      {{with .IsAuthenticated}}
+      <div class="fade tab-pane" id="leave-review" role="tabpanel">
+        <form class="form" id="reviewForm" method="post" action="/v1/products/{{$res.ID}}/review">
+          <input type="hidden" name="csrf_token" value="{{$csrf}}">
+          <input type="hidden" name="product_id" value="{{$res.ID}}">
 
-        {{with .IsAuthenticated}}
-        <div class="fade tab-pane" id="leave-review" role="tabpanel">
           <div class="py-5 px-3">
             <div class="row">
               <div class="col-sm-6">
@@ -205,10 +206,10 @@
                 required="required"></textarea>
             </div>
             <button id="reviewForm" class="btn btn-outline-dark" type="submit">Post review</button>
-      </form>
+        </form>
+      </div>
+      {{end}}
     </div>
-  </div>
-  {{end}}
   </div>
   </div>
 </section>
@@ -228,10 +229,17 @@
   const rangepicker = new DateRangePicker(elem, {
     format: "dd-mm-yyyy",
     minDate: dateToday,
-    datesDisabled: [
-      {{range $b}}
+    datesDisabled: [{
+        {
+          range $b
+        }
+      }
       "{{.}}",
-      {{end}}
+      {
+        {
+          end
+        }
+      }
     ]
   });
 </script>
