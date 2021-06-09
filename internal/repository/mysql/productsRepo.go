@@ -162,3 +162,32 @@ func (m *DBrepo) GetAllProducts() ([]model.Product, error) {
 	}
 	return products, nil
 }
+
+func (m *DBrepo) GetProductNextIndex() (int, error) {
+
+	p := model.Product{}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	query := `select id from products order by id desc limit 1`
+
+	rows, err := m.QueryContext(ctx, query)
+	if err != nil {
+		return -1, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		err := rows.Scan(
+			&p.ID,
+		)
+		if err != nil {
+			return -1, err
+		}
+	}
+	if err := rows.Err(); err != nil {
+		return -1, err
+	}
+	return p.ID + 1, nil
+}
