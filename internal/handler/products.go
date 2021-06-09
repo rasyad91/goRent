@@ -107,8 +107,9 @@ func (m *Repository) PostReview(w http.ResponseWriter, r *http.Request) {
 func (m *Repository) AddProduct(w http.ResponseWriter, r *http.Request) {
 
 	data := make(map[string]interface{})
-
-	if err := render.Template(w, r, "addproduct.page.html", &render.TemplateData{
+	u := m.App.Session.Get(r.Context(), "user").(model.User)
+	data["products"] = u.Products
+	if err := render.Template(w, r, "userProduct.page.html", &render.TemplateData{
 		Data: data,
 	}); err != nil {
 		m.App.Error.Println(err)
