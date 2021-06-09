@@ -7,6 +7,7 @@ import (
 	"goRent/internal/model"
 	"goRent/internal/render"
 	"net/http"
+	"time"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -30,6 +31,8 @@ func (m *Repository) Login(w http.ResponseWriter, r *http.Request) {
 
 func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("HITTING LOGINPOST")
+	t := time.Now()
+	fmt.Println("Start timing...")
 	form := form.New(r.PostForm)
 	if err := r.ParseForm(); err != nil {
 		m.App.Error.Println(err)
@@ -55,6 +58,7 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("PASSWORD MATCHES")
 	}
 
+	fmt.Println("time taken: ", time.Since(t))
 	data := make(map[string]interface{})
 	if len(form.Errors) != 0 {
 		if err := render.Template(w, r, "login.page.html", &render.TemplateData{

@@ -8,6 +8,7 @@ import (
 	"goRent/internal/render"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
@@ -19,6 +20,8 @@ import (
 
 func (m *Repository) ShowProductByID(w http.ResponseWriter, r *http.Request) {
 
+	t := time.Now()
+	fmt.Println("start timing...")
 	m.App.Info.Println("showProduct")
 	params := mux.Vars(r)
 	productID, err := strconv.Atoi(params["productID"])
@@ -49,6 +52,7 @@ func (m *Repository) ShowProductByID(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
 	data["product"] = p
 	data["blocked"] = dates
+	fmt.Println("time taken", time.Since(t))
 	if err := render.Template(w, r, "product.page.html", &render.TemplateData{
 		Data: data,
 	}); err != nil {
