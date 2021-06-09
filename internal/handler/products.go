@@ -14,6 +14,8 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/gorilla/mux"
 
+	"golang.org/x/sync/errgroup"
+
 	// "github.com/aws/aws-sdk-go/aws"
 	awsS3 "github.com/aws/aws-sdk-go/aws/session"
 )
@@ -29,22 +31,37 @@ func (m *Repository) ShowProductByID(w http.ResponseWriter, r *http.Request) {
 		m.App.Error.Println(err)
 		return
 	}
-	p, err := m.DB.GetProductByID(productID)
-	if err != nil {
-		m.App.Error.Println(err)
-		return
-	}
-	rents, err := m.DB.GetRentsByProductID(productID)
-	if err != nil {
-		m.App.Error.Println(err)
-		return
-	}
 
-	var user model.User
-	dates := helper.ListDatesFromRents(rents)
+	g, _ := errgroup.WithContext(r.Context())
+	p := model.Product{}
+	dates := []string{}
+	rents := []model.Rent{}
+
+	g.Go(func() error {
+		p, err = m.DB.GetProductByID(productID)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+
+	g.Go(func() error {
+		rents, err = m.DB.GetRentsByProductID(productID)
+		if err != nil {
+			return err
+		}
+		dates = helper.ListDatesFromRents(rents)
+		return nil
+	})
+
+	if err := g.Wait(); err != nil {
+		render.ServerError(w, r, err)
+		m.App.Error.Println(err)
+		return
+	}
 
 	if helper.IsAuthenticated(r) {
-		user = m.App.Session.Get(r.Context(), "user").(model.User)
+		user := m.App.Session.Get(r.Context(), "user").(model.User)
 		// append dates that are already booked and processed in system and dates that user has rent but not yet processed for that user
 		dates = append(helper.ListDatesFromRents(rents), helper.ListDatesFromRents(user.Rents)...)
 	}
@@ -53,11 +70,13 @@ func (m *Repository) ShowProductByID(w http.ResponseWriter, r *http.Request) {
 	data["product"] = p
 	data["blocked"] = dates
 	fmt.Println("time taken", time.Since(t))
+
 	if err := render.Template(w, r, "product.page.html", &render.TemplateData{
 		Data: data,
 	}); err != nil {
 		m.App.Error.Println(err)
 	}
+
 }
 
 func (m *Repository) PostReview(w http.ResponseWriter, r *http.Request) {
@@ -161,7 +180,7 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, sess *awsS3.Session, ch chan string) {
+func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, sess *awsS3.Session, ch chan<- string) {
 
 	const MAX_UPLOAD_SIZE = 1024 * 1024 // 1MB
 	uploader := s3manager.NewUploader(sess)
@@ -172,16 +191,15 @@ func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, 
 		http.Error(w, "The uploaded file is too big. Please choose an file that's less than 1MB in size", http.StatusBadRequest)
 		return
 	}
+	defer r.Body.Close()
 
 	fileName := "file" + strconv.Itoa(i) //file1
 
-	file, fileHeader, err := r.FormFile(fileName)
+	file, _, err := r.FormFile(fileName)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	_ = fileHeader
-
 	defer file.Close()
 
 	buff := make([]byte, 512)
@@ -215,9 +233,9 @@ func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, 
 
 	if err != nil {
 		fmt.Println("error with uploading file", err)
-	} else {
-		fmt.Println("upload to S3 bucket was successful; please check")
+		return
 	}
+	fmt.Println("upload to S3 bucket was successful; please check")
 
 	//return amz link:
 	s3link := "https://wooteam-productslist.s3-ap-southeast-1.amazonaws.com/product_list/images/" + s3FileName

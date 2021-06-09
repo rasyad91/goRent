@@ -7,7 +7,6 @@ import (
 )
 
 func NewAWSSession() (*awsS3.Session, error) {
-
 	sess, err := awsS3.NewSession(&aws.Config{
 		Region: aws.String(*region),
 		Credentials: credentials.NewStaticCredentials(

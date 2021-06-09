@@ -26,6 +26,7 @@
 
             <div class="row">
                 <div class="card-deck">
+                    {{with index .Data "Product"}}
                     {{range $res := index .Data "product"}}
                     <a class="" href="/v1/products/{{$res.ID}}">
                         <div class="col-md-4 mb-3">
@@ -60,6 +61,13 @@
                             </div>
                         </div>
                     </a>
+                    {{end}}
+                    {{else}}
+                    <div class="">
+                        <i class="fas fa-ghost fa-3x d-flex justify-content-center"></i>
+                        <span class="text-muted d-flex justify-content-center">Sorry! No results found</span>
+
+                    </div>
                     {{end}}
                 </div>
             </div>

@@ -16,9 +16,8 @@ func (m *DBrepo) GetProductByID(id int) (model.Product, error) {
 	p := model.Product{}
 	g, _ := errgroup.WithContext(ctx)
 
-	idChan := make(chan int, 1)
-
 	g.Go(func() error {
+		fmt.Println("IN FIRST GO ROUTINE")
 		query := `select 
 						p.id, p.owner_id, p.brand, p.category, p.title, p.rating, p.description, p.price, p.created_at, p.updated_at
 					from
@@ -35,21 +34,23 @@ func (m *DBrepo) GetProductByID(id int) (model.Product, error) {
 			&p.Price,
 			&p.CreatedAt,
 			&p.UpdatedAt,
-			&p.UpdatedAt,
 		); err != nil {
 			return fmt.Errorf("db getproductbyid: %v", err)
 		}
-		idChan <- p.OwnerID
-		close(idChan)
+		query = `select username from users where id = ?`
+		if err := m.DB.QueryRowContext(ctx, query, p.OwnerID).Scan(&p.OwnerName); err != nil {
+			return err
+		}
 		return nil
 	})
 
 	// get reviews from reviews table
-
 	g.Go(func() error {
 		query := `select id, reviewer_id, reviewer_name, product_id, body, rating, created_at, updated_at
 		from product_reviews where product_id = ?`
 		rows, err := m.DB.QueryContext(ctx, query, id)
+		fmt.Println("IN SECOND GO ROUTINE")
+
 		if err != nil {
 			return err
 		}
@@ -74,14 +75,6 @@ func (m *DBrepo) GetProductByID(id int) (model.Product, error) {
 		return nil
 	})
 
-	g.Go(func() error {
-		// get owner's detail from users using ownerID
-		query := `select username from users where id = ?`
-		if err := m.DB.QueryRowContext(ctx, query, <-idChan).Scan(&p.OwnerName); err != nil {
-			return err
-		}
-		return nil
-	})
 	if err := g.Wait(); err != nil {
 		return model.Product{}, err
 	}
@@ -111,6 +104,7 @@ func (m *DBrepo) CreateProductReview(pr model.ProductReview) error {
 				where pr.product_id = ?
 				group by p.rating`
 	if err := tx.QueryRowContext(ctx, query, pr.ProductID).Scan(&reviewCount, &rating); err != nil {
+		tx.Rollback()
 		return fmt.Errorf("db addproductreview query reviewcount + rating: %v", err)
 	}
 
@@ -186,29 +180,16 @@ func (m *DBrepo) GetAllProducts() ([]model.Product, error) {
 
 func (m *DBrepo) GetProductNextIndex() (int, error) {
 
-	p := model.Product{}
-
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
 	query := `select id from products order by id desc limit 1`
 
-	rows, err := m.QueryContext(ctx, query)
-	if err != nil {
+	var id int
+	row := m.QueryRowContext(ctx, query)
+	if err := row.Scan(&id); err != nil {
 		return -1, err
 	}
-	defer rows.Close()
 
-	for rows.Next() {
-		err := rows.Scan(
-			&p.ID,
-		)
-		if err != nil {
-			return -1, err
-		}
-	}
-	if err := rows.Err(); err != nil {
-		return -1, err
-	}
-	return p.ID + 1, nil
+	return id + 1, nil
 }
