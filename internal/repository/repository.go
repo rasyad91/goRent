@@ -14,7 +14,7 @@ type DatabaseRepo interface {
 
 	// Rents
 	GetRentsByProductID(id int) ([]model.Rent, error)
-	CreateRent(r model.Rent) (int, error)
+	CreateRent(r model.Rent) error
 	DeleteRent(rentID int) error
 
 	// Reviews
