@@ -96,3 +96,11 @@ func (m *Repository) PostReview(w http.ResponseWriter, r *http.Request) {
 // 		retun
 // 	}
 // }
+func (m *Repository) UserProducts(w http.ResponseWriter, r *http.Request) {
+	data := make(map[string]interface{})
+	if err := render.Template(w, r, "userProduct.page.html", &render.TemplateData{
+		Data: data,
+	}); err != nil {
+		m.App.Error.Println(err)
+	}
+}

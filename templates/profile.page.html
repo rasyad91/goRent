@@ -18,7 +18,7 @@
                 <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/account">
                   <span>
                     <svg class="svg-icon svg-icon-heavy mr-2">
-                    </svg>Account</span>
+                    </svg>Overview</span>
                 </a>
                 <a class="active list-group-item d-flex justify-content-between align-items-center" href="/v1/user/account/profile"><span>
                     <svg class="svg-icon svg-icon-heavy mr-2">
@@ -28,7 +28,7 @@
                     <svg class="svg-icon svg-icon-heavy mr-2">
                       <use xlink:href="#real-estate-1"> </use>
                     </svg>Payment</span></a>
-                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/cart"><span>
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/products"><span>
                     <svg class="svg-icon svg-icon-heavy mr-2">
                       <use xlink:href="#heart-1"> </use>
                     </svg>Products</span></a>
@@ -63,7 +63,7 @@
                               {{with $form.Errors.Get "username"}}
                               <span for="username"  class="text-danger float-right">{{.}}</span>
                               {{end}}
-                              <input type="username" class="form-control  {{with .Form.Errors.Get "username"}} is-invalid{{end}}" name="username" placeholder="Username" value="{{$res.Username}}">
+                              <input disabled type="username" class="form-control  {{with .Form.Errors.Get "username"}} is-invalid{{end}}" name="username" placeholder="Username" value="{{$res.Username}}">
                           </div>
                         </div>
                         <div class="col-sm-6">
@@ -77,7 +77,7 @@
                         </div>
                       </div>
                     <div class="form-group">
-                        <button type="submit" class="btn btn-outline-dark btn-lg">Change Profile Name</button>
+                        <button type="submit" class="btn btn-outline-dark">Change Email</button>
                     </div>
             </form>
             <hr class="mb-5">
@@ -115,7 +115,7 @@
                   </div>
                 </div>
                 <div class="mt-4">
-                  <button class="btn btn-dark" type="submit"><i class="far fa-save mr-2"></i>Change password</button>
+                  <button type="submit" class="btn btn-outline-dark">Change Password</button>
                 </div>
               </form>
             </div>
@@ -161,7 +161,7 @@
                     </div>
     
                     <div class="form-group">
-                        <button type="submit" class="btn btn-outline-dark btn-lg">Change Address</button>
+                        <button type="submit" class="btn btn-outline-dark">Change Address</button>
                     </div>
             </form>
           </div>

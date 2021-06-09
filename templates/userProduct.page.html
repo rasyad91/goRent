@@ -1,0 +1,116 @@
+{{template "base" .}}
+
+{{define "content"}}
+
+<section class="pb-4 py-3">
+      <div class="container">
+      {{$res := index .Data "editUser"}}
+      {{$form := index .Form}}
+        <div class="row">
+                  <!-- Customer Sidebar-->
+          <div class="col-lg-3 col-xl-3 mb-3">
+            <div class="customer-sidebar card border-0"> 
+              <div class="customer-profile"><a class="d-inline-block" href="#"><img class="img-fluid rounded-circle customer-image" src="https://d19m59y37dris4.cloudfront.net/varkala/1-2-1/img/avatar/avatar-0.jpg" alt=""></a>
+                <h5>{{$res.Username}}</h5>
+                <p class="text-muted text-sm mb-0">Los Angeles, CA</p>
+              </div>
+              <nav class="list-group customer-nav">
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/account">
+                  <span>
+                    <svg class="svg-icon svg-icon-heavy mr-2">
+                    </svg>Overview</span>
+                </a>
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/account/profile"><span>
+                    <svg class="svg-icon svg-icon-heavy mr-2">
+                    </svg>Edit Profile</span>
+                </a>
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/account/payment"><span>
+                    <svg class="svg-icon svg-icon-heavy mr-2">
+                      <use xlink:href="#real-estate-1"> </use>
+                    </svg>Payment</span></a>
+                <a class="active list-group-item d-flex justify-content-between align-items-center" href="/v1/user/products"><span>
+                    <svg class="svg-icon svg-icon-heavy mr-2">
+                      <use xlink:href="#heart-1"> </use>
+                    </svg>Products</span></a>
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/cart"><span>
+                    <svg class="svg-icon svg-icon-heavy mr-2">
+                      <use xlink:href="#heart-1"> </use>
+                    </svg>Rentals</span></a>
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/cart"><span>
+                    <svg class="svg-icon svg-icon-heavy mr-2">
+                      <use xlink:href="#heart-1"> </use>
+                    </svg>Bookings</span></a>
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/user/logout"><span>
+                    <svg class="svg-icon svg-icon-heavy mr-2">
+                    </svg>Log out</span>
+                </a>
+              </nav>
+            </div>
+          </div>
+          <!-- /Customer Sidebar-->
+          <div class="col-lg-9 col-xl-9 mb-5 mb-lg-0">
+          <div class="cart">
+              <div class="cart-wrapper">
+                <div class="cart-header">
+                  <div class="row">
+                    <div class="col-6">Item</div>
+                    <div class="col-2 text-center">Price</div>
+                    <div class="col-2 text-right">Quantity</div>
+                    <div class="col-2 text-right">Total</div>
+                  </div>
+                </div>
+                <div class="cart-body">
+                  <!-- Product-->
+                  <div class="cart-item">
+                    <div class="row d-flex align-items-center text-center">
+                      <div class="col-6">
+                        <div class="d-flex align-items-center"><a href="detail.html"><img class="cart-item-img" src="https://d19m59y37dris4.cloudfront.net/varkala/1-2-1/img/product/product-square-ian-dooley-347968-unsplash.jpg" alt="..."></a>
+                          <div class="cart-title text-left"><a class="text-dark" href="detail.html"><strong>Skull Tee</strong></a><br><span class="text-muted text-sm">Size: Large</span><br><span class="text-muted text-sm">Colour: Green</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-2">$65.00</div>
+                      <div class="col-2">4
+                      </div>
+                      <div class="col-2 text-center">$260.00</div>
+                    </div>
+                  </div>
+                  <!-- Product-->
+                  <div class="cart-item">
+                    <div class="row d-flex align-items-center text-center">
+                      <div class="col-6">
+                        <div class="d-flex align-items-center"><a href="detail.html"><img class="cart-item-img" src="https://d19m59y37dris4.cloudfront.net/varkala/1-2-1/img/product/product-square-kyle-loftus-596319-unsplash.jpg" alt="..."></a>
+                          <div class="cart-title text-left"><a class="text-dark" href="detail.html"><strong>Transparent Blouse</strong></a><br><span class="text-muted text-sm">Size: Medium</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-2">$55.00</div>
+                      <div class="col-2">3
+                      </div>
+                      <div class="col-2 text-center">$165.00</div>
+                    </div>
+                  </div>
+                  <!-- Product-->
+                  <div class="cart-item">
+                    <div class="row d-flex align-items-center text-center">
+                      <div class="col-6">
+                        <div class="d-flex align-items-center"><a href="detail.html"><img class="cart-item-img" src="https://d19m59y37dris4.cloudfront.net/varkala/1-2-1/img/product/product-square-serrah-galos-494312-unsplash.jpg" alt="..."></a>
+                          <div class="cart-title text-left"><a class="text-dark" href="detail.html"><strong>White Tee</strong></a><br><span class="text-muted text-sm">Size: Medium</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-2">$55.00</div>
+                      <div class="col-2">3
+                      </div>
+                      <div class="col-2 text-center">$165.00</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+{{end}}
