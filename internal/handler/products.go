@@ -6,8 +6,10 @@ import (
 	"goRent/internal/helper"
 	"goRent/internal/model"
 	"goRent/internal/render"
-	"io/ioutil"
+	"io"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
 
 	"github.com/gorilla/mux"
@@ -113,45 +115,78 @@ func (m *Repository) AddProduct(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (m *Repository) UploadImages(w http.ResponseWriter, r *http.Request) {
+func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 
 	// data := make(map[string]interface{})
-	fmt.Fprintf(w, "Uploading File \n")
+	for i := 1; i < 5; i++ {
+		storeImages(w, r, i)
+	}
+	fmt.Fprintf(w, "successfully uploaded file to server")
 
-	r.ParseMultipartForm(7 << 10)
+}
 
-	file, handler, err := r.FormFile("productImage")
+func storeImages(w http.ResponseWriter, r *http.Request, i int) {
+
+	const MAX_UPLOAD_SIZE = 1024 * 1024 // 1MB
+
+	r.Body = http.MaxBytesReader(w, r.Body, MAX_UPLOAD_SIZE)
+	if err := r.ParseMultipartForm(MAX_UPLOAD_SIZE); err != nil {
+		http.Error(w, "The uploaded file is too big. Please choose an file that's less than 1MB in size", http.StatusBadRequest)
+		return
+	}
+
+	fileName := "file" + strconv.Itoa(i)
+	file, fileHeader, err := r.FormFile(fileName)
 	if err != nil {
-		m.App.Error.Println("Error retriveving file from form-data/ frontend:", err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	defer file.Close()
 
-	fmt.Printf("Uploaded File: %+v\n", handler.Filename)
-	fmt.Printf("File Size: %+v\n", handler.Size)
-	fmt.Printf("MINE Header: %+v\n", handler.Header)
-
-	tempFile, err := ioutil.TempFile("temp-images", "upload-*.png")
-
+	buff := make([]byte, 512)
+	_, err = file.Read(buff)
 	if err != nil {
-		m.App.Error.Println("Error writing the image upload to the temp images directory", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
-	defer tempFile.Close()
-
-	fileBytes, err := ioutil.ReadAll(file)
-	if err != nil {
-		m.App.Error.Println("Error writing the image upload to the temp images directory", err)
+	filetype := http.DetectContentType(buff)
+	if filetype != "image/jpeg" && filetype != "image/png" {
+		http.Error(w, "The provided file format is not allowed. Please upload a JPEG or PNG image", http.StatusBadRequest)
+		return
 	}
 
-	tempFile.Write(fileBytes)
+	_, err = file.Seek(0, io.SeekStart)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-	fmt.Fprintf(w, "successfully uploaded file to server")
+	err = os.MkdirAll("./uploads", os.ModePerm)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-	// if err := render.Template(w, r, "addproduct.page.html", &render.TemplateData{
-	// 	Data: data,
-	// }); err != nil {
-	// 	m.App.Error.Println(err)
-	// }
+	// Create a new file in the uploads directory & replace product ID with real productID
+	var productID string = "1" //assume productID is 1.
+	imageFileName := productID + "_" + strconv.Itoa(i)
+	// dst, err := os.Create(fmt.Sprintf("./uploads/%d%s", time.Now().UnixNano(), filepath.Ext(fileHeader.Filename)))
+	dst, err := os.Create(fmt.Sprintf("./uploads/%s%s", imageFileName, filepath.Ext(fileHeader.Filename)))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	defer dst.Close()
+
+	// Copy the uploaded file to the filesystem
+	// at the specified destination
+	_, err = io.Copy(dst, file)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 }

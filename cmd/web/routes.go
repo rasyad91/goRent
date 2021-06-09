@@ -40,7 +40,7 @@ func routes() http.Handler {
 	mux.HandleFunc("/v1/user/cart", handler.Repo.GetCart).Methods("GET")
 
 	mux.HandleFunc("/v1/user/addproduct", handler.Repo.AddProduct).Methods("GET")
-	mux.HandleFunc("/v1/user/uploadimages", handler.Repo.UploadImages).Methods("POST")
+	mux.HandleFunc("/v1/user/createproduct", handler.Repo.CreateProduct).Methods("POST")
 
 	mux.PathPrefix("/auth").Subrouter().Use(Auth)
 

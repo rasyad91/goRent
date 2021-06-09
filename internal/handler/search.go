@@ -107,7 +107,7 @@ func searchQuery(client *elastic.Client, searchKewords string) []model.Product {
 		}
 		product = append(product, t)
 	}
-	fmt.Println(product)
+	// fmt.Println(product)
 	return product
 
 }
@@ -140,7 +140,7 @@ func searchEmptyQuery(client *elastic.Client) []model.Product {
 		}
 		product = append(product, t)
 	}
-	fmt.Println(product)
+	// fmt.Println(product)
 	return product
 
 }
@@ -202,7 +202,7 @@ func trialMultiSearchQuery(client *elastic.Client, min, max, searchKeywords stri
 
 	}
 
-	fmt.Println(product)
+	// fmt.Println(product)
 	return product, nil
 }
 
