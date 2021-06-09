@@ -6,8 +6,6 @@ import (
 	awsS3 "github.com/aws/aws-sdk-go/aws/session"
 )
 
-// var app *config.AppConfig
-
 func NewAWSSession() (*awsS3.Session, error) {
 
 	sess, err := awsS3.NewSession(&aws.Config{
