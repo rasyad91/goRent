@@ -81,9 +81,9 @@ func (m *DBrepo) GetUser(username string) (model.User, error) {
 	//timing prior to concurrency
 
 	wg.Add(3)
-	go m.runQuery(u, rent_query, "rent")
-	go m.runQuery(u, product_query, "product")
-	go m.runQuery(u, booking_query, "booking")
+	go m.runQuery(&u, rent_query, "rent")
+	go m.runQuery(&u, product_query, "product")
+	go m.runQuery(&u, booking_query, "booking")
 	wg.Wait()
 	// // rent_query
 	// rent_rows, err := tx.QueryContext(ctx, rent_query, u.ID)
@@ -203,7 +203,7 @@ func (m *DBrepo) GetUser(username string) (model.User, error) {
 	// }
 	return u, nil
 }
-func (m *DBrepo) runQuery(user model.User, query string, structType string) error {
+func (m *DBrepo) runQuery(user *model.User, query string, structType string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer wg.Done()
 	defer cancel()
