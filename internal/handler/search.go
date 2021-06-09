@@ -169,11 +169,8 @@ func trialMultiSearchQuery(client *elastic.Client, min, max string, searchKeywor
 
 //for rachel.
 func imagequery(client *elastic.Client, owner_id int) ([]model.Product, error) {
-
 	var product []model.Product
-
 	req := elastic.NewTermQuery("owner_id", owner_id) //maybe change "1"  to ownder_id , received frum functoin
-
 	searchResult, err := client.Search().
 		Index("sample_product_list"). // search in index "tweets"
 		Query(req).                   // specify the query

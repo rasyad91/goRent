@@ -103,17 +103,24 @@ func (m *Repository) PostReview(w http.ResponseWriter, r *http.Request) {
 // 		retun
 // 	}
 // }
+<<<<<<< HEAD
 
 func (m *Repository) AddProduct(w http.ResponseWriter, r *http.Request) {
 
 	data := make(map[string]interface{})
 
 	if err := render.Template(w, r, "addproduct.page.html", &render.TemplateData{
+=======
+func (m *Repository) UserProducts(w http.ResponseWriter, r *http.Request) {
+	data := make(map[string]interface{})
+	if err := render.Template(w, r, "userProduct.page.html", &render.TemplateData{
+>>>>>>> origin/Login
 		Data: data,
 	}); err != nil {
 		m.App.Error.Println(err)
 	}
 }
+<<<<<<< HEAD
 
 func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 
@@ -190,3 +197,5 @@ func storeImages(w http.ResponseWriter, r *http.Request, i int) {
 	}
 
 }
+=======
+>>>>>>> origin/Login
