@@ -33,6 +33,13 @@ func (m *DBrepo) GetProductByID(id int) (model.Product, error) {
 		return p, fmt.Errorf("db getproductbyid: %v", err)
 	}
 
+	query = `select username from users where id = ?`
+	if err := m.DB.QueryRowContext(ctx, query, p.OwnerID).Scan(
+		&p.OwnerName,
+	); err != nil {
+		return p, fmt.Errorf("db getproductbyid: %v", err)
+	}
+
 	query = `select id, reviewer_id, reviewer_name, product_id, body, rating, created_at, updated_at
 				from product_reviews where product_id = ?`
 	rows, err := m.DB.QueryContext(ctx, query, id)

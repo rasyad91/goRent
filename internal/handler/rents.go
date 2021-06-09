@@ -15,13 +15,26 @@ import (
 func (m *Repository) PostRent(w http.ResponseWriter, r *http.Request) {
 
 	m.App.Info.Println("postRent")
-	u := m.App.Session.Get(r.Context(), "user").(model.User)
-
 	if err := r.ParseForm(); err != nil {
 		m.App.Error.Println(err)
 		render.ServerError(w, r, err)
 		return
 	}
+	productID, err := strconv.Atoi(r.PostFormValue("product_id"))
+	if err != nil {
+		m.App.Error.Println(err)
+		return
+	}
+
+	if !helper.IsAuthenticated(r) {
+		m.App.Session.Put(r.Context(), "url", fmt.Sprintf("/v1/products/%d", productID))
+		m.App.Session.Put(r.Context(), "warning", "Sorry! You have to login first to make a booking.")
+		m.App.Info.Println("user not logged in to make rent, redirecting to login")
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	u := m.App.Session.Get(r.Context(), "user").(model.User)
 
 	start := r.PostFormValue("start_date")
 	startDate, err := time.Parse(config.DateLayout, start)
@@ -38,11 +51,6 @@ func (m *Repository) PostRent(w http.ResponseWriter, r *http.Request) {
 	productTitle := r.PostFormValue("product_title")
 	blocked := r.PostFormValue("blocked")
 
-	productID, err := strconv.Atoi(r.PostFormValue("product_id"))
-	if err != nil {
-		m.App.Error.Println(err)
-		return
-	}
 	ownerID, err := strconv.Atoi(r.PostFormValue("owner_id"))
 	if err != nil {
 		m.App.Error.Println(err)
@@ -79,6 +87,8 @@ func (m *Repository) PostRent(w http.ResponseWriter, r *http.Request) {
 		EndDate:   endDate,
 	}
 
+	t := time.Now()
+	fmt.Println("Create Rent: Start timing ...")
 	if err := m.DB.CreateRent(rent); err != nil {
 		render.ServerError(w, r, err)
 		m.App.Error.Println(err)
@@ -87,6 +97,7 @@ func (m *Repository) PostRent(w http.ResponseWriter, r *http.Request) {
 
 	eu, _ := m.DB.GetUser(u.Username)
 	m.App.Session.Put(r.Context(), "user", eu)
+	fmt.Println("Time taken: ", time.Since(t))
 
 	m.App.Session.Put(r.Context(), "flash", fmt.Sprintf("You have added %s to cart!", productTitle))
 	http.Redirect(w, r, fmt.Sprintf("/v1/products/%d", productID), http.StatusSeeOther)
@@ -108,7 +119,9 @@ func (m *Repository) DeleteRent(w http.ResponseWriter, r *http.Request) {
 		render.ServerError(w, r, err)
 		return
 	}
-	fmt.Println(rentID)
+
+	t := time.Now()
+	fmt.Println("Delete Rent: Start timing ...")
 
 	if err := m.DB.DeleteRent(rentID); err != nil {
 		render.ServerError(w, r, err)
@@ -117,8 +130,14 @@ func (m *Repository) DeleteRent(w http.ResponseWriter, r *http.Request) {
 	}
 
 	u := m.App.Session.Get(r.Context(), "user").(model.User)
-	eu, _ := m.DB.GetUser(u.Username)
+	eu, err := m.DB.GetUser(u.Username)
+	if err != nil {
+		m.App.Error.Println(err)
+		render.ServerError(w, r, err)
+		return
+	}
 	m.App.Session.Put(r.Context(), "user", eu)
+	fmt.Println("Time taken: ", time.Since(t))
 
 	m.App.Session.Put(r.Context(), "flash", fmt.Sprintf("Rent #%d removed from cart!", rentID))
 	http.Redirect(w, r, "/v1/user/cart", http.StatusSeeOther)

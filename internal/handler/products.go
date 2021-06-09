@@ -6,7 +6,10 @@ import (
 	"goRent/internal/helper"
 	"goRent/internal/model"
 	"goRent/internal/render"
+	"io"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
 
 	"github.com/gorilla/mux"
@@ -15,8 +18,6 @@ import (
 func (m *Repository) ShowProductByID(w http.ResponseWriter, r *http.Request) {
 
 	m.App.Info.Println("showProduct")
-
-	user := m.App.Session.Get(r.Context(), "user").(model.User)
 	params := mux.Vars(r)
 	productID, err := strconv.Atoi(params["productID"])
 	if err != nil {
@@ -34,8 +35,14 @@ func (m *Repository) ShowProductByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// append dates that are already booked and processed in system and dates that user has rent but not yet processed for that user
-	dates := append(helper.ListDatesFromRents(rents), helper.ListDatesFromRents(user.Rents)...)
+	var user model.User
+	dates := helper.ListDatesFromRents(rents)
+
+	if helper.IsAuthenticated(r) {
+		user = m.App.Session.Get(r.Context(), "user").(model.User)
+		// append dates that are already booked and processed in system and dates that user has rent but not yet processed for that user
+		dates = append(helper.ListDatesFromRents(rents), helper.ListDatesFromRents(user.Rents)...)
+	}
 
 	data := make(map[string]interface{})
 	data["product"] = p
@@ -96,13 +103,90 @@ func (m *Repository) PostReview(w http.ResponseWriter, r *http.Request) {
 // 		retun
 // 	}
 // }
-func (m *Repository) UserProducts(w http.ResponseWriter, r *http.Request) {
+
+func (m *Repository) AddProduct(w http.ResponseWriter, r *http.Request) {
+
 	data := make(map[string]interface{})
-	u := m.App.Session.Get(r.Context(), "user").(model.User)
-	data["products"] = u.Products
-	if err := render.Template(w, r, "userProduct.page.html", &render.TemplateData{
+
+	if err := render.Template(w, r, "addproduct.page.html", &render.TemplateData{
 		Data: data,
 	}); err != nil {
 		m.App.Error.Println(err)
 	}
+}
+
+func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
+
+	// data := make(map[string]interface{})
+	for i := 1; i < 5; i++ {
+		storeImages(w, r, i)
+	}
+	fmt.Fprintf(w, "successfully uploaded file to server")
+
+}
+
+func storeImages(w http.ResponseWriter, r *http.Request, i int) {
+
+	const MAX_UPLOAD_SIZE = 1024 * 1024 // 1MB
+
+	r.Body = http.MaxBytesReader(w, r.Body, MAX_UPLOAD_SIZE)
+	if err := r.ParseMultipartForm(MAX_UPLOAD_SIZE); err != nil {
+		http.Error(w, "The uploaded file is too big. Please choose an file that's less than 1MB in size", http.StatusBadRequest)
+		return
+	}
+
+	fileName := "file" + strconv.Itoa(i)
+	file, fileHeader, err := r.FormFile(fileName)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	defer file.Close()
+
+	buff := make([]byte, 512)
+	_, err = file.Read(buff)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	filetype := http.DetectContentType(buff)
+	if filetype != "image/jpeg" && filetype != "image/png" {
+		http.Error(w, "The provided file format is not allowed. Please upload a JPEG or PNG image", http.StatusBadRequest)
+		return
+	}
+
+	_, err = file.Seek(0, io.SeekStart)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = os.MkdirAll("./uploads", os.ModePerm)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Create a new file in the uploads directory & replace product ID with real productID
+	var productID string = "1" //assume productID is 1.
+	imageFileName := productID + "_" + strconv.Itoa(i)
+	// dst, err := os.Create(fmt.Sprintf("./uploads/%d%s", time.Now().UnixNano(), filepath.Ext(fileHeader.Filename)))
+	dst, err := os.Create(fmt.Sprintf("./uploads/%s%s", imageFileName, filepath.Ext(fileHeader.Filename)))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	defer dst.Close()
+
+	// Copy the uploaded file to the filesystem
+	// at the specified destination
+	_, err = io.Copy(dst, file)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 }
