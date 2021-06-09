@@ -168,35 +168,35 @@ func trialMultiSearchQuery(client *elastic.Client, min, max string, searchKeywor
 }
 
 //for rachel.
-func imagequery(client *elastic.Client, owner_id int) ([]model.Product, error) {
-	var product []model.Product
-	req := elastic.NewTermQuery("owner_id", owner_id) //maybe change "1"  to ownder_id , received frum functoin
-	searchResult, err := client.Search().
-		Index("sample_product_list"). // search in index "tweets"
-		Query(req).                   // specify the query
-		Pretty(true).                 // pretty print request and response JSON
-		Do(context.Background())      // execute
+// func imagequery(client *elastic.Client, owner_id int) ([]model.Product, error) {
+// 	var product []model.Product
+// 	req := elastic.NewTermQuery("owner_id", owner_id) //maybe change "1"  to ownder_id , received frum functoin
+// 	searchResult, err := client.Search().
+// 		Index("sample_product_list"). // search in index "tweets"
+// 		Query(req).                   // specify the query
+// 		Pretty(true).                 // pretty print request and response JSON
+// 		Do(context.Background())      // execute
 
-	if err != nil {
-		fmt.Println("error from querying image", err)
-	}
+// 	if err != nil {
+// 		fmt.Println("error from querying image", err)
+// 	}
 
-	for _, hit := range searchResult.Hits.Hits {
+// 	for _, hit := range searchResult.Hits.Hits {
 
-		var t model.Product
+// 		var t model.Product
 
-		if err := json.Unmarshal(hit.Source, &t); err != nil {
-			// log.Errorf("ERROR UNMARSHALLING ES SUGGESTION RESPONSE: %v", err)
-			continue
-		}
-		if err != nil {
-			fmt.Println("error unmarshaling json", err)
+// 		if err := json.Unmarshal(hit.Source, &t); err != nil {
+// 			// log.Errorf("ERROR UNMARSHALLING ES SUGGESTION RESPONSE: %v", err)
+// 			continue
+// 		}
+// 		if err != nil {
+// 			fmt.Println("error unmarshaling json", err)
 
-		}
-		product = append(product, t)
+// 		}
+// 		product = append(product, t)
 
-	}
+// 	}
 
-	fmt.Println("these are the products image query.")
-	return product, nil
-}
+// 	fmt.Println("these are the products image query.")
+// 	return product, nil
+// }

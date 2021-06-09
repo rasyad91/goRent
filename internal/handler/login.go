@@ -47,14 +47,7 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 		form.Errors.Add("login", "Username or password incorrect")
 	}
 	fmt.Println("SUCCESSFULLY PULLED USER INFO")
-	// fmt.Println(password)
-	// t, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	// fmt.Println(t)
-	// fmt.Println(string(t))
-	// fmt.Println([]byte(t))
-	// fmt.Println(string(t))
 
-	// fmt.Println(eu.Password)
 	err = bcrypt.CompareHashAndPassword([]byte(eu.Password), []byte(password))
 	if err != nil {
 		form.Errors.Add("login", "Username or password incorrect")
@@ -70,13 +63,6 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 			m.App.Error.Println(err)
 		}
 		return
-	}
-
-	for _, v := range eu.Rents {
-		fmt.Printf("%#v\n", v)
-	}
-	for _, v := range eu.Bookings {
-		fmt.Println(v)
 	}
 
 	m.App.Session.Put(r.Context(), "userID", eu.ID)
