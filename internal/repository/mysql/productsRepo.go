@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"goRent/internal/model"
 	"time"
+
+	"golang.org/x/sync/errgroup"
 )
 
 func (m *DBrepo) GetProductByID(id int) (model.Product, error) {
@@ -12,59 +14,78 @@ func (m *DBrepo) GetProductByID(id int) (model.Product, error) {
 	defer cancel()
 
 	p := model.Product{}
+	g, _ := errgroup.WithContext(ctx)
 
-	query := `select 
-				p.id, p.owner_id, p.brand, p.category, p.title, p.rating, p.description, p.price, p.created_at, p.updated_at
-			from
-				products p where id = ?
-			`
-	if err := m.DB.QueryRowContext(ctx, query, id).Scan(
-		&p.ID,
-		&p.OwnerID,
-		&p.Brand,
-		&p.Category,
-		&p.Title,
-		&p.Rating,
-		&p.Description,
-		&p.Price,
-		&p.CreatedAt,
-		&p.UpdatedAt,
-	); err != nil {
-		return p, fmt.Errorf("db getproductbyid: %v", err)
+	idChan := make(chan int, 1)
+
+	g.Go(func() error {
+		query := `select 
+						p.id, p.owner_id, p.brand, p.category, p.title, p.rating, p.description, p.price, p.created_at, p.updated_at
+					from
+						products p where id = ?
+	`
+		if err := m.DB.QueryRowContext(ctx, query, id).Scan(
+			&p.ID,
+			&p.OwnerID,
+			&p.Brand,
+			&p.Category,
+			&p.Title,
+			&p.Rating,
+			&p.Description,
+			&p.Price,
+			&p.CreatedAt,
+			&p.UpdatedAt,
+			&p.UpdatedAt,
+		); err != nil {
+			return fmt.Errorf("db getproductbyid: %v", err)
+		}
+		idChan <- p.OwnerID
+		close(idChan)
+		return nil
+	})
+
+	// get reviews from reviews table
+
+	g.Go(func() error {
+		query := `select id, reviewer_id, reviewer_name, product_id, body, rating, created_at, updated_at
+		from product_reviews where product_id = ?`
+		rows, err := m.DB.QueryContext(ctx, query, id)
+		if err != nil {
+			return err
+		}
+		defer rows.Close()
+		for rows.Next() {
+			r := model.ProductReview{}
+			rows.Scan(
+				&r.ID,
+				&r.ReviewerID,
+				&r.ReviewerName,
+				&r.ProductID,
+				&r.Body,
+				&r.Rating,
+				&r.CreatedAt,
+				&r.UpdatedAt,
+			)
+			p.Reviews = append(p.Reviews, r)
+		}
+		if err := rows.Err(); err != nil {
+			return err
+		}
+		return nil
+	})
+
+	g.Go(func() error {
+		// get owner's detail from users using ownerID
+		query := `select username from users where id = ?`
+		if err := m.DB.QueryRowContext(ctx, query, <-idChan).Scan(&p.OwnerName); err != nil {
+			return err
+		}
+		return nil
+	})
+	if err := g.Wait(); err != nil {
+		return model.Product{}, err
 	}
 
-	query = `select username from users where id = ?`
-	if err := m.DB.QueryRowContext(ctx, query, p.OwnerID).Scan(
-		&p.OwnerName,
-	); err != nil {
-		return p, fmt.Errorf("db getproductbyid: %v", err)
-	}
-
-	query = `select id, reviewer_id, reviewer_name, product_id, body, rating, created_at, updated_at
-				from product_reviews where product_id = ?`
-	rows, err := m.DB.QueryContext(ctx, query, id)
-	if err != nil {
-		return p, fmt.Errorf("db getproductbyid: %v", err)
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		r := model.ProductReview{}
-		rows.Scan(
-			&r.ID,
-			&r.ReviewerID,
-			&r.ReviewerName,
-			&r.ProductID,
-			&r.Body,
-			&r.Rating,
-			&r.CreatedAt,
-			&r.UpdatedAt,
-		)
-		p.Reviews = append(p.Reviews, r)
-	}
-	if err := rows.Err(); err != nil {
-		return p, fmt.Errorf("db getproductbyid: %v", err)
-	}
 	return p, nil
 }
 

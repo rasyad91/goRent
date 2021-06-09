@@ -15,4 +15,5 @@ require (
 	github.com/olivere/env v1.1.0
 	github.com/xhit/go-simple-mail v2.2.2+incompatible
 	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a
+	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 )

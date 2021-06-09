@@ -32,11 +32,7 @@ func (m *DBrepo) GetUser(username string) (model.User, error) {
 	defer cancel()
 
 	u := model.User{}
-	tx, err := m.DB.BeginTx(ctx, nil)
-	if err != nil {
-		return model.User{}, fmt.Errorf("db GetUser: %v", err)
-	}
-	if err := tx.QueryRowContext(ctx, "SELECT * FROM goRent.Users where username=?", username).
+	if err := m.DB.QueryRowContext(ctx, "SELECT * FROM goRent.Users where username=?", username).
 		Scan(
 			&u.ID,
 			&u.Username,
@@ -51,6 +47,9 @@ func (m *DBrepo) GetUser(username string) (model.User, error) {
 			&u.CreatedAt,
 			&u.UpdatedAt,
 		); err != nil {
+		if err == sql.ErrNoRows {
+			return model.User{}, err
+		}
 		return model.User{}, fmt.Errorf("db GetUser: %v", err)
 	}
 	// add in concurrency here - 1 get Rent 1 get Product
