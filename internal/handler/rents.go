@@ -87,6 +87,8 @@ func (m *Repository) PostRent(w http.ResponseWriter, r *http.Request) {
 		EndDate:   endDate,
 	}
 
+	t := time.Now()
+	fmt.Println("Create Rent: Start timing ...")
 	if err := m.DB.CreateRent(rent); err != nil {
 		render.ServerError(w, r, err)
 		m.App.Error.Println(err)
@@ -95,6 +97,7 @@ func (m *Repository) PostRent(w http.ResponseWriter, r *http.Request) {
 
 	eu, _ := m.DB.GetUser(u.Username)
 	m.App.Session.Put(r.Context(), "user", eu)
+	fmt.Println("Time taken: ", time.Since(t))
 
 	m.App.Session.Put(r.Context(), "flash", fmt.Sprintf("You have added %s to cart!", productTitle))
 	http.Redirect(w, r, fmt.Sprintf("/v1/products/%d", productID), http.StatusSeeOther)
@@ -116,7 +119,9 @@ func (m *Repository) DeleteRent(w http.ResponseWriter, r *http.Request) {
 		render.ServerError(w, r, err)
 		return
 	}
-	fmt.Println(rentID)
+
+	t := time.Now()
+	fmt.Println("Delete Rent: Start timing ...")
 
 	if err := m.DB.DeleteRent(rentID); err != nil {
 		render.ServerError(w, r, err)
@@ -132,6 +137,7 @@ func (m *Repository) DeleteRent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	m.App.Session.Put(r.Context(), "user", eu)
+	fmt.Println("Time taken: ", time.Since(t))
 
 	m.App.Session.Put(r.Context(), "flash", fmt.Sprintf("Rent #%d removed from cart!", rentID))
 	http.Redirect(w, r, "/v1/user/cart", http.StatusSeeOther)

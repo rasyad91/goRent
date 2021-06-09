@@ -175,19 +175,19 @@ func (m *DBrepo) GetUser(username string) (model.User, error) {
 	if err := booking_rows.Err(); err != nil {
 		return model.User{}, fmt.Errorf("db GetUser: %v", err)
 	}
-	fmt.Println("PRODUCTS QUERY:")
-	for _, item := range u.Products {
-		fmt.Println(item.Title)
-	}
-	fmt.Println("Rents QUERY:")
-	for _, item := range u.Rents {
-		fmt.Println(item.Product.Title)
-	}
+	// fmt.Println("PRODUCTS QUERY:")
+	// for _, item := range u.Products {
+	// 	fmt.Println(item.Title)
+	// }
+	// fmt.Println("Rents QUERY:")
+	// for _, item := range u.Rents {
+	// 	fmt.Println(item.Product.Title)
+	// }
 
-	fmt.Println("Bookings QUERY:")
-	for _, item := range u.Bookings {
-		fmt.Println(item.Product.Title)
-	}
+	// fmt.Println("Bookings QUERY:")
+	// for _, item := range u.Bookings {
+	// 	fmt.Println(item.Product.Title)
+	// }
 	return u, nil
 }
 
