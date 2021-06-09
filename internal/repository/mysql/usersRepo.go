@@ -64,8 +64,9 @@ func (m *DBrepo) GetUser(username string) (model.User, error) {
 		left join 
 			products p on (p.id = r.product_id)
 		where 
-			r.renter_id = ?`
-	product_query := `select * from products p where p.owner_id = ?`
+			r.renter_id = ?
+		order by r.product_id asc`
+	product_query := `select * from products p where p.owner_id = ? order by id asc`
 	booking_query := `select 
 		r.id, r.owner_id, r.renter_id, r.product_id, r.restriction_id, r.processed, r.start_date, r.end_date, r.duration, r.total_cost, r.created_at, r.updated_at,
 		p.id, p.owner_id, p.brand, p.category, p.title, p.rating, p.description, p.price, p.created_at, p.updated_at
@@ -74,10 +75,10 @@ func (m *DBrepo) GetUser(username string) (model.User, error) {
 	left join 
 		products p on (p.id = r.product_id)
 	where 
-		r.owner_id = ?`
-	//initializing concurrency // linear - 9.791375ms
+		r.owner_id = ?
+	order by r.product_id asc`
+	//initializing concurrency // linear - 9.791375ms, concurrent - 7.357559ms
 	//timing prior to concurrency
-	start := time.Now()
 
 	wg.Add(3)
 	go m.runQuery(&u, rent_query, "rent")
@@ -183,9 +184,7 @@ func (m *DBrepo) GetUser(username string) (model.User, error) {
 	// 	u.Products = append(u.Products, p)
 	// }
 	// end of timing
-	elapsed := time.Since(start)
-	fmt.Println("=====================================")
-	fmt.Println("Linear query took:", elapsed)
+
 	// if err := booking_rows.Err(); err != nil {
 	// 	return model.User{}, fmt.Errorf("db GetUser: %v", err)
 	// }
