@@ -34,10 +34,6 @@ func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
 	// m.App.Session.Put(r.Context(), "flash", "let's see")
 	data := make(map[string]interface{})
 
-	// u := m.App.Session.Get(r.Context(), "user").(model.User)
-	// fmt.Println("PRINTINT U", u)
-	// fmt.Println("checking authenticate", m.App.Session.Exists(r.Context(), "userID"))
-	// fmt.Println(u.ID)
 	if err := render.Template(w, r, "home.page.html", &render.TemplateData{
 		Data: data,
 	}); err != nil {

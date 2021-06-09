@@ -30,7 +30,6 @@ func (m *Repository) Login(w http.ResponseWriter, r *http.Request) {
 
 func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("HITTING LOGINPOST")
-	data := make(map[string]interface{})
 	form := form.New(r.PostForm)
 	if err := r.ParseForm(); err != nil {
 		m.App.Error.Println(err)
@@ -39,6 +38,7 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 	_ = m.App.Session.RenewToken(r.Context())
 	Username := r.FormValue("username")
 	password := r.FormValue("password")
+
 	eu, err := m.DB.GetUser(Username)
 	if err != nil {
 		if err != sql.ErrNoRows {
@@ -48,13 +48,14 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println("SUCCESSFULLY PULLED USER INFO")
 
-	err = bcrypt.CompareHashAndPassword([]byte(eu.Password), []byte(password))
-	if err != nil {
+	if err := bcrypt.CompareHashAndPassword([]byte(eu.Password), []byte(password)); err != nil {
 		form.Errors.Add("login", "Username or password incorrect")
 	} else {
 		http.Redirect(w, r, "/home", http.StatusSeeOther)
 		fmt.Println("PASSWORD MATCHES")
 	}
+
+	data := make(map[string]interface{})
 	if len(form.Errors) != 0 {
 		if err := render.Template(w, r, "login.page.html", &render.TemplateData{
 			Form: form,
