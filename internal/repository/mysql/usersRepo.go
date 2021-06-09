@@ -15,7 +15,6 @@ type DBrepo struct {
 }
 
 var wg sync.WaitGroup
-var mutex sync.Mutex
 
 // const (
 // 	layoutISO = "2006-01-02"
@@ -81,130 +80,16 @@ func (m *DBrepo) GetUser(username string) (model.User, error) {
 	//timing prior to concurrency
 
 	wg.Add(3)
-	go m.runQuery(u, rent_query, "rent")
-	go m.runQuery(u, product_query, "product")
-	go m.runQuery(u, booking_query, "booking")
+	go m.runQuery(&u, rent_query, "rent")
+	go m.runQuery(&u, product_query, "product")
+	go m.runQuery(&u, booking_query, "booking")
 	wg.Wait()
-	// // rent_query
-	// rent_rows, err := tx.QueryContext(ctx, rent_query, u.ID)
-	// if err != nil {
-	// 	return model.User{}, fmt.Errorf("db GetUser: %v", err)
-	// }
-	// defer rent_rows.Close()
-	// for rent_rows.Next() {
-	// 	r := model.Rent{}
-	// 	if err := rent_rows.Scan(
-	// 		&r.ID,
-	// 		&r.OwnerID,
-	// 		&r.RenterID,
-	// 		&r.ProductID,
-	// 		&r.RestrictionID,
-	// 		&r.Processed,
-	// 		&r.StartDate,
-	// 		&r.EndDate,
-	// 		&r.Duration,
-	// 		&r.TotalCost,
-	// 		&r.CreatedAt,
-	// 		&r.UpdatedAt,
-	// 		&r.Product.ID,
-	// 		&r.Product.OwnerID,
-	// 		&r.Product.Brand,
-	// 		&r.Product.Category,
-	// 		&r.Product.Title,
-	// 		&r.Product.Rating,
-	// 		&r.Product.Description,
-	// 		&r.Product.Price,
-	// 		&r.Product.CreatedAt,
-	// 		&r.Product.UpdatedAt,
-	// 	); err != nil {
-	// 		return model.User{}, fmt.Errorf("db GetUser: %v", err)
-	// 	}
-	// 	u.Rents = append(u.Rents, r)
-	// }
-	// //booking_query
-	// booking_rows, err := tx.QueryContext(ctx, booking_query, u.ID)
-	// if err != nil {
-	// 	return model.User{}, fmt.Errorf("db GetUser: %v", err)
-	// }
-	// defer booking_rows.Close()
-	// for booking_rows.Next() {
-	// 	b := model.Rent{}
-	// 	if err := booking_rows.Scan(
-	// 		&b.ID,
-	// 		&b.OwnerID,
-	// 		&b.RenterID,
-	// 		&b.ProductID,
-	// 		&b.RestrictionID,
-	// 		&b.Processed,
-	// 		&b.StartDate,
-	// 		&b.EndDate,
-	// 		&b.Duration,
-	// 		&b.TotalCost,
-	// 		&b.CreatedAt,
-	// 		&b.UpdatedAt,
-	// 		&b.Product.ID,
-	// 		&b.Product.OwnerID,
-	// 		&b.Product.Brand,
-	// 		&b.Product.Category,
-	// 		&b.Product.Title,
-	// 		&b.Product.Rating,
-	// 		&b.Product.Description,
-	// 		&b.Product.Price,
-	// 		&b.Product.CreatedAt,
-	// 		&b.Product.UpdatedAt,
-	// 	); err != nil {
-	// 		return model.User{}, fmt.Errorf("db GetUser: %v", err)
-	// 	}
-	// 	u.Bookings = append(u.Bookings, b)
-	// }
 
-	// //product query
-	// product_rows, err := tx.QueryContext(ctx, product_query, u.ID)
-	// if err != nil {
-	// 	return model.User{}, fmt.Errorf("db GetUser: %v", err)
-	// }
-	// defer product_rows.Close()
-	// for product_rows.Next() {
-	// 	p := model.Product{}
-	// 	if err := product_rows.Scan(
-	// 		&p.ID,
-	// 		&p.OwnerID,
-	// 		&p.Brand,
-	// 		&p.Category,
-	// 		&p.Title,
-	// 		&p.Rating,
-	// 		&p.Description,
-	// 		&p.Price,
-	// 		// &p.Images,
-	// 		&p.CreatedAt,
-	// 		&p.UpdatedAt,
-	// 	); err != nil {
-	// 		return model.User{}, fmt.Errorf("db GetUser: %v", err)
-	// 	}
-	// 	u.Products = append(u.Products, p)
-	// }
-	// end of timing
-
-	// if err := booking_rows.Err(); err != nil {
-	// 	return model.User{}, fmt.Errorf("db GetUser: %v", err)
-	// }
-	// fmt.Println("PRODUCTS QUERY:")
-	// for _, item := range u.Products {
-	// 	fmt.Println(item.Title)
-	// }
-	// fmt.Println("Rents QUERY:")
-	// for _, item := range u.Rents {
-	// 	fmt.Println(item.Product.Title)
-	// }
-
-	// fmt.Println("Bookings QUERY:")
-	// for _, item := range u.Bookings {
-	// 	fmt.Println(item.Product.Title)
-	// }
 	return u, nil
 }
-func (m *DBrepo) runQuery(user model.User, query string, structType string) error {
+func (m *DBrepo) runQuery(user *model.User, query string, structType string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+
 	defer wg.Done()
 	defer cancel()
 	rows, err := m.DB.QueryContext(ctx, query, user.ID)
@@ -241,9 +126,7 @@ func (m *DBrepo) runQuery(user model.User, query string, structType string) erro
 			); err != nil {
 				return fmt.Errorf("db GetUser: %v", err)
 			}
-			mutex.Lock()
 			user.Rents = append(user.Rents, r)
-			mutex.Unlock()
 		} else if structType == "booking" {
 			r := model.Rent{}
 			if err := rows.Scan(
@@ -272,9 +155,7 @@ func (m *DBrepo) runQuery(user model.User, query string, structType string) erro
 			); err != nil {
 				return fmt.Errorf("db GetUser: %v", err)
 			}
-			mutex.Lock()
 			user.Bookings = append(user.Bookings, r)
-			mutex.Unlock()
 		} else {
 			r := model.Product{}
 			if err := rows.Scan(
@@ -292,13 +173,12 @@ func (m *DBrepo) runQuery(user model.User, query string, structType string) erro
 			); err != nil {
 				return fmt.Errorf("db GetUser: %v", err)
 			}
-			mutex.Lock()
 			user.Products = append(user.Products, r)
-			mutex.Unlock()
 		}
 	}
 	return nil
 }
+
 func (m *DBrepo) InsertUser(u model.User) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
