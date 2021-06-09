@@ -50,6 +50,7 @@ func (m *Repository) EditUserAccountPost(w http.ResponseWriter, r *http.Request)
 	u := m.App.Session.Get(r.Context(), "user").(model.User)
 	data := make(map[string]interface{})
 	form := form.New(r.PostForm)
+
 	data["editUser"] = model.User{
 		Username: u.Username,
 		Email:    u.Email,
@@ -58,6 +59,9 @@ func (m *Repository) EditUserAccountPost(w http.ResponseWriter, r *http.Request)
 	}
 	if err := r.ParseForm(); err != nil {
 		m.App.Error.Println(err)
+	}
+	switch {
+
 	}
 	action := r.FormValue("action")
 	if action == "address" {

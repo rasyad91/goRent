@@ -47,14 +47,7 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 		form.Errors.Add("login", "Username or password incorrect")
 	}
 	fmt.Println("SUCCESSFULLY PULLED USER INFO")
-	// fmt.Println(password)
-	// t, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	// fmt.Println(t)
-	// fmt.Println(string(t))
-	// fmt.Println([]byte(t))
-	// fmt.Println(string(t))
 
-	// fmt.Println(eu.Password)
 	err = bcrypt.CompareHashAndPassword([]byte(eu.Password), []byte(password))
 	if err != nil {
 		form.Errors.Add("login", "Username or password incorrect")
@@ -70,13 +63,6 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 			m.App.Error.Println(err)
 		}
 		return
-	}
-
-	for _, v := range eu.Rents {
-		fmt.Printf("%#v\n", v)
-	}
-	for _, v := range eu.Bookings {
-		fmt.Println(v)
 	}
 
 	m.App.Session.Put(r.Context(), "userID", eu.ID)
@@ -113,59 +99,3 @@ func (m *Repository) Logout(w http.ResponseWriter, r *http.Request) {
 	m.App.Session.Put(r.Context(), "flash", "You've been logged out successfully!")
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
-
-// WHEN USER REACH LOGIN SCREEN:
-// // LoginScreen shows the home (login) screen
-// func (repo *DBRepo) LoginScreen(w http.ResponseWriter, r *http.Request) {
-//  // if already logged in, take to dashboard
-//  if repo.App.Session.Exists(r.Context(), "userID") {
-//   http.Redirect(w, r, "/admin/overview", http.StatusSeeOther)
-//   return
-//  }
-
-//  err := helpers.RenderPage(w, r, "login", nil, nil)
-//  if err != nil {
-//   printTemplateError(w, err)
-//  }
-// }
-// WHEN USER ATTEMPTS TO LOGIN:
-
-// // Login attempts to log the user in
-// func (repo *DBRepo) Login(w http.ResponseWriter, r *http.Request) {
-//  _ = repo.App.Session.RenewToken(r.Context())
-//  err := r.ParseForm()
-//  if err != nil {
-//   log.Println(err)
-//   ClientError(w, r, http.StatusBadRequest)
-//   return
-//  }
-
-//  id, hash, err := repo.DB.Authenticate(r.Form.Get("email"), r.Form.Get("password"))
-//  if err == models.ErrInvalidCredentials {
-//   app.Session.Put(r.Context(), "error", "Invalid login")
-//   err := helpers.RenderPage(w, r, "login", nil, nil)
-//   if err != nil {
-//    printTemplateError(w, err)
-//                         return
-//   }
-
-//  // we authenticated. Get the user.
-//  u, err := repo.DB.GetUserById(id)
-//  if err != nil {
-//   log.Println(err)
-//   ClientError(w, r, http.StatusBadRequest)
-//   return
-//  }
-
-//  app.Session.Put(r.Context(), "userID", id)
-//  app.Session.Put(r.Context(), "flash", "You've been logged in successfully!")
-//  app.Session.Put(r.Context(), "user", u)
-
-//  http.Redirect(w, r, "/admin/overview", http.StatusSeeOther)
-// }
-
-// m.App.Session.Put(r.Context(), "success", "hello")
-// fmt.Printf("%#v", m.App.Session)
-// //to do
-// - add in notification for register and login
-// - feed in user info for header

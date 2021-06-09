@@ -229,17 +229,10 @@
   const rangepicker = new DateRangePicker(elem, {
     format: "dd-mm-yyyy",
     minDate: dateToday,
-    datesDisabled: [{
-        {
-          range $b
-        }
-      }
+    datesDisabled: [
+      {{range $b}}
       "{{.}}",
-      {
-        {
-          end
-        }
-      }
+      {{end}}
     ]
   });
 </script>
