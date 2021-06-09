@@ -90,11 +90,10 @@
             <li>
               <strong>Category:</strong>
               <a class="text-muted" href="/searchresult?q={{$res.Category}}">{{$res.Category}}</a></li>
-            </ul>
             <li>
               <strong>User:</strong>
-              <a class="text-muted" href="/searchresult?q={{$res.Category}}">{{$res.Category}}</a></li>
-            </ul>
+              <a class="text-muted" href="/searchresult?q={{$res.Category}}">{{$res.}}</a></li>
+          </ul>
 
           <form id="addRent" action="/v1/products/addRent" method="POST">
             <input type="hidden" name="csrf_token" value="{{.CSRFToken }}">
@@ -122,7 +121,7 @@
               <div class="input-group-append flex-grow-1">
                 <button id="addRent" value="1" class="btn btn-outline-dark btn-block" type="submit">
                   <i class="fas fa-shopping-cart mr-2"></i>Add to Cart</button>
-                  
+
               </div>
             </div>
           </form>
@@ -228,10 +227,17 @@
   const rangepicker = new DateRangePicker(elem, {
     format: "dd-mm-yyyy",
     minDate: dateToday,
-    datesDisabled: [
-      {{range $b}}
+    datesDisabled: [{
+        {
+          range $b
+        }
+      }
       "{{.}}",
-      {{end}}
+      {
+        {
+          end
+        }
+      }
     ]
   });
 </script>
