@@ -84,12 +84,6 @@ func searchQuery(client *elastic.Client, searchKeywords ...string) []model.Produ
 		query = elastic.NewMatchAllQuery()
 		fmt.Printf("query is matchallquery %#v", query)
 	}
-	// fmt.Println(product)
-	return product
-
-}
-
-func searchEmptyQuery(client *elastic.Client) []model.Product {
 
 	searchResult, err := client.Search().
 		Index("sample_product_list"). // search in index "tweets"
@@ -113,7 +107,7 @@ func searchEmptyQuery(client *elastic.Client) []model.Product {
 		}
 		product = append(product, t)
 	}
-	// fmt.Println(product)
+	fmt.Println(product)
 	return product
 
 }
@@ -171,8 +165,7 @@ func trialMultiSearchQuery(client *elastic.Client, min, max string, searchKeywor
 		}
 		product = append(product, t)
 	}
-
-	// fmt.Println(product)
+	fmt.Println(product)
 	return product, nil
 }
 
