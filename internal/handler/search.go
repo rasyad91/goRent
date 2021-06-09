@@ -17,13 +17,11 @@ import (
 )
 
 func (m *Repository) Search(w http.ResponseWriter, r *http.Request) {
-
 	if err := render.Template(w, r, "home.page.html", &render.TemplateData{
 		Data: nil,
 	}); err != nil {
 		m.App.Error.Println(err)
 	}
-
 }
 
 func (m *Repository) SearchResult(w http.ResponseWriter, r *http.Request) {

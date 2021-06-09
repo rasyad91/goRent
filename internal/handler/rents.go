@@ -125,7 +125,12 @@ func (m *Repository) DeleteRent(w http.ResponseWriter, r *http.Request) {
 	}
 
 	u := m.App.Session.Get(r.Context(), "user").(model.User)
-	eu, _ := m.DB.GetUser(u.Username)
+	eu, err := m.DB.GetUser(u.Username)
+	if err != nil {
+		m.App.Error.Println(err)
+		render.ServerError(w, r, err)
+		return
+	}
 	m.App.Session.Put(r.Context(), "user", eu)
 
 	m.App.Session.Put(r.Context(), "flash", fmt.Sprintf("Rent #%d removed from cart!", rentID))
