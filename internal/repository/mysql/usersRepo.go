@@ -136,6 +136,9 @@ func (m *DBrepo) runQuery(ctx context.Context, user *model.User, query string, s
 				&r.Product.CreatedAt,
 				&r.Product.UpdatedAt,
 			); err != nil {
+				if err == sql.ErrNoRows {
+					return err
+				}
 				return fmt.Errorf("db GetUser %s: %v", structType, err)
 			}
 			user.Rents = append(user.Rents, r)
@@ -165,6 +168,9 @@ func (m *DBrepo) runQuery(ctx context.Context, user *model.User, query string, s
 				&r.Product.CreatedAt,
 				&r.Product.UpdatedAt,
 			); err != nil {
+				if err == sql.ErrNoRows {
+					return err
+				}
 				return fmt.Errorf("db GetUser %s: %v", structType, err)
 			}
 			user.Bookings = append(user.Bookings, r)
@@ -183,6 +189,9 @@ func (m *DBrepo) runQuery(ctx context.Context, user *model.User, query string, s
 				&r.CreatedAt,
 				&r.UpdatedAt,
 			); err != nil {
+				if err == sql.ErrNoRows {
+					return err
+				}
 				return fmt.Errorf("db GetUser %s: %v", structType, err)
 			}
 			user.Products = append(user.Products, r)

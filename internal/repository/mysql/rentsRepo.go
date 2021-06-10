@@ -39,8 +39,8 @@ func (m *DBrepo) CreateRent(r model.Rent) (int, error) {
 	return int(id), nil
 }
 
-func (m *DBrepo) GetRentsByProductID(id int) ([]model.Rent, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+func (m *DBrepo) GetRentsByProductID(ctx context.Context, id int) ([]model.Rent, error) {
+	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
 	defer cancel()
 
 	rents := []model.Rent{}
@@ -76,7 +76,12 @@ func (m *DBrepo) GetRentsByProductID(id int) ([]model.Rent, error) {
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("db getrentbyproductid: %v", err)
 	}
-	return rents, nil
+	select {
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	default:
+		return rents, nil
+	}
 }
 
 func (m *DBrepo) DeleteRent(rentID int) error {

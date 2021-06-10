@@ -2,6 +2,7 @@ package mysql
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"goRent/internal/model"
 	"time"
@@ -9,15 +10,14 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-func (m *DBrepo) GetProductByID(id int) (model.Product, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+func (m *DBrepo) GetProductByID(ctx context.Context, id int) (model.Product, error) {
+	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
 	defer cancel()
 
 	p := model.Product{}
-	g, _ := errgroup.WithContext(ctx)
+	g, ctx := errgroup.WithContext(ctx)
 
 	g.Go(func() error {
-		fmt.Println("IN FIRST GO ROUTINE")
 		query := `select 
 						p.id, p.owner_id, p.brand, p.category, p.title, p.rating, p.description, p.price, p.created_at, p.updated_at
 					from
@@ -35,13 +35,21 @@ func (m *DBrepo) GetProductByID(id int) (model.Product, error) {
 			&p.CreatedAt,
 			&p.UpdatedAt,
 		); err != nil {
+			if err == sql.ErrNoRows {
+				return err
+			}
 			return fmt.Errorf("db getproductbyid: %v", err)
 		}
 		query = `select username from users where id = ?`
 		if err := m.DB.QueryRowContext(ctx, query, p.OwnerID).Scan(&p.OwnerName); err != nil {
 			return err
 		}
-		return nil
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+			return nil
+		}
 	})
 
 	// get reviews from reviews table
@@ -49,7 +57,6 @@ func (m *DBrepo) GetProductByID(id int) (model.Product, error) {
 		query := `select id, reviewer_id, reviewer_name, product_id, body, rating, created_at, updated_at
 		from product_reviews where product_id = ?`
 		rows, err := m.DB.QueryContext(ctx, query, id)
-		fmt.Println("IN SECOND GO ROUTINE")
 
 		if err != nil {
 			return err
@@ -57,7 +64,7 @@ func (m *DBrepo) GetProductByID(id int) (model.Product, error) {
 		defer rows.Close()
 		for rows.Next() {
 			r := model.ProductReview{}
-			rows.Scan(
+			if err := rows.Scan(
 				&r.ID,
 				&r.ReviewerID,
 				&r.ReviewerName,
@@ -66,20 +73,26 @@ func (m *DBrepo) GetProductByID(id int) (model.Product, error) {
 				&r.Rating,
 				&r.CreatedAt,
 				&r.UpdatedAt,
-			)
+			); err != nil {
+				if err == sql.ErrNoRows {
+					return err
+				}
+				return fmt.Errorf("db getproductbyid: %v", err)
+			}
 			p.Reviews = append(p.Reviews, r)
 		}
 		if err := rows.Err(); err != nil {
 			return err
 		}
-		return nil
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+			return nil
+		}
 	})
 
-	if err := g.Wait(); err != nil {
-		return model.Product{}, err
-	}
-
-	return p, nil
+	return p, g.Wait()
 }
 
 func (m *DBrepo) CreateProductReview(pr model.ProductReview) error {

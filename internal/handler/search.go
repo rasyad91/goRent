@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"goRent/internal/form"
 	"goRent/internal/model"
 	"goRent/internal/render"
 	"net/http"
@@ -41,6 +42,9 @@ func (m *Repository) SearchResult(w http.ResponseWriter, r *http.Request) {
 	_, okMax := x["maxprice"]
 	err := fmt.Errorf("")
 	fmt.Println(err)
+
+	form := form.New(r.PostForm)
+	form.Required("minprice", "maxprice")
 
 	// owner_id := 1
 	// imagequery(m.App.AWSClient, owner_id)
@@ -92,7 +96,7 @@ func searchQuery(client *elastic.Client, searchKeywords ...string) []model.Produ
 		fmt.Println("error from search", err)
 	}
 
-	var product []model.Product
+	var products []model.Product
 	for _, hit := range searchResult.Hits.Hits {
 		var t model.Product
 		if err := json.Unmarshal(hit.Source, &t); err != nil {
@@ -103,23 +107,26 @@ func searchQuery(client *elastic.Client, searchKeywords ...string) []model.Produ
 			// Deserialization failed
 			fmt.Println("error unmarshaling json", err)
 		}
-		product = append(product, t)
+		products = append(products, t)
 	}
-	fmt.Println(product)
-	return product
+
+	for i, v := range products {
+		fmt.Printf("%d: %v\n", i, v.Title)
+	}
+	return products
 
 }
 
 func trialMultiSearchQuery(client *elastic.Client, min, max string, searchKeywords ...string) ([]model.Product, error) {
 
-	var product []model.Product
+	var products []model.Product
 	minPrice, err := strconv.ParseFloat(min, 32)
 	if err != nil {
-		return product, err
+		return nil, err
 	}
 	maxPrice, err := strconv.ParseFloat(max, 32)
 	if err != nil {
-		return product, err
+		return nil, err
 	}
 	var stringQuery elastic.Query
 	if searchKeywords[0] != "" {
@@ -161,10 +168,13 @@ func trialMultiSearchQuery(client *elastic.Client, min, max string, searchKeywor
 		if err != nil {
 			fmt.Println("error unmarshaling json", err)
 		}
-		product = append(product, t)
+		products = append(products, t)
 	}
-	fmt.Println(product)
-	return product, nil
+
+	for i, v := range products {
+		fmt.Printf("%d: %v\n", i, v.Title)
+	}
+	return products, nil
 }
 
 //for rachel.

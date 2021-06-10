@@ -36,6 +36,7 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 	form := form.New(r.PostForm)
 	if err := r.ParseForm(); err != nil {
 		m.App.Error.Println(err)
+		render.ServerError(w, r, err)
 		return
 	}
 	_ = m.App.Session.RenewToken(r.Context())
@@ -46,6 +47,8 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		if err != sql.ErrNoRows {
 			m.App.Error.Println(err)
+			render.ServerError(w, r, err)
+			return
 		}
 		form.Errors.Add("login", "Username or password incorrect")
 	}

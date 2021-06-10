@@ -115,13 +115,13 @@
                             </div>
                             <div id="subcategories_0">
                                 <form method="GET" action="/searchresult">
-                                    <ul class="sidebar-icon-menu sidebar-icon-submenu">
+                                    <ul class="sidebar-icon-menu sidebar-icon-submenu" novalidate>
                                         <li class="sidebar-icon-submenu-item">
-                                            <input type="number" min="0" step="any" class="form-control" name="minprice"
-                                                placeholder="$ From">
+                                            <input type="number" min="1" step="any" class="form-control" name="minprice"
+                                                placeholder="$ From" validate>
                                         </li>
                                         <li class="sidebar-icon-submenu-item"><input type="number" min="1" step="any"
-                                                class="form-control" name="maxprice" placeholder="$ To">
+                                                class="form-control" name="maxprice" placeholder="$ To" validate>
                                             <input type="hidden" name="q" value={{index .Data "query"}}></li>
                                         <li class="sidebar-icon-submenu-item">
                                             <button class="btn btn-outline-dark">
@@ -130,7 +130,8 @@
                                 </form>
                             </div>
                         </div>
-                        <div class="sidebar-icon-menu-item" data-toggle="collapse" data-target="#subcategories_1"
+                        <hr class="text-muted">
+                        <!-- <div class="sidebar-icon-menu-item" data-toggle="collapse" data-target="#subcategories_1"
                             aria-controls="subcategories_1" role="menuitem">
                             <div class="d-flex align-items-center">
                                 <svg class="svg-icon sidebar-icon">
@@ -158,7 +159,7 @@
                                             vitae </a></li>
                                 </ul>
                             </div>
-                        </div>
+                        </div> -->
 
                     </div>
                 </div>

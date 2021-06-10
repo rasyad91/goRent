@@ -28,30 +28,41 @@ func (m *Repository) ShowProductByID(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	productID, err := strconv.Atoi(params["productID"])
 	if err != nil {
+		render.ServerError(w, r, err)
 		m.App.Error.Println(err)
 		return
 	}
 
-	g, _ := errgroup.WithContext(r.Context())
+	g, ctx := errgroup.WithContext(r.Context())
 	p := model.Product{}
 	dates := []string{}
 	rents := []model.Rent{}
 
 	g.Go(func() error {
-		p, err = m.DB.GetProductByID(productID)
+		p, err = m.DB.GetProductByID(ctx, productID)
 		if err != nil {
 			return err
 		}
-		return nil
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+			return nil
+		}
 	})
 
 	g.Go(func() error {
-		rents, err = m.DB.GetRentsByProductID(productID)
+		rents, err = m.DB.GetRentsByProductID(ctx, productID)
 		if err != nil {
 			return err
 		}
 		dates = helper.ListDatesFromRents(rents)
-		return nil
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+			return nil
+		}
 	})
 
 	if err := g.Wait(); err != nil {
