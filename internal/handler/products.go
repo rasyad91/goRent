@@ -2,11 +2,13 @@ package handler
 
 import (
 	"fmt"
+	"goRent/internal/config"
 	"goRent/internal/form"
 	"goRent/internal/helper"
 	"goRent/internal/model"
 	"goRent/internal/render"
 	"net/http"
+	"sort"
 	"strconv"
 	"time"
 
@@ -168,6 +170,7 @@ func (m *Repository) AddProduct(w http.ResponseWriter, r *http.Request) {
 func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 
 	// data := make(map[string]interface{})
+	var imageIndex []int
 
 	form := form.New(r.PostForm)
 
@@ -191,7 +194,17 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 				return err
 			} else {
 				defer file.Close()
-				storeImagesS3(w, r, id, productIndex, m.App.AWSS3Session)
+
+				s3err := storeImagesS3(w, r, id, productIndex, m.App.AWSS3Session)
+				if s3err != nil {
+					m.App.Error.Println("S3 error", err)
+					fmt.Println("")
+					form.Errors.Add("fileupload", "Please only use .jpeg/ .png files not exceeding 1MB in size")
+
+				} else {
+
+					imageIndex = append(imageIndex, id)
+				}
 			}
 			select {
 			case <-ctx.Done():
@@ -203,7 +216,6 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := g.Wait(); err != nil {
-		// render.ServerError(w, r, err)
 		m.App.Error.Println(err)
 		form.Errors.Add("fileupload", "A miniumum of 4 images are required")
 
@@ -227,10 +239,23 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("category", category)
 	fmt.Println("routine ended")
 
+	sort.Ints(imageIndex)
+	fmt.Println("this is the sorted index", imageIndex)
+
+	var productImageURL []string
+	for _, v := range imageIndex {
+
+		s := "samples3URLstring"
+		fileType := ".jpeg"
+		productImageURL = append(productImageURL, s+strconv.Itoa(v)+fileType)
+
+	}
+
+	fmt.Println("this is the product type url", productImageURL)
+
 	if len(form.Errors) != 0 {
 		if err := render.Template(w, r, "addproduct.page.html", &render.TemplateData{
 			Form: form,
-			// Data: data,
 		}); err != nil {
 			m.App.Error.Println(err)
 		}
@@ -239,7 +264,7 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, sess *awsS3.Session) {
+func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, sess *awsS3.Session) error {
 
 	const MAX_UPLOAD_SIZE = 1024 * 1024 // 1MB
 	uploader := s3manager.NewUploader(sess)
@@ -247,8 +272,8 @@ func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, 
 	r.Body = http.MaxBytesReader(w, r.Body, MAX_UPLOAD_SIZE)
 
 	if err := r.ParseMultipartForm(MAX_UPLOAD_SIZE); err != nil {
-		http.Error(w, "The uploaded file is too big. Please choose an file that's less than 1MB in size", http.StatusBadRequest)
-		return
+		// http.Error(w, "The uploaded file is too big. Please choose an file that's less than 1MB in size", http.StatusBadRequest)
+		return fmt.Errorf("the uplaoded file is too big. Please choose af ile that's less than 1 MB in size :%s", err)
 	}
 	defer r.Body.Close()
 
@@ -256,23 +281,23 @@ func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, 
 
 	file, header, err := r.FormFile(fileName)
 	if err != nil || header.Size == 0 {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+		// http.Error(w, err.Error(), http.StatusBadRequest)
+		return fmt.Errorf("there are no files being uploaded: %s", err)
 	}
 	defer file.Close()
 
 	buff := make([]byte, 512)
 	_, err = file.Read(buff)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		// http.Error(w, err.Error(), http.StatusInternalServerError)
+		return fmt.Errorf("failed to read buff: %s", err)
 	}
 
 	filetype := http.DetectContentType(buff)
 	if filetype != "image/jpeg" && filetype != "image/png" {
 		// http.Error(w, "The provided file format is not allowed. Please upload a JPEG or PNG image", http.StatusBadRequest)
-		fmt.Println(err)
-		return
+		// fmt.Println("error in file type !!!")
+		return fmt.Errorf("only .jpeg and .png files are allowed: %s", err)
 	}
 
 	var s3fileExtension string
@@ -285,17 +310,19 @@ func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, 
 	s3FileName := strconv.Itoa(productIndex) + "_" + strconv.Itoa(i) + s3fileExtension
 
 	_, err = uploader.Upload(&s3manager.UploadInput{
-		Bucket: aws.String("wooteam-productslist/product_list/images/"),
+		Bucket: aws.String(config.AWSProductBucket),
 		ACL:    aws.String("public-read"),
 		Key:    aws.String(s3FileName),
 		Body:   file,
 	})
 
 	if err != nil {
-		fmt.Println("error with uploading file", err)
-		return
+		// fmt.Println("error with uploading file", err)
+		return fmt.Errorf("error with uploading file: %s", err)
 	}
 	fmt.Println("upload to S3 bucket was successful; please check")
+
+	return nil
 
 	//return amz link:
 }
