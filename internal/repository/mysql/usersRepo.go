@@ -114,7 +114,6 @@ func (m *DBrepo) runQuery(ctx context.Context, user *model.User, query string, s
 			r := model.Rent{}
 			if err := rows.Scan(
 				&r.ID,
-				&r.ID,
 				&r.OwnerID,
 				&r.RenterID,
 				&r.ProductID,
@@ -144,7 +143,6 @@ func (m *DBrepo) runQuery(ctx context.Context, user *model.User, query string, s
 			r := model.Rent{}
 			if err := rows.Scan(
 				&r.ID,
-				&r.ID,
 				&r.OwnerID,
 				&r.RenterID,
 				&r.ProductID,
@@ -173,7 +171,6 @@ func (m *DBrepo) runQuery(ctx context.Context, user *model.User, query string, s
 		} else {
 			r := model.Product{}
 			if err := rows.Scan(
-				&r.ID,
 				&r.ID,
 				&r.OwnerID,
 				&r.Brand,
