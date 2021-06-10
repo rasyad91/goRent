@@ -8,6 +8,8 @@ import (
 	"goRent/internal/repository"
 	"sync"
 	"time"
+
+	"golang.org/x/sync/errgroup"
 )
 
 type DBrepo struct {
@@ -77,13 +79,23 @@ func (m *DBrepo) GetUser(username string) (model.User, error) {
 	order by r.product_id asc`
 	//initializing concurrency // linear - 9.791375ms, concurrent - 7.357559ms
 	//timing prior to concurrency
-
+	x, _ := errgroup.WithContext(ctx)
 	wg.Add(3)
-	go m.runQuery(&u, rent_query, "rent")
+	x.Go(func() error {
+		if err := m.runQuery(&u, rent_query, "rent"); err != nil {
+			return err
+		}
+		return nil
+	})
 	go m.runQuery(&u, product_query, "product")
 	go m.runQuery(&u, booking_query, "booking")
 	wg.Wait()
 
+	if err := x.Wait(); err != nil {
+		return model.User{}, err
+	}
+
+	fmt.Println(u.Rents)
 	return u, nil
 }
 func (m *DBrepo) runQuery(user *model.User, query string, structType string) error {
