@@ -8,6 +8,7 @@ import (
 	"goRent/internal/render"
 	"net/http"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -158,6 +159,8 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	ch := make(chan string)
 	errCh := make(chan error)
 
+	var wg sync.WaitGroup
+
 	productIndex, err := m.DB.GetProductNextIndex()
 
 	if err != nil {
@@ -165,20 +168,34 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for i := 1; i < 5; i++ {
-		go checkEmptyUpload(w, r, i, errCh)
+		wg.Add(1)
+		go func(i int, errCh chan<- error) {
+			defer wg.Done()
+			fileName := "file" + strconv.Itoa(i) //file1
+			file, header, err := r.FormFile(fileName)
+			if err != nil || header.Size == 0 {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				errCh <- fmt.Errorf("one of the uploaded files are empty")
+			} else {
+				// errCh <- nil
+			}
+			defer file.Close()
+		}(i, errCh)
 	}
+	wg.Wait()
+	close(errCh)
 
 	for i := range errCh {
-		fmt.Println("s3 stored URL", i)
 		if i != nil {
 			//log error and don't let user proceed
 			fmt.Println("one of the file uploads are missing")
+		} else {
+			fmt.Println("all the upload slots have actual images")
 		}
 	}
 
-	for i := 1; i < 5; i++ {
-		// storeImages(w, r, i)
-		go storeImagesS3(w, r, i, productIndex, m.App.AWSS3Session, ch)
+	for j := 1; j < 5; j++ {
+		go storeImagesS3(w, r, j, productIndex, m.App.AWSS3Session, ch)
 	}
 
 	form := form.New(r.PostForm)
@@ -273,7 +290,6 @@ func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, 
 }
 
 func storeProfileImage(w http.ResponseWriter, r *http.Request, owner_ID int, sess *awsS3.Session) {
-
 	const MAX_UPLOAD_SIZE = 1024 * 1024 // 1MB
 	uploader := s3manager.NewUploader(sess)
 
@@ -330,19 +346,8 @@ func storeProfileImage(w http.ResponseWriter, r *http.Request, owner_ID int, ses
 		fmt.Println("upload to S3 bucket was successful; please check")
 	}
 
-	// s3link := "https://wooteam-productslist.s3-ap-southeast-1.amazonaws.com/product_list/images/" + s3FileName
 }
 
-func checkEmptyUpload(w http.ResponseWriter, r *http.Request, i int, ch chan<- error) {
+// func checkEmptyUpload(w http.ResponseWriter, r *http.Request, i int, ch chan<- error, wg *sync.WaitGroup) {
 
-	fileName := "file" + strconv.Itoa(i) //file1
-
-	file, header, err := r.FormFile(fileName)
-	if err != nil || header.Size == 0 {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		ch <- fmt.Errorf("Empty file detected")
-	} else {
-		ch <- nil
-	}
-	defer file.Close()
-}
+// }
