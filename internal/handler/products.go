@@ -8,7 +8,6 @@ import (
 	"goRent/internal/render"
 	"net/http"
 	"strconv"
-	"sync"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -155,9 +154,12 @@ func (m *Repository) UserProducts(w http.ResponseWriter, r *http.Request) {
 func (m *Repository) AddProduct(w http.ResponseWriter, r *http.Request) {
 
 	data := make(map[string]interface{})
-
+	// user := m.App.Session.Get(r.Context(), "user").(model.User)
+	// data["products"] = user.Products
+	// data["user"] = user
 	if err := render.Template(w, r, "addproduct.page.html", &render.TemplateData{
 		Data: data,
+		Form: &form.Form{},
 	}); err != nil {
 		m.App.Error.Println(err)
 	}
@@ -167,10 +169,7 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 
 	// data := make(map[string]interface{})
 
-	ch := make(chan string)
-	errCh := make(chan error)
-
-	var wg sync.WaitGroup
+	form := form.New(r.PostForm)
 
 	productIndex, err := m.DB.GetProductNextIndex()
 
@@ -178,38 +177,37 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 		m.App.Error.Println("error occured when retriving product ID from DB query", err)
 	}
 
+	g, ctx := errgroup.WithContext(r.Context())
+
 	for i := 1; i < 5; i++ {
-		wg.Add(1)
-		go func(i int, errCh chan<- error) {
-			defer wg.Done()
-			fileName := "file" + strconv.Itoa(i) //file1
+		id := i
+		g.Go(func() error {
+
+			fileName := "file" + strconv.Itoa(id) //file1/2/3/4/
 			file, header, err := r.FormFile(fileName)
 			if err != nil || header.Size == 0 {
 				http.Error(w, err.Error(), http.StatusBadRequest)
-				errCh <- fmt.Errorf("one of the uploaded files are empty")
+				return err
 			} else {
-				// errCh <- nil
+				defer file.Close()
+				storeImagesS3(w, r, id, productIndex, m.App.AWSS3Session)
 			}
-			defer file.Close()
-		}(i, errCh)
-	}
-	wg.Wait()
-	close(errCh)
-
-	for i := range errCh {
-		if i != nil {
-			//log error and don't let user proceed
-			fmt.Println("one of the file uploads are missing")
-		} else {
-			fmt.Println("all the upload slots have actual images")
-		}
+			select {
+			case <-ctx.Done():
+				return ctx.Err()
+			default:
+				return nil
+			}
+		})
 	}
 
-	for j := 1; j < 5; j++ {
-		go storeImagesS3(w, r, j, productIndex, m.App.AWSS3Session, ch)
+	if err := g.Wait(); err != nil {
+		// render.ServerError(w, r, err)
+		m.App.Error.Println(err)
+		form.Errors.Add("fileupload", "A miniumum of 4 images are required")
+
 	}
 
-	form := form.New(r.PostForm)
 	form.Required("productname", "price", "brand", "productdescription")
 	form.CheckLength("productname", 1, 255)
 	form.CheckLength("price", 1, 5)
@@ -226,19 +224,21 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("brand", brand)
 	fmt.Println("productdescription", productdescription)
 	fmt.Println("category", category)
+	fmt.Println("routine ended")
 
-	fmt.Fprintf(w, "successfully uploaded file to server")
-	var imagelinks []string
-	for i := range ch {
-		imagelinks = append(imagelinks, i)
-		fmt.Println("s3 stored URL", i)
+	if len(form.Errors) != 0 {
+		if err := render.Template(w, r, "addproduct.page.html", &render.TemplateData{
+			Form: form,
+			// Data: data,
+		}); err != nil {
+			m.App.Error.Println(err)
+		}
+		return
 	}
-
-	//explore Selectcase for goroutine
 
 }
 
-func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, sess *awsS3.Session, ch chan<- string) {
+func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, sess *awsS3.Session) {
 
 	const MAX_UPLOAD_SIZE = 1024 * 1024 // 1MB
 	uploader := s3manager.NewUploader(sess)
@@ -296,8 +296,6 @@ func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, 
 	fmt.Println("upload to S3 bucket was successful; please check")
 
 	//return amz link:
-	s3link := "https://wooteam-productslist.s3-ap-southeast-1.amazonaws.com/product_list/images/" + s3FileName
-	ch <- s3link
 }
 
 func storeProfileImage(w http.ResponseWriter, r *http.Request, owner_ID int, sess *awsS3.Session) {

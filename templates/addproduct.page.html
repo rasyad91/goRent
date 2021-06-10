@@ -1,4 +1,5 @@
 {{template "base" .}}
+
 {{define "content"}}
 <div class="container">
    <div class="row mt-5">
@@ -10,7 +11,9 @@
             <hr class="mb-3" style="color:gray">
             <h2 class="mb-3">Create a new product</h2>
             <div class="container">
+               {{$form := index .Form}}
                <form id="form" enctype="multipart/form-data" action="/v1/user/createproduct" method="POST">
+                  <input type="hidden" name="csrf_token" value="{{.CSRFToken }}">
                   <div class="row">
                      <div class="col-8">
                         <div class="row">
@@ -40,65 +43,65 @@
                            </div>
                         </div>
                         {{/* <button class="button" type="submit">Submit</button> */}}
-               
-               </div> <div class="col-4"></div></div>
+                     </div>
+                     <div class="col-4"></div>
+                  </div>
+                  {{with $form.Errors.Get "fileupload"}}
+                  <span for="fileupload"  class="text-danger float-right">{{.}}</span>
+                  {{end}}
             </div>
          </div>
-
-            <input type="hidden" name="csrf_token" value="{{.CSRFToken }}">
-            <div class="form-group row mb-3">
-               <div class="form-group col ml-3">
-                  <label class="form-label"for="productname">Product Name</label> 
-                  <span for="productname"  class="text-danger float-right"></span>
-                  <input type="text" class="form-control" name="productname" placeholder="Badminton Rackets">
-                  <div class="form-text">Remember that a good product name attracts the most renters!</div>
-               </div>
-               <div class="form-group col ">
-                  <label class="form-label"for="price">$ Price/Day</label>
-                  <span for="price" class="text-danger float-right"></span>
-                  <input type="number" step="0.01" class="form-control" name="price" placeholder="$">
-                  <div class="form-text">Price refers to the amount it costs to rent your item <strong>per</strong> day</div>
-               </div>
-            </div>
-            <div class="form-group row mb-3 ml-1">
-               <div class="form-group col">
-                  <label class="form-label"for="brand">Brand</label> 
-                  <span for="brand"  class="text-danger float-right"></span>
-                  <input type="brand" class="form-control" name="brand" placeholder="Yonex">
-                  <div class="form-text">Enter Yonex, if it's a yonex badminton racket. Canon, for a canon camera etc</div>
-               </div>
-               <div class="form-group col">
-
-                  <label for="exampleFormControlSelect2">Select your product's category</label>
-                  <select multiple class="form-control" name="category">
-                     <option>Books > Programming</option>
-                     <option>Sports > Hockey</option>
-                     <option>Sports > Badminton</option>
-                     <option>Sports > Roller Blades</option>
-                     <option>Home & Office >> Monitors</option>
-                     <option>Wedding > Wedding Dress</option>
-                     <option>Wedding > Wedding Decoration</option>
-                     <option>Outdoor > Camping Equipment</option>
-                     <option>Outdoor > Glamping Equipment</option>
-                  </select>
-                  <div class="form-text">Please select a category that is closest to your product.</div>
-               </div>
-            </div>
-            <div class="form-group mb-3 ml-3">
-               <label class="form-label"for="productdescription">Product Description</label>
-               <span for="productdescription"  class="text-danger float-right"></span>
-               {{/* <input type="email" class="form-control" name="email" placeholder="A pair of badminton rackets with 2 completely new shuttlecocks for every rent package!" value="" rows="3"> */}}
-               <textarea class="form-control" name="productdescription" rows="4"></textarea>
-               <div class="form-text">A good description will help you rent out your items faster. You may want to include as many details as possible. For example, if you are renting badminton rackets, you may also want include how many shuttlecocks are included in the rent etc. Maximum 400 words.</div>
-            </div>
-            <div class="form-group">
-               <button type="submit" class="btn btn-outline-dark btn-lg ml-3">Create Product</button>
-            </div>
+         {{/* <input type="hidden" name="csrf_token" value="{{.CSRFToken }}"> */}}
+         <div class="form-group row mb-3">
+         <div class="form-group col ml-3">
+         <label class="form-label"for="productname">Product Name</label> 
+         <span for="productname"  class="text-danger float-right"></span>
+         <input type="text" class="form-control" name="productname" placeholder="Badminton Rackets">
+         <div class="form-text">Remember that a good product name attracts the most renters!</div>
+         </div>
+         <div class="form-group col ">
+         <label class="form-label"for="price">$ Price/Day</label>
+         <span for="price" class="text-danger float-right"></span>
+         <input type="number" step="0.01" class="form-control" name="price" placeholder="$">
+         <div class="form-text">Price refers to the amount it costs to rent your item <strong>per</strong> day</div>
+         </div>
+         </div>
+         <div class="form-group row mb-3 ml-1">
+         <div class="form-group col">
+         <label class="form-label"for="brand">Brand</label> 
+         <span for="brand"  class="text-danger float-right"></span>
+         <input type="brand" class="form-control" name="brand" placeholder="Yonex">
+         <div class="form-text">Enter Yonex, if it's a yonex badminton racket. Canon, for a canon camera etc</div>
+         </div>
+         <div class="form-group col">
+         <label for="exampleFormControlSelect2">Select your product's category</label>
+         <select multiple class="form-control" name="category">
+         <option>Books > Programming</option>
+         <option>Sports > Hockey</option>
+         <option>Sports > Badminton</option>
+         <option>Sports > Roller Blades</option>
+         <option>Home & Office >> Monitors</option>
+         <option>Wedding > Wedding Dress</option>
+         <option>Wedding > Wedding Decoration</option>
+         <option>Outdoor > Camping Equipment</option>
+         <option>Outdoor > Glamping Equipment</option>
+         </select>
+         <div class="form-text">Please select a category that is closest to your product.</div>
+         </div>
+         </div>
+         <div class="form-group mb-3 ml-3">
+         <label class="form-label"for="productdescription">Product Description</label>
+         <span for="productdescription"  class="text-danger float-right"></span>
+         {{/* <input type="email" class="form-control" name="email" placeholder="A pair of badminton rackets with 2 completely new shuttlecocks for every rent package!" value="" rows="3"> */}}
+         <textarea class="form-control" name="productdescription" rows="4"></textarea>
+         <div class="form-text">A good description will help you rent out your items faster. You may want to include as many details as possible. For example, if you are renting badminton rackets, you may also want include how many shuttlecocks are included in the rent etc. Maximum 400 words.</div>
+         </div>
+         <div class="form-group">
+         <button type="submit" class="btn btn-outline-dark btn-lg ml-3">Create Product</button>
+         </div>
          </form>
       </div>
    </div>
 </div>
 </div>
-{{end}}
-{{define "script"}}
 {{end}}
