@@ -12,7 +12,7 @@
     <ul class="breadcrumb undefined">
       <li class="breadcrumb-item"><a href="/">Home</a></li>
       <li class="breadcrumb-item"><a href="/searchresult?q=">Products</a></li>
-      <li class="breadcrumb-item active">{{$res.Title}} </li>
+      <li class="breadcrumb-item active">{{$res.Title}}</li>
     </ul>
     <div class="row">
       <div class="col-lg-6 col-xl-7 pt-4 order-2 order-lg-1 photoswipe-gallery"><a class="d-block mb-4"
@@ -67,7 +67,15 @@
       </div>
       <div class="col-lg-6 col-xl-4 pt-4 order-1 order-lg-2 ml-lg-auto">
         <div class="sticky-top" style="top: 100px;">
-          <h1 class="mb-4">{{$res.Title}}</h1>
+          <h1 class="mb-4">{{$res.Title}}
+            {{if .IsAuthenticated}}
+            {{if eq $user.ID $res.OwnerID}}
+            <span class="badge badge-warning text-sm justify-content-center">My product</span>
+            {{end}}
+            {{end}}
+
+
+          </h1>
           <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-sm-between mb-4">
             <ul class="list-inline mb-2 mb-sm-0">
               <li class="list-inline-item h4 font-weight-light mb-0">${{$res.Price}}</li>
@@ -138,8 +146,11 @@
       <li class="nav-item"><a class="nav-link detail-nav-link active" data-toggle="tab" href="#reviews" role="tab"
           aria-selected="false">Reviews</a></li>
       {{with .IsAuthenticated}}
+      {{if ne $user.ID $res.OwnerID}}
+
       <li class="nav-item"><a class="nav-link detail-nav-link" data-toggle="tab" href="#leave-review" role="tab"
           aria-selected="false">Leave a review</a></li>
+      {{end}}
       {{end}}
     </ul>
     <div class="tab-content py-4">
@@ -173,6 +184,7 @@
         </div>
       </div>
       {{with .IsAuthenticated}}
+      {{if ne $user.ID $res.OwnerID}}
       <div class="fade tab-pane" id="leave-review" role="tabpanel">
         <form class="form" id="reviewForm" method="post" action="/v1/products/{{$res.ID}}/review">
           <input type="hidden" name="csrf_token" value="{{$csrf}}">
@@ -209,6 +221,8 @@
         </form>
       </div>
       {{end}}
+      {{end}}
+
     </div>
   </div>
   </div>
@@ -229,8 +243,7 @@
   const rangepicker = new DateRangePicker(elem, {
     format: "dd-mm-yyyy",
     minDate: dateToday,
-    datesDisabled: [
-      {{range $b}}
+    datesDisabled: [{{range $b}}
       "{{.}}",
       {{end}}
     ]
