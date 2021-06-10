@@ -103,7 +103,18 @@ func (m *Repository) PostReview(w http.ResponseWriter, r *http.Request) {
 // 		retun
 // 	}
 // }
+func (m *Repository) UserProducts(w http.ResponseWriter, r *http.Request) {
 
+	data := make(map[string]interface{})
+	user := m.App.Session.Get(r.Context(), "user").(model.User)
+	data["products"] = user.Products
+	data["user"] = user
+	if err := render.Template(w, r, "userProduct.page.html", &render.TemplateData{
+		Data: data,
+	}); err != nil {
+		m.App.Error.Println(err)
+	}
+}
 func (m *Repository) AddProduct(w http.ResponseWriter, r *http.Request) {
 
 	data := make(map[string]interface{})
