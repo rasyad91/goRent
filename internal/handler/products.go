@@ -139,11 +139,24 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	// data := make(map[string]interface{})
 
 	ch := make(chan string)
+	errCh := make(chan error)
 
 	productIndex, err := m.DB.GetProductNextIndex()
 
 	if err != nil {
 		m.App.Error.Println("error occured when retriving product ID from DB query", err)
+	}
+
+	for i := 1; i < 5; i++ {
+		go checkEmptyUpload(w, r, i, errCh)
+	}
+
+	for i := range errCh {
+		fmt.Println("s3 stored URL", i)
+		if i != nil {
+			//log error and don't let user proceed
+			fmt.Println("one of the file uploads are missing")
+		}
 	}
 
 	for i := 1; i < 5; i++ {
@@ -195,8 +208,8 @@ func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, 
 
 	fileName := "file" + strconv.Itoa(i) //file1
 
-	file, _, err := r.FormFile(fileName)
-	if err != nil {
+	file, header, err := r.FormFile(fileName)
+	if err != nil || header.Size == 0 {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -301,4 +314,18 @@ func storeProfileImage(w http.ResponseWriter, r *http.Request, owner_ID int, ses
 	}
 
 	// s3link := "https://wooteam-productslist.s3-ap-southeast-1.amazonaws.com/product_list/images/" + s3FileName
+}
+
+func checkEmptyUpload(w http.ResponseWriter, r *http.Request, i int, ch chan<- error) {
+
+	fileName := "file" + strconv.Itoa(i) //file1
+
+	file, header, err := r.FormFile(fileName)
+	if err != nil || header.Size == 0 {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		ch <- fmt.Errorf("Empty file detected")
+	} else {
+		ch <- nil
+	}
+	defer file.Close()
 }
