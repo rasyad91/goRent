@@ -87,7 +87,9 @@ func searchQuery(client *elastic.Client, searchKeywords ...string) []model.Produ
 		Index("sample_product_list"). // search in index "tweets"
 		Query(query).                 // specify the query
 		Pretty(true).                 // pretty print request and response JSON
-		Do(context.Background())      // execute
+		From(0).
+		Size(20).
+		Do(context.Background()) // execute
 	if err != nil {
 		fmt.Println("error from search", err)
 	}
