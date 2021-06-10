@@ -37,7 +37,7 @@
                     <svg class="svg-icon svg-icon-heavy mr-2">
                       <use xlink:href="#heart-1"> </use>
                     </svg>Rentals</span></a>
-                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/cart"><span>
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/bookings"><span>
                     <svg class="svg-icon svg-icon-heavy mr-2">
                       <use xlink:href="#heart-1"> </use>
                     </svg>Bookings</span></a>
@@ -57,9 +57,11 @@
               <div class="cart-wrapper">
                 <div class="cart-header">
                   <div class="row">
-                    <div class="col-6">Product</div>
+                    <div class="col-4">Product</div>
                     <div class="col-2 text-center">Price</div>
                     <div class="col-4 text-center">Review</div>
+                    <div class="col-1 text-center">Edit</div>
+                    <div class="col-1 text-center">Delete</div>
                   </div>
                 </div>
                 <div class="cart-body">
@@ -67,7 +69,7 @@
                   <!-- Product-->
                   <div class="cart-item">
                     <div class="row d-flex align-items-center text-center">
-                      <div class="col-6">
+                      <div class="col-4">
                         <div class="d-flex align-items-center"><a href="/v1/products/{{$p.ID}}"><img class="cart-item-img" src="https://d19m59y37dris4.cloudfront.net/varkala/1-2-1/img/product/product-square-ian-dooley-347968-unsplash.jpg" alt="..."></a>
                           <div class="cart-title text-left"><a class="text-dark" href="/v1/products/{{$p.ID}}"><strong>{{$p.Title}}</strong></a>
                           </div>
@@ -86,6 +88,8 @@
                             </ul><span class="text-muted text-uppercase">{{len $p.Reviews}} reviews</span>
                         </div>
                       </div>
+                      <div class="col-1"><a class="btn" href="#"><i class="fas fa-edit"></i></a></div>
+                      <div class="col-1"><a class="btn" href="#"><i class="fas fa-trash"></i></a></div>
                     </div>
                   </div>
                 {{end}}
