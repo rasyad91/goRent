@@ -170,7 +170,13 @@ func (m *Repository) AddProduct(w http.ResponseWriter, r *http.Request) {
 func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 
 	// data := make(map[string]interface{})
-	var imageIndex []int
+	// var imageIndex []int
+	type imageIndex struct {
+		index     int
+		imageType string
+	}
+
+	var s3ImageInformation []imageIndex
 
 	form := form.New(r.PostForm)
 
@@ -195,15 +201,14 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 			} else {
 				defer file.Close()
 
-				s3err := storeImagesS3(w, r, id, productIndex, m.App.AWSS3Session)
+				s3imgType, s3err := storeImagesS3(w, r, id, productIndex, m.App.AWSS3Session)
 				if s3err != nil {
 					m.App.Error.Println("S3 error", err)
 					fmt.Println("")
 					form.Errors.Add("fileupload", "Please only use .jpeg/ .png files not exceeding 1MB in size")
 
 				} else {
-
-					imageIndex = append(imageIndex, id)
+					s3ImageInformation = append(s3ImageInformation, imageIndex{index: id, imageType: s3imgType})
 				}
 			}
 			select {
@@ -239,15 +244,20 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("category", category)
 	fmt.Println("routine ended")
 
-	sort.Ints(imageIndex)
-	fmt.Println("this is the sorted index", imageIndex)
+	// sort.Slice(imageIndex)
+	fmt.Println("this is the unsorted index", s3ImageInformation)
+
+	sort.Slice(s3ImageInformation, func(i, j int) bool {
+		return s3ImageInformation[i].index < s3ImageInformation[j].index
+	})
+
+	fmt.Println("this is the sorted index", s3ImageInformation)
 
 	var productImageURL []string
-	for _, v := range imageIndex {
+	for _, v := range s3ImageInformation {
 
 		s := "samples3URLstring"
-		fileType := ".jpeg"
-		productImageURL = append(productImageURL, s+strconv.Itoa(v)+fileType)
+		productImageURL = append(productImageURL, s+strconv.Itoa(v.index)+v.imageType)
 
 	}
 
@@ -264,7 +274,7 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, sess *awsS3.Session) error {
+func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, sess *awsS3.Session) (string, error) {
 
 	const MAX_UPLOAD_SIZE = 1024 * 1024 // 1MB
 	uploader := s3manager.NewUploader(sess)
@@ -273,7 +283,7 @@ func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, 
 
 	if err := r.ParseMultipartForm(MAX_UPLOAD_SIZE); err != nil {
 		// http.Error(w, "The uploaded file is too big. Please choose an file that's less than 1MB in size", http.StatusBadRequest)
-		return fmt.Errorf("the uplaoded file is too big. Please choose af ile that's less than 1 MB in size :%s", err)
+		return "", fmt.Errorf("the uplaoded file is too big. Please choose af ile that's less than 1 MB in size :%s", err)
 	}
 	defer r.Body.Close()
 
@@ -282,7 +292,7 @@ func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, 
 	file, header, err := r.FormFile(fileName)
 	if err != nil || header.Size == 0 {
 		// http.Error(w, err.Error(), http.StatusBadRequest)
-		return fmt.Errorf("there are no files being uploaded: %s", err)
+		return "", fmt.Errorf("there are no files being uploaded: %s", err)
 	}
 	defer file.Close()
 
@@ -290,14 +300,14 @@ func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, 
 	_, err = file.Read(buff)
 	if err != nil {
 		// http.Error(w, err.Error(), http.StatusInternalServerError)
-		return fmt.Errorf("failed to read buff: %s", err)
+		return "", fmt.Errorf("failed to read buff: %s", err)
 	}
 
 	filetype := http.DetectContentType(buff)
 	if filetype != "image/jpeg" && filetype != "image/png" {
 		// http.Error(w, "The provided file format is not allowed. Please upload a JPEG or PNG image", http.StatusBadRequest)
 		// fmt.Println("error in file type !!!")
-		return fmt.Errorf("only .jpeg and .png files are allowed: %s", err)
+		return "", fmt.Errorf("only .jpeg and .png files are allowed: %s", err)
 	}
 
 	var s3fileExtension string
@@ -318,11 +328,11 @@ func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, 
 
 	if err != nil {
 		// fmt.Println("error with uploading file", err)
-		return fmt.Errorf("error with uploading file: %s", err)
+		return "", fmt.Errorf("error with uploading file: %s", err)
 	}
 	fmt.Println("upload to S3 bucket was successful; please check")
 
-	return nil
+	return s3fileExtension, nil
 
 	//return amz link:
 }
