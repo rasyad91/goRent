@@ -1,6 +1,9 @@
 package repository
 
-import "goRent/internal/model"
+import (
+	"context"
+	"goRent/internal/model"
+)
 
 type DatabaseRepo interface {
 	// Users
@@ -10,11 +13,11 @@ type DatabaseRepo interface {
 
 	// Products
 	GetAllProducts() ([]model.Product, error)
-	GetProductByID(id int) (model.Product, error)
+	GetProductByID(ctx context.Context, id int) (model.Product, error)
 	GetProductNextIndex() (int, error)
 
 	// Rents
-	GetRentsByProductID(id int) ([]model.Rent, error)
+	GetRentsByProductID(ctx context.Context, id int) ([]model.Rent, error)
 	CreateRent(r model.Rent) (int, error)
 	DeleteRent(rentID int) error
 
