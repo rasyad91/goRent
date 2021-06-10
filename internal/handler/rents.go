@@ -70,6 +70,12 @@ func (m *Repository) PostRent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if ownerID == u.ID {
+		m.App.Session.Put(r.Context(), "warning", "You fool! You cannot book your own product!")
+		http.Redirect(w, r, fmt.Sprintf("/v1/products/%d", productID), http.StatusSeeOther)
+		return
+	}
+
 	if helper.Includes(blockedDates, rentDates...) {
 		m.App.Session.Put(r.Context(), "warning", "Dates selected are already booked! Please select another date")
 		http.Redirect(w, r, fmt.Sprintf("/v1/products/%d", productID), http.StatusSeeOther)

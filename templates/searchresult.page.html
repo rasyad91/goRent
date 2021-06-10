@@ -23,35 +23,35 @@
                         aria-controls="productFilter">Filter</button>
                 </div> -->
             </div>
-
+            {{$p := index .Data "product"}}
             <div class="row">
                 <div class="card-deck">
-                    {{with index .Data "Product"}}
-                    {{range $res := index .Data "product"}}
-                    <a class="" href="/v1/products/{{$res.ID}}">
+                    {{with len $p}}
+                    {{range $p}}
+                    <a class="" href="/v1/products/{{.ID}}">
                         <div class="col-md-4 mb-3">
                             <div class="card">
                                 <div class="card-img-top product-swap-image">
                                     <img class="card-img img-fluid product-swap-image-front"
-                                        src="{{index $res.Images 0}}" alt="product">
-                                    {{if gt (len $res.Images) 1}}
-                                    <img class="card-img img-fluid" src="{{index $res.Images 1}}" alt="product">
+                                        src="{{index .Images 0}}" alt="product">
+                                    {{if gt (len .Images) 1}}
+                                    <img class="card-img img-fluid" src="{{index .Images 1}}" alt="product">
                                     {{end}}
                                 </div>
                                 <div class="card-body">
                                     <div class="position-relative">
                                         <h3 class="text-base mb-1"><a class="text-dark"
-                                                href="/v1/products/{{$res.ID}}">{{$res.Title}}</a></h3>
-                                        <span class="text-muted">${{$res.Price}}</span>
+                                                href="/v1/products/{{.ID}}">{{.Title}}</a></h3>
+                                        <span class="text-muted">${{.Price}}</span>
                                         <span class="text-xs float-right">
-                                            {{with len $res.Reviews}}
-                                            {{len $res.Reviews}}
+                                            {{with len .Reviews}}
+                                            {{len .Reviews}}
                                             {{end}}
-                                            {{range $index := iterate (floatToInt $res.Rating)}}
+                                            {{range $index := iterate (floatToInt .Rating)}}
                                             <li class="list-inline-item mr-0"><i class="fa fa-star text-danger"></i>
                                             </li>
                                             {{end}}
-                                            {{range $index := iterate (substract 5 (floatToInt $res.Rating))}}
+                                            {{range $index := iterate (substract 5 (floatToInt .Rating))}}
                                             <li class="list-inline-item mr-0"><i class="fa fa-star text-gray-300"></i>
                                             </li>
                                             {{end}}
@@ -66,7 +66,6 @@
                     <div class="">
                         <i class="fas fa-ghost fa-3x d-flex justify-content-center"></i>
                         <span class="text-muted d-flex justify-content-center">Sorry! No results found</span>
-
                     </div>
                     {{end}}
                 </div>
