@@ -53,9 +53,6 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 
 	if err := bcrypt.CompareHashAndPassword([]byte(eu.Password), []byte(password)); err != nil {
 		form.Errors.Add("login", "Username or password incorrect")
-	} else {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		fmt.Println("PASSWORD MATCHES")
 	}
 
 	fmt.Println("time taken: ", time.Since(t))
