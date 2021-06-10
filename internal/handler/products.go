@@ -186,7 +186,8 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 			fileName := "file" + strconv.Itoa(id) //file1/2/3/4/
 			file, header, err := r.FormFile(fileName)
 			if err != nil || header.Size == 0 {
-				http.Error(w, err.Error(), http.StatusBadRequest)
+				// http.Error(w, err.Error(), http.StatusBadRequest)
+				fmt.Println(err)
 				return err
 			} else {
 				defer file.Close()
@@ -269,7 +270,8 @@ func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, 
 
 	filetype := http.DetectContentType(buff)
 	if filetype != "image/jpeg" && filetype != "image/png" {
-		http.Error(w, "The provided file format is not allowed. Please upload a JPEG or PNG image", http.StatusBadRequest)
+		// http.Error(w, "The provided file format is not allowed. Please upload a JPEG or PNG image", http.StatusBadRequest)
+		fmt.Println(err)
 		return
 	}
 
