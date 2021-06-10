@@ -4,7 +4,6 @@
 
 <section class="pb-4 py-3">
       <div class="container">
-      {{$products := index .Data "products"}}
       {{$res := index .Data "user"}}
       {{$form := index .Form}}
         <div class="row">
@@ -29,19 +28,15 @@
                     <svg class="svg-icon svg-icon-heavy mr-2">
                       <use xlink:href="#real-estate-1"> </use>
                     </svg>Payment</span></a>
-                <a class="active list-group-item d-flex justify-content-between align-items-center" href="/v1/user/products"><span>
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/products"><span>
                     <svg class="svg-icon svg-icon-heavy mr-2">
                       <use xlink:href="#heart-1"> </use>
                     </svg>Products</span></a>
-                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/addproduct"><span>
-                    <svg class="svg-icon svg-icon-heavy mr-2">
-                      <use xlink:href="#heart-1"> </use>
-                    </svg>Add Products</span></a>
                 <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/rents"><span>
                     <svg class="svg-icon svg-icon-heavy mr-2">
                       <use xlink:href="#heart-1"> </use>
                     </svg>Rentals</span></a>
-                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/cart"><span>
+                <a class="active list-group-item d-flex justify-content-between align-items-center" href="/v1/user/bookings"><span>
                     <svg class="svg-icon svg-icon-heavy mr-2">
                       <use xlink:href="#heart-1"> </use>
                     </svg>Bookings</span></a>
@@ -54,42 +49,31 @@
           </div>
           <!-- /Customer Sidebar-->
           <div class="col-lg-9 col-xl-9 mb-5 mb-lg-0">
-          <div class = "mb-3" > 
-            <a class="btn btn-outline-dark btn-block" href="/v1/user/addproduct" role="button">Add Product</a>
-          </div>
           <div class="cart">
               <div class="cart-wrapper">
                 <div class="cart-header">
                   <div class="row">
-                    <div class="col-6">Product</div>
+                    <div class="col-6">Bookings</div>
                     <div class="col-2 text-center">Price</div>
-                    <div class="col-4 text-center">Review</div>
+                    <div class="col-2 text-center">Start Date</div>
+                    <div class="col-2 text-center">End Date</div>
                   </div>
                 </div>
                 <div class="cart-body">
-                {{range $p := $products}}
+                {{$rents := $res.Bookings}}
+                {{range $r := $rents}}
                   <!-- Product-->
                   <div class="cart-item">
                     <div class="row d-flex align-items-center text-center">
                       <div class="col-6">
-                        <div class="d-flex align-items-center"><a href="/v1/products/{{$p.ID}}"><img class="cart-item-img" src="https://d19m59y37dris4.cloudfront.net/varkala/1-2-1/img/product/product-square-ian-dooley-347968-unsplash.jpg" alt="..."></a>
-                          <div class="cart-title text-left"><a class="text-dark" href="/v1/products/{{$p.ID}}"><strong>{{$p.Title}}</strong></a>
+                        <div class="d-flex align-items-center"><a href="detail.html"><img class="cart-item-img" src="https://d19m59y37dris4.cloudfront.net/varkala/1-2-1/img/product/product-square-ian-dooley-347968-unsplash.jpg" alt="..."></a>
+                          <div class="cart-title text-left"><a class="text-dark" href="detail.html"><strong>{{$r.Product.Title}}</strong></a>
                           </div>
                         </div>
                       </div>
-                      <div class="col-2">{{$p.Price}}</div>
-                      <div class="col-4">
-                        <div class="d-flex align-items-center text-sm">
-                            <ul class="list-inline mr-2 mb-0">
-                                {{range $index := iterate (floatToInt $p.Rating)}}
-                                <li class="list-inline-item mr-0"><i class="fa fa-star text-danger"></i></li>
-                                {{end}}
-                                {{range $index := iterate (substract 5 (floatToInt $p.Rating))}}
-                                <li class="list-inline-item mr-0"><i class="fa fa-star text-gray-300"></i></li>
-                                {{end}}
-                            </ul><span class="text-muted text-uppercase">{{len $p.Reviews}} reviews</span>
-                        </div>
-                      </div>
+                      <div class="col-2">{{$r.Product.Price}}</div>
+                      <div class="col-2">{{$r.StartDate.Format "2006-01-02"}}</div>
+                      <div class="col-2">{{$r.EndDate.Format "2006-01-02"}}</div>
                     </div>
                   </div>
                 {{end}}
