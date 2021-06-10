@@ -59,8 +59,8 @@
                   <div class="row">
                     <div class="col-6">Rentals</div>
                     <div class="col-2 text-center">Price</div>
-                    <div class="col-2 text-right">Edit</div>
-                    <div class="col-2 text-right">Delete</div>
+                    <div class="col-2 text-center">Start Date</div>
+                    <div class="col-2 text-center">End Date</div>
                   </div>
                 </div>
                 <div class="cart-body">
@@ -76,9 +76,8 @@
                         </div>
                       </div>
                       <div class="col-2">{{$r.Product.Price}}</div>
-                      <div class="col-2">Edit
-                      </div>
-                      <div class="col-2 text-center">Delete</div>
+                      <div class="col-2">{{$r.StartDate.Format "2006-01-02"}}</div>
+                      <div class="col-2">{{$r.EndDate.Format "2006-01-02"}}</div>
                     </div>
                   </div>
                 {{end}}

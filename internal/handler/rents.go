@@ -92,6 +92,7 @@ func (m *Repository) PostRent(w http.ResponseWriter, r *http.Request) {
 		Duration:  len(rentDates),
 		StartDate: startDate,
 		EndDate:   endDate,
+		Product:   model.Product{Title: productTitle},
 	}
 
 	t := time.Now()

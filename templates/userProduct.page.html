@@ -54,14 +54,16 @@
           </div>
           <!-- /Customer Sidebar-->
           <div class="col-lg-9 col-xl-9 mb-5 mb-lg-0">
+          <div class = "mb-3" > 
+            <a class="btn btn-outline-dark btn-block" href="/v1/user/addproduct" role="button">Add Product</a>
+          </div>
           <div class="cart">
               <div class="cart-wrapper">
                 <div class="cart-header">
                   <div class="row">
                     <div class="col-6">Product</div>
                     <div class="col-2 text-center">Price</div>
-                    <div class="col-2 text-right">Edit</div>
-                    <div class="col-2 text-right">Delete</div>
+                    <div class="col-4 text-center">Review</div>
                   </div>
                 </div>
                 <div class="cart-body">
@@ -70,15 +72,24 @@
                   <div class="cart-item">
                     <div class="row d-flex align-items-center text-center">
                       <div class="col-6">
-                        <div class="d-flex align-items-center"><a href="detail.html"><img class="cart-item-img" src="https://d19m59y37dris4.cloudfront.net/varkala/1-2-1/img/product/product-square-ian-dooley-347968-unsplash.jpg" alt="..."></a>
-                          <div class="cart-title text-left"><a class="text-dark" href="detail.html"><strong>{{$p.Title}}</strong></a>
+                        <div class="d-flex align-items-center"><a href="/v1/products/{{$p.ID}}"><img class="cart-item-img" src="https://d19m59y37dris4.cloudfront.net/varkala/1-2-1/img/product/product-square-ian-dooley-347968-unsplash.jpg" alt="..."></a>
+                          <div class="cart-title text-left"><a class="text-dark" href="/v1/products/{{$p.ID}}"><strong>{{$p.Title}}</strong></a>
                           </div>
                         </div>
                       </div>
                       <div class="col-2">{{$p.Price}}</div>
-                      <div class="col-2">Edit
+                      <div class="col-4">
+                        <div class="d-flex align-items-center text-sm">
+                            <ul class="list-inline mr-2 mb-0">
+                                {{range $index := iterate (floatToInt $p.Rating)}}
+                                <li class="list-inline-item mr-0"><i class="fa fa-star text-danger"></i></li>
+                                {{end}}
+                                {{range $index := iterate (substract 5 (floatToInt $p.Rating))}}
+                                <li class="list-inline-item mr-0"><i class="fa fa-star text-gray-300"></i></li>
+                                {{end}}
+                            </ul><span class="text-muted text-uppercase">{{len $p.Reviews}} reviews</span>
+                        </div>
                       </div>
-                      <div class="col-2 text-center">Delete</div>
                     </div>
                   </div>
                 {{end}}

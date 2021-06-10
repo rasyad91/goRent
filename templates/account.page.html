@@ -120,7 +120,8 @@
                         <div class="d-flex flex-row justify-content-between px-3 pb-4">
                           <div class="d-flex flex-column">
                             <span class="text-dark">{{$r.Product.Title}}</span>
-                            <small class="text-dark">Brand: {{$r.Product.Brand}}</small>
+                            <small class="text-dark">Start: {{$r.StartDate.Format "2006-01-02"}}</small>
+                            <small class = "text-dark">End: {{$r.EndDate.Format "2006-01-02"}}</small>
                           </div>
                         </div>
                         <!-----end passed 1 ---->
@@ -160,7 +161,8 @@
                         <div class="d-flex flex-row justify-content-between px-3 pb-4">
                           <div class="d-flex flex-column">
                             <span class="text-dark">{{$b.Product.Title}}</span>
-                            <small class="text-dark">Brand: {{$b.Product.Brand}}</small>
+                            <small class="text-dark">Start: {{$b.StartDate.Format "2006-01-02"}}</small>
+                            <small class = "text-dark">End: {{$b.EndDate.Format "2006-01-02"}}</small>
                           </div>
                         </div>
                         <!-----end passed 1 ---->
