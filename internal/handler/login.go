@@ -7,6 +7,7 @@ import (
 	"goRent/internal/model"
 	"goRent/internal/render"
 	"net/http"
+	"time"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -30,7 +31,8 @@ func (m *Repository) Login(w http.ResponseWriter, r *http.Request) {
 
 func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("HITTING LOGINPOST")
-	data := make(map[string]interface{})
+	t := time.Now()
+	fmt.Println("Start timing...")
 	form := form.New(r.PostForm)
 	if err := r.ParseForm(); err != nil {
 		m.App.Error.Println(err)
@@ -39,6 +41,7 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 	_ = m.App.Session.RenewToken(r.Context())
 	Username := r.FormValue("username")
 	password := r.FormValue("password")
+
 	eu, err := m.DB.GetUser(Username)
 	if err != nil {
 		if err != sql.ErrNoRows {
@@ -47,21 +50,13 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 		form.Errors.Add("login", "Username or password incorrect")
 	}
 	fmt.Println("SUCCESSFULLY PULLED USER INFO")
-	// fmt.Println(password)
-	// t, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	// fmt.Println(t)
-	// fmt.Println(string(t))
-	// fmt.Println([]byte(t))
-	// fmt.Println(string(t))
 
-	// fmt.Println(eu.Password)
-	err = bcrypt.CompareHashAndPassword([]byte(eu.Password), []byte(password))
-	if err != nil {
+	if err := bcrypt.CompareHashAndPassword([]byte(eu.Password), []byte(password)); err != nil {
 		form.Errors.Add("login", "Username or password incorrect")
-	} else {
-		http.Redirect(w, r, "/home", http.StatusSeeOther)
-		fmt.Println("PASSWORD MATCHES")
 	}
+
+	fmt.Println("time taken: ", time.Since(t))
+	data := make(map[string]interface{})
 	if len(form.Errors) != 0 {
 		if err := render.Template(w, r, "login.page.html", &render.TemplateData{
 			Form: form,
@@ -70,13 +65,6 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 			m.App.Error.Println(err)
 		}
 		return
-	}
-
-	for _, v := range eu.Rents {
-		fmt.Printf("%#v\n", v)
-	}
-	for _, v := range eu.Bookings {
-		fmt.Println(v)
 	}
 
 	m.App.Session.Put(r.Context(), "userID", eu.ID)

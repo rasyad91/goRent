@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/alexedwards/scs/v2"
+	awsS3 "github.com/aws/aws-sdk-go/aws/session"
 	"github.com/olivere/elastic/v7"
 )
 
@@ -16,6 +17,7 @@ type AppConfig struct {
 	Error         *log.Logger
 	MailChan      chan model.MailData
 	AWSClient     *elastic.Client
+	AWSS3Session  *awsS3.Session
 }
 
 const (

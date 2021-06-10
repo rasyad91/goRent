@@ -3,189 +3,213 @@
 {{define "content"}}
 
 <section class="pb-4 py-3">
-      <div class="container">
-            
-        {{$res := index .Data "user"}}
-        <div class="row">
-                  <!-- Customer Sidebar-->
-          <div class="col-lg-3 col-xl-3 mb-3">
-            <div class="customer-sidebar card border-0"> 
-              <div class="customer-profile"><a class="d-inline-block" href="#"><img class="img-fluid rounded-circle customer-image" src="https://d19m59y37dris4.cloudfront.net/varkala/1-2-1/img/avatar/avatar-0.jpg" alt=""></a>
-                <h5>{{$res.Username}}</h5>
-                <p class="text-muted text-sm mb-0">Los Angeles, CA</p>
-              </div>
-              <nav class="list-group customer-nav">
-                <a class="active list-group-item d-flex justify-content-between align-items-center" href="/v1/user/account">
-                  <span>
-                    <svg class="svg-icon svg-icon-heavy mr-2">
-                    </svg>Overview</span>
-                </a>
-                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/account/profile"><span>
-                    <svg class="svg-icon svg-icon-heavy mr-2">
-                    </svg>Edit Profile</span>
-                </a>
-                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/account/payment"><span>
-                    <svg class="svg-icon svg-icon-heavy mr-2">
-                      <use xlink:href="#real-estate-1"> </use>
-                    </svg>Payment</span></a>
-                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/products"><span>
-                    <svg class="svg-icon svg-icon-heavy mr-2">
-                      <use xlink:href="#heart-1"> </use>
-                    </svg>Products</span></a>
-                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/addproduct"><span>
-                    <svg class="svg-icon svg-icon-heavy mr-2">
-                      <use xlink:href="#heart-1"> </use>
-                    </svg>Add Products</span></a>
-                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/cart"><span>
-                    <svg class="svg-icon svg-icon-heavy mr-2">
-                      <use xlink:href="#heart-1"> </use>
-                    </svg>Rentals</span></a>    
-                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/cart"><span>
-                    <svg class="svg-icon svg-icon-heavy mr-2">
-                      <use xlink:href="#heart-1"> </use>
-                    </svg>Bookings</span></a>
-                <a class="list-group-item d-flex justify-content-between align-items-center" href="/user/logout"><span>
-                    <svg class="svg-icon svg-icon-heavy mr-2">
-                    </svg>Log out</span>
-                </a>
-              </nav>
-            </div>
+  <div class="container">
+
+    {{$res := index .Data "user"}}
+    <div class="row">
+      <!-- Customer Sidebar-->
+      <div class="col-lg-3 col-xl-3 mb-3">
+        <div class="customer-sidebar card border-0">
+          <div class="customer-profile"><a class="d-inline-block" href="#"><img
+                class="img-fluid rounded-circle customer-image"
+                src="https://d19m59y37dris4.cloudfront.net/varkala/1-2-1/img/avatar/avatar-0.jpg" alt=""></a>
+            <h5>{{$res.Username}}</h5>
+            <p class="text-muted text-sm mb-0">Los Angeles, CA</p>
           </div>
-          <!-- /Customer Sidebar-->
-          <div class="col-lg-9 col-xl-9 mb-5 mb-lg-0">
-            <div class = "container">
-                <h5><a href="#">My Products</a></h5>
-                {{$products := $res.Products}}
-                <div class="swiper-container swiper-container-initialized swiper-container-horizontal swiper-container-pointer-events">
-                    <div class="swiper-wrapper" id="swiper-wrapper-dde3f11d71d76b66" aria-live="polite" style="transition-duration: 0ms; transform: translate3d(-685.333px, 0px, 0px);">
-                      {{range $index,$p := $products}}
-                        {{if le $index 10 }}
-                          <div class="swiper-slide" role="group" style="width: 30%;">
-                            <figure class="card card-product">
-                                <div class="card">
-                                    <a href="/v1/products/{{$p.ID}}"><img src="https://miro.medium.com/max/2400/1*mk1-6aYaf_Bes1E3Imhc0A.jpeg" class="card-img-top" style='height: 100%; width: 100%; object-fit: contain'></a>
-                                    <figcaption class="info-wrap">
-                                        <!--- passed 1 ---->
-                                            <div class="card-body pt-0 px-0">
-                                                <hr class="mt-2 mx-3">
-                                                <div class="d-flex flex-row justify-content-between px-3 pb-4">
-                                                    <div class="d-flex flex-column">
-                                                        <span class="text-dark">{{$p.Title}}</span>
-                                                        <small class="text-dark">Brand: {{$p.Brand}}</small>
-                                                    </div>
-                                                </div>
-                                        <!-----end passed 1 ---->
-                                    </figcaption>
-                                </div>
-                            </figure>
+          <nav class="list-group customer-nav">
+            <a class="active list-group-item d-flex justify-content-between align-items-center" href="/v1/user/account">
+              <span>
+                <svg class="svg-icon svg-icon-heavy mr-2">
+                </svg>Overview</span>
+            </a>
+            <a class="list-group-item d-flex justify-content-between align-items-center"
+              href="/v1/user/account/profile"><span>
+                <svg class="svg-icon svg-icon-heavy mr-2">
+                </svg>Edit Profile</span>
+            </a>
+            <a class="list-group-item d-flex justify-content-between align-items-center"
+              href="/v1/user/account/payment"><span>
+                <svg class="svg-icon svg-icon-heavy mr-2">
+                  <use xlink:href="#real-estate-1"> </use>
+                </svg>Payment</span></a>
+            <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/products"><span>
+                <svg class="svg-icon svg-icon-heavy mr-2">
+                  <use xlink:href="#heart-1"> </use>
+                </svg>Products</span></a>
+            <a class="list-group-item d-flex justify-content-between align-items-center"
+              href="/v1/user/addproduct"><span>
+                <svg class="svg-icon svg-icon-heavy mr-2">
+                  <use xlink:href="#heart-1"> </use>
+                </svg>Add Products</span></a>
+            <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/cart"><span>
+                <svg class="svg-icon svg-icon-heavy mr-2">
+                  <use xlink:href="#heart-1"> </use>
+                </svg>Rentals</span></a>
+            <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/cart"><span>
+                <svg class="svg-icon svg-icon-heavy mr-2">
+                  <use xlink:href="#heart-1"> </use>
+                </svg>Bookings</span></a>
+            <a class="list-group-item d-flex justify-content-between align-items-center" href="/user/logout"><span>
+                <svg class="svg-icon svg-icon-heavy mr-2">
+                </svg>Log out</span>
+            </a>
+          </nav>
+        </div>
+      </div>
+      <!-- /Customer Sidebar-->
+      <div class="col-lg-9 col-xl-9 mb-5 mb-lg-0">
+        <div class="container" style="height:80%">
+          <h5><a href="#">My Products</a></h5>
+          {{$products := $res.Products}}
+          <div
+            class="swiper-container swiper-container-initialized swiper-container-horizontal swiper-container-pointer-events">
+            <div class="swiper-wrapper" id="swiper-wrapper-dde3f11d71d76b66" aria-live="polite"
+              style="transition-duration: 0ms; transform: translate3d(-685.333px, 0px, 0px);">
+              {{range $index,$p := $products}}
+              {{if le $index 10 }}
+              <div class="swiper-slide" role="group" style="width: 30%;">
+                <figure class="card card-product">
+                  <div class="card">
+                    <a href="/v1/products/{{$p.ID}}"><img
+                        src="https://miro.medium.com/max/2400/1*mk1-6aYaf_Bes1E3Imhc0A.jpeg" class="card-img-top"
+                        style='height: 100%; width: 100%; object-fit: contain'></a>
+                    <figcaption class="info-wrap">
+                      <!--- passed 1 ---->
+                      <div class="card-body pt-0 px-0">
+                        <hr class="mt-2 mx-3">
+                        <div class="d-flex flex-row justify-content-between px-3 pb-4">
+                          <div class="d-flex flex-column">
+                            <span class="text-dark">{{$p.Title}}</span>
+                            <small class="text-dark">Brand: {{$p.Brand}}</small>
                           </div>
-                        {{end}}
-                      {{end}}
-                      {{/* <div class="swiper-slide" role="group"  style="width: 30%;">Resize me!</div> */}}
-                    </div>
-                    <div class="swiper-button-next" tabindex="0" role="button" aria-label="Next slide" aria-controls="swiper-wrapper-dde3f11d71d76b66" aria-disabled="false"></div>
-                    <div class="swiper-button-prev" tabindex="0" role="button" aria-label="Previous slide" aria-controls="swiper-wrapper-dde3f11d71d76b66" aria-disabled="false"></div>
-                  <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span>
-                </div>
-                <hr>
-                <h5><a href="#">My Rented Products</a></h5>
-                {{$rents := $res.Rents}}
-                <div class="swiper-container swiper-container-initialized swiper-container-horizontal swiper-container-pointer-events">
-                    <div class="swiper-wrapper" id="swiper-wrapper-dde3f11d71d76b66" aria-live="polite" style="transition-duration: 0ms; transform: translate3d(-685.333px, 0px, 0px);">
-                      {{range $index, $r := $rents}}
-                        {{if le $index 10 }}
-                          <div class="swiper-slide" role="group" style="width: 30%;">
-                            <figure class="card card-product">
-                                <div class="card">
-                                    <a href="/v1/products/{{$r.ProductID}}"><img src="https://miro.medium.com/max/2400/1*mk1-6aYaf_Bes1E3Imhc0A.jpeg" class="card-img-top" style='height: 100%; width: 100%; object-fit: contain'></a>
-                                    <figcaption class="info-wrap">
-                                        <!--- passed 1 ---->
-                                            <div class="card-body pt-0 px-0">
-                                                <hr class="mt-2 mx-3">
-                                                <div class="d-flex flex-row justify-content-between px-3 pb-4">
-                                                    <div class="d-flex flex-column">
-                                                        <span class="text-dark">{{$r.Product.Title}}</span>
-                                                        <small class="text-dark">Brand: {{$r.Product.Brand}}</small>
-                                                    </div>
-                                                </div>
-                                        <!-----end passed 1 ---->
-                                    </figcaption>
-                                </div>
-                            </figure>
-                          </div>
-                        {{end}}
-                      {{end}}
-                      {{/* <div class="swiper-slide" role="group"  style="width: 30%;">Resize me!</div> */}}
-                    </div>
-                    <div class="swiper-button-next" tabindex="0" role="button" aria-label="Next slide" aria-controls="swiper-wrapper-dde3f11d71d76b66" aria-disabled="false"></div>
-                    <div class="swiper-button-prev" tabindex="0" role="button" aria-label="Previous slide" aria-controls="swiper-wrapper-dde3f11d71d76b66" aria-disabled="false"></div>
-                  <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span>
-                </div>
-                <hr>
-                <h5><a href="#">My Bookings</a></h5>
-                {{$books := $res.Bookings}}
-                <div class="swiper-container swiper-container-initialized swiper-container-horizontal swiper-container-pointer-events">
-                    <div class="swiper-wrapper" id="swiper-wrapper-dde3f11d71d76b66" aria-live="polite" style="transition-duration: 0ms; transform: translate3d(-685.333px, 0px, 0px);">
-                      {{range $index,$b := $books}}
-                        {{if le $index 10 }}
-                        <div class="swiper-slide" role="group" style="width: 30%;">
-                          <figure class="card card-product">
-                              <div class="card">
-                                  <a href="/v1/products/{{$b.ProductID}}"><img src="https://miro.medium.com/max/2400/1*mk1-6aYaf_Bes1E3Imhc0A.jpeg" class="card-img-top" style='height: 100%; width: 100%; object-fit: contain'></a>
-                                  <figcaption class="info-wrap">
-                                      <!--- passed 1 ---->
-                                          <div class="card-body pt-0 px-0">
-                                              <hr class="mt-2 mx-3">
-                                              <div class="d-flex flex-row justify-content-between px-3 pb-4">
-                                                  <div class="d-flex flex-column">
-                                                      <span class="text-dark">{{$b.Product.Title}}</span>
-                                                      <small class="text-dark">Brand: {{$b.Product.Brand}}</small>
-                                                  </div>
-                                              </div>
-                                      <!-----end passed 1 ---->
-                                  </figcaption>
-                              </div>
-                          </figure>
                         </div>
-                        {{end}}
-                      {{end}}
-                      {{/* <div class="swiper-slide" role="group"  style="width: 30%;">Resize me!</div> */}}
-                    </div>
-                    <div class="swiper-button-next" tabindex="0" role="button" aria-label="Next slide" aria-controls="swiper-wrapper-dde3f11d71d76b66" aria-disabled="false"></div>
-                    <div class="swiper-button-prev" tabindex="0" role="button" aria-label="Previous slide" aria-controls="swiper-wrapper-dde3f11d71d76b66" aria-disabled="false"></div>
-                  <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span>
-                </div>
+                        <!-----end passed 1 ---->
+                    </figcaption>
+                  </div>
+                </figure>
+              </div>
+              {{end}}
+              {{end}}
+              {{/* <div class="swiper-slide" role="group"  style="width: 30%;">Resize me!</div> */}}
             </div>
+            <div class="swiper-button-next" tabindex="0" role="button" aria-label="Next slide"
+              aria-controls="swiper-wrapper-dde3f11d71d76b66" aria-disabled="false"></div>
+            <div class="swiper-button-prev" tabindex="0" role="button" aria-label="Previous slide"
+              aria-controls="swiper-wrapper-dde3f11d71d76b66" aria-disabled="false"></div>
+            <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span>
+          </div>
+          <hr>
+          <h5><a href="#">My Rented Products</a></h5>
+          {{$rents := $res.Rents}}
+          <div
+            class="swiper-container swiper-container-initialized swiper-container-horizontal swiper-container-pointer-events">
+            <div class="swiper-wrapper" id="swiper-wrapper-dde3f11d71d76b66" aria-live="polite"
+              style="transition-duration: 0ms; transform: translate3d(-685.333px, 0px, 0px);">
+              {{range $index, $r := $rents}}
+              {{if le $index 10 }}
+              <div class="swiper-slide" role="group" style="width: 30%;">
+                <figure class="card card-product">
+                  <div class="card">
+                    <a href="/v1/products/{{$r.ProductID}}"><img
+                        src="https://miro.medium.com/max/2400/1*mk1-6aYaf_Bes1E3Imhc0A.jpeg" class="card-img-top"
+                        style='height: 100%; width: 100%; object-fit: contain'></a>
+                    <figcaption class="info-wrap">
+                      <!--- passed 1 ---->
+                      <div class="card-body pt-0 px-0">
+                        <hr class="mt-2 mx-3">
+                        <div class="d-flex flex-row justify-content-between px-3 pb-4">
+                          <div class="d-flex flex-column">
+                            <span class="text-dark">{{$r.Product.Title}}</span>
+                            <small class="text-dark">Brand: {{$r.Product.Brand}}</small>
+                          </div>
+                        </div>
+                        <!-----end passed 1 ---->
+                    </figcaption>
+                  </div>
+                </figure>
+              </div>
+              {{end}}
+              {{end}}
+              {{/* <div class="swiper-slide" role="group"  style="width: 30%;">Resize me!</div> */}}
+            </div>
+            <div class="swiper-button-next" tabindex="0" role="button" aria-label="Next slide"
+              aria-controls="swiper-wrapper-dde3f11d71d76b66" aria-disabled="false"></div>
+            <div class="swiper-button-prev" tabindex="0" role="button" aria-label="Previous slide"
+              aria-controls="swiper-wrapper-dde3f11d71d76b66" aria-disabled="false"></div>
+            <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span>
+          </div>
+          <hr>
+          <h5><a href="#">My Bookings</a></h5>
+          {{$books := $res.Bookings}}
+          <div
+            class="swiper-container swiper-container-initialized swiper-container-horizontal swiper-container-pointer-events">
+            <div class="swiper-wrapper" id="swiper-wrapper-dde3f11d71d76b66" aria-live="polite"
+              style="transition-duration: 0ms; transform: translate3d(-685.333px, 0px, 0px);">
+              {{range $index,$b := $books}}
+              {{if le $index 10 }}
+              <div class="swiper-slide" role="group" style="width: 30%;">
+                <figure class="card card-product">
+                  <div class="card">
+                    <a href="/v1/products/{{$b.ProductID}}"><img
+                        src="https://miro.medium.com/max/2400/1*mk1-6aYaf_Bes1E3Imhc0A.jpeg" class="card-img-top"
+                        style='height: 100%; width: 100%; object-fit: contain'></a>
+                    <figcaption class="info-wrap">
+                      <!--- passed 1 ---->
+                      <div class="card-body pt-0 px-0">
+                        <hr class="mt-2 mx-3">
+                        <div class="d-flex flex-row justify-content-between px-3 pb-4">
+                          <div class="d-flex flex-column">
+                            <span class="text-dark">{{$b.Product.Title}}</span>
+                            <small class="text-dark">Brand: {{$b.Product.Brand}}</small>
+                          </div>
+                        </div>
+                        <!-----end passed 1 ---->
+                    </figcaption>
+                  </div>
+                </figure>
+              </div>
+              {{end}}
+              {{end}}
+              {{/* <div class="swiper-slide" role="group"  style="width: 30%;">Resize me!</div> */}}
+            </div>
+            <div class="swiper-button-next" tabindex="0" role="button" aria-label="Next slide"
+              aria-controls="swiper-wrapper-dde3f11d71d76b66" aria-disabled="false"></div>
+            <div class="swiper-button-prev" tabindex="0" role="button" aria-label="Previous slide"
+              aria-controls="swiper-wrapper-dde3f11d71d76b66" aria-disabled="false"></div>
+            <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span>
           </div>
         </div>
       </div>
-    </section>
+    </div>
+  </div>
+</section>
 {{end}}
+
 {{define "script"}}
 <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 
 <script>
-var swiper = new Swiper('.swiper-container', {
-  autoHeight: true,
-  spaceBetween: 20,
-  slidesPerView: 3,
-  direction: getDirection(),
-  navigation: {
-    nextEl: '.swiper-button-next',
-    prevEl: '.swiper-button-prev',
-  },
-  on: {
-    resize: function () {
-      swiper.changeDirection(getDirection());
+  var swiper = new Swiper('.swiper-container', {
+    autoHeight: true,
+    spaceBetween: 20,
+    slidesPerView: 3,
+    direction: getDirection(),
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
     },
-  },
-});
+    on: {
+      resize: function () {
+        swiper.changeDirection(getDirection());
+      },
+    },
+  });
 
-function getDirection() {
-  var windowWidth = window.innerWidth;
-  var direction = window.innerWidth <= 760 ? 'vertical' : 'horizontal';
+  function getDirection() {
+    var windowWidth = window.innerWidth;
+    var direction = window.innerWidth <= 760 ? 'vertical' : 'horizontal';
 
-  return direction;
-}
+    return direction;
+  }
 </script>
 {{end}}

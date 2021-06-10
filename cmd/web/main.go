@@ -94,6 +94,16 @@ func main() {
 	app.AWSClient = client
 	app.Info.Printf("AWS elasticsearch client connected")
 
+	app.Info.Printf("Connecting to AWS S3 client session....")
+
+	awsS3Session, err := NewAWSSession()
+	if err != nil {
+		app.Error.Fatal(err)
+	}
+
+	app.AWSS3Session = awsS3Session
+	app.Info.Printf("AWS S3 Session Established")
+
 	app.Info.Printf("Initializing handlers ...")
 	r := handler.NewMySQLHandler(db, app)
 	handler.New(r)

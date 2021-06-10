@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func (m *DBrepo) CreateRent(r model.Rent) error {
+func (m *DBrepo) CreateRent(r model.Rent) (int, error) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -15,7 +15,7 @@ func (m *DBrepo) CreateRent(r model.Rent) error {
 	query := `INSERT INTO rents (owner_id, renter_id, product_id, restriction_id, processed,duration, total_cost, start_date, end_date, created_at, updated_at)
 				VALUES (?,?,?,?,?,?,?,?,?,?,?)`
 
-	if _, err := m.DB.ExecContext(ctx, query,
+	result, err := m.DB.ExecContext(ctx, query,
 		r.OwnerID,
 		r.RenterID,
 		r.ProductID,
@@ -27,11 +27,16 @@ func (m *DBrepo) CreateRent(r model.Rent) error {
 		r.EndDate,
 		time.Now(),
 		time.Now(),
-	); err != nil {
-		return fmt.Errorf("db createrent: %v", err)
+	)
+	if err != nil {
+		return 0, fmt.Errorf("db createrent: %v", err)
+	}
+	id, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
 	}
 
-	return nil
+	return int(id), nil
 }
 
 func (m *DBrepo) GetRentsByProductID(id int) ([]model.Rent, error) {

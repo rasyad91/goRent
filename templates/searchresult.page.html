@@ -23,34 +23,44 @@
                         aria-controls="productFilter">Filter</button>
                 </div> -->
             </div>
-
+            {{$a := index .IsAuthenticated}}
+            {{$u := index .User}}
+            {{$p := index .Data "product"}}
             <div class="row">
                 <div class="card-deck">
-                    {{range $res := index .Data "product"}}
-                    <a class="" href="/v1/products/{{$res.ID}}">
+                    {{with len $p}}
+                    {{range $p}}
+                    <a class="" href="/v1/products/{{.ID}}">
                         <div class="col-md-4 mb-3">
                             <div class="card">
                                 <div class="card-img-top product-swap-image">
-                                    <img class="card-img img-fluid product-swap-image-front"
-                                        src="{{index $res.Images 0}}" alt="product">
-                                    {{if gt (len $res.Images) 1}}
-                                    <img class="card-img img-fluid" src="{{index $res.Images 1}}" alt="product">
-                                    {{end}}
+                                    
+                                        {{if $a}}
+                                        {{if eq $u.ID .OwnerID}}
+                                        <div class="product-badge badge badge-warning">My product</div>
+                                        {{end}}
+                                        {{end}}
+                                        <a href="/v1/products/{{.ID}}"><img class="card-img img-fluid product-swap-image-front"
+                                            src="{{index .Images 0}}" alt="product"></a>
+                                        {{if gt (len .Images) 1}}
+                                        <img class="card-img img-fluid" src="{{index .Images 1}}" alt="product">
+                                        {{end}}
+                                    
                                 </div>
                                 <div class="card-body">
                                     <div class="position-relative">
                                         <h3 class="text-base mb-1"><a class="text-dark"
-                                                href="/v1/products/{{$res.ID}}">{{$res.Title}}</a></h3>
-                                        <span class="text-muted">${{$res.Price}}</span>
+                                                href="/v1/products/{{.ID}}">{{.Title}}</a></h3>
+                                        <span class="text-muted">${{.Price}}</span>
                                         <span class="text-xs float-right">
-                                            {{with len $res.Reviews}}
-                                            {{len $res.Reviews}}
+                                            {{with len .Reviews}}
+                                            {{len .Reviews}}
                                             {{end}}
-                                            {{range $index := iterate (floatToInt $res.Rating)}}
+                                            {{range $index := iterate (floatToInt .Rating)}}
                                             <li class="list-inline-item mr-0"><i class="fa fa-star text-danger"></i>
                                             </li>
                                             {{end}}
-                                            {{range $index := iterate (substract 5 (floatToInt $res.Rating))}}
+                                            {{range $index := iterate (substract 5 (floatToInt .Rating))}}
                                             <li class="list-inline-item mr-0"><i class="fa fa-star text-gray-300"></i>
                                             </li>
                                             {{end}}
@@ -61,9 +71,14 @@
                         </div>
                     </a>
                     {{end}}
+                    {{else}}
+                    <div class="">
+                        <i class="fas fa-ghost fa-3x d-flex justify-content-center"></i>
+                        <span class="text-muted d-flex justify-content-center">Sorry! No results found</span>
+                    </div>
+                    {{end}}
                 </div>
             </div>
-
             <!-- <nav class="d-flex justify-content-center mb-5 mt-3" aria-label="page navigation">
                 <ul class="pagination">
                     <li class="page-item"><a class="page-arrow" href="#" aria-label="Previous"><span aria-hidden="true">
@@ -127,16 +142,20 @@
                                 <ul class="sidebar-icon-menu sidebar-icon-submenu">
                                     <li class="sidebar-icon-submenu-item"><a
                                             class="sidebar-icon-submenu-link link-animated link-animated-light"
-                                            href="#">Lorem ipsum </a></li>
+                                            href="#">Lorem
+                                            ipsum </a></li>
                                     <li class="sidebar-icon-submenu-item"><a
                                             class="sidebar-icon-submenu-link link-animated link-animated-light"
-                                            href="#">Dolor </a></li>
+                                            href="#">Dolor
+                                        </a></li>
                                     <li class="sidebar-icon-submenu-item"><a
                                             class="sidebar-icon-submenu-link link-animated link-animated-light"
-                                            href="#">Sit amet </a></li>
+                                            href="#">Sit
+                                            amet </a></li>
                                     <li class="sidebar-icon-submenu-item"><a
                                             class="sidebar-icon-submenu-link link-animated link-animated-light"
-                                            href="#">Donec vitae </a></li>
+                                            href="#">Donec
+                                            vitae </a></li>
                                 </ul>
                             </div>
                         </div>

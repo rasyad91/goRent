@@ -11,10 +11,11 @@ type DatabaseRepo interface {
 	// Products
 	GetAllProducts() ([]model.Product, error)
 	GetProductByID(id int) (model.Product, error)
+	GetProductNextIndex() (int, error)
 
 	// Rents
 	GetRentsByProductID(id int) ([]model.Rent, error)
-	CreateRent(r model.Rent) error
+	CreateRent(r model.Rent) (int, error)
 	DeleteRent(rentID int) error
 
 	// Reviews

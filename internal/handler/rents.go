@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -69,6 +70,12 @@ func (m *Repository) PostRent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if ownerID == u.ID {
+		m.App.Session.Put(r.Context(), "warning", "You fool! You cannot book your own product!")
+		http.Redirect(w, r, fmt.Sprintf("/v1/products/%d", productID), http.StatusSeeOther)
+		return
+	}
+
 	if helper.Includes(blockedDates, rentDates...) {
 		m.App.Session.Put(r.Context(), "warning", "Dates selected are already booked! Please select another date")
 		http.Redirect(w, r, fmt.Sprintf("/v1/products/%d", productID), http.StatusSeeOther)
@@ -89,14 +96,23 @@ func (m *Repository) PostRent(w http.ResponseWriter, r *http.Request) {
 
 	t := time.Now()
 	fmt.Println("Create Rent: Start timing ...")
-	if err := m.DB.CreateRent(rent); err != nil {
-		render.ServerError(w, r, err)
-		m.App.Error.Println(err)
-		return
-	}
 
-	eu, _ := m.DB.GetUser(u.Username)
-	m.App.Session.Put(r.Context(), "user", eu)
+	c := make(chan int, 1)
+	go func(rent model.Rent) {
+		id, err := m.DB.CreateRent(rent)
+		if err != nil {
+			render.ServerError(w, r, err)
+			m.App.Error.Println(err)
+			return
+		}
+		c <- id
+		close(c)
+	}(rent)
+
+	rent.ID = <-c
+	u.Rents = append(u.Rents, rent)
+
+	m.App.Session.Put(r.Context(), "user", u)
 	fmt.Println("Time taken: ", time.Since(t))
 
 	m.App.Session.Put(r.Context(), "flash", fmt.Sprintf("You have added %s to cart!", productTitle))
@@ -123,20 +139,27 @@ func (m *Repository) DeleteRent(w http.ResponseWriter, r *http.Request) {
 	t := time.Now()
 	fmt.Println("Delete Rent: Start timing ...")
 
-	if err := m.DB.DeleteRent(rentID); err != nil {
-		render.ServerError(w, r, err)
-		m.App.Error.Println(err)
-		return
-	}
+	var wg sync.WaitGroup
+	wg.Add(1)
+
+	go func() {
+		if err := m.DB.DeleteRent(rentID); err != nil {
+			render.ServerError(w, r, err)
+			m.App.Error.Println(err)
+			return
+		}
+		wg.Done()
+	}()
 
 	u := m.App.Session.Get(r.Context(), "user").(model.User)
-	eu, err := m.DB.GetUser(u.Username)
-	if err != nil {
-		m.App.Error.Println(err)
-		render.ServerError(w, r, err)
-		return
+	for i, v := range u.Rents {
+		if v.ID == rentID {
+			u.Rents = append(u.Rents[:i], u.Rents[i+1:]...)
+		}
 	}
-	m.App.Session.Put(r.Context(), "user", eu)
+
+	wg.Wait()
+	m.App.Session.Put(r.Context(), "user", u)
 	fmt.Println("Time taken: ", time.Since(t))
 
 	m.App.Session.Put(r.Context(), "flash", fmt.Sprintf("Rent #%d removed from cart!", rentID))
