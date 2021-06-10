@@ -4,7 +4,6 @@
 
 <section class="pb-4 py-3">
       <div class="container">
-      {{$products := index .Data "products"}}
       {{$res := index .Data "user"}}
       {{$form := index .Form}}
         <div class="row">
@@ -29,7 +28,7 @@
                     <svg class="svg-icon svg-icon-heavy mr-2">
                       <use xlink:href="#real-estate-1"> </use>
                     </svg>Payment</span></a>
-                <a class="active list-group-item d-flex justify-content-between align-items-center" href="/v1/user/products"><span>
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/products"><span>
                     <svg class="svg-icon svg-icon-heavy mr-2">
                       <use xlink:href="#heart-1"> </use>
                     </svg>Products</span></a>
@@ -37,11 +36,11 @@
                     <svg class="svg-icon svg-icon-heavy mr-2">
                       <use xlink:href="#heart-1"> </use>
                     </svg>Add Products</span></a>
-                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/rents"><span>
+                <a class="active list-group-item d-flex justify-content-between align-items-center" href="/v1/user/rents"><span>
                     <svg class="svg-icon svg-icon-heavy mr-2">
                       <use xlink:href="#heart-1"> </use>
                     </svg>Rentals</span></a>
-                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/cart"><span>
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/bookings"><span>
                     <svg class="svg-icon svg-icon-heavy mr-2">
                       <use xlink:href="#heart-1"> </use>
                     </svg>Bookings</span></a>
@@ -58,24 +57,25 @@
               <div class="cart-wrapper">
                 <div class="cart-header">
                   <div class="row">
-                    <div class="col-6">Product</div>
+                    <div class="col-6">Rentals</div>
                     <div class="col-2 text-center">Price</div>
                     <div class="col-2 text-right">Edit</div>
                     <div class="col-2 text-right">Delete</div>
                   </div>
                 </div>
                 <div class="cart-body">
-                {{range $p := $products}}
+                {{$rents := $res.Rents}}
+                {{range $r := $rents}}
                   <!-- Product-->
                   <div class="cart-item">
                     <div class="row d-flex align-items-center text-center">
                       <div class="col-6">
                         <div class="d-flex align-items-center"><a href="detail.html"><img class="cart-item-img" src="https://d19m59y37dris4.cloudfront.net/varkala/1-2-1/img/product/product-square-ian-dooley-347968-unsplash.jpg" alt="..."></a>
-                          <div class="cart-title text-left"><a class="text-dark" href="detail.html"><strong>{{$p.Title}}</strong></a>
+                          <div class="cart-title text-left"><a class="text-dark" href="detail.html"><strong>{{$r.Product.Title}}</strong></a>
                           </div>
                         </div>
                       </div>
-                      <div class="col-2">{{$p.Price}}</div>
+                      <div class="col-2">{{$r.Product.Price}}</div>
                       <div class="col-2">Edit
                       </div>
                       <div class="col-2 text-center">Delete</div>

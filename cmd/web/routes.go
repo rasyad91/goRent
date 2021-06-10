@@ -39,6 +39,9 @@ func routes() http.Handler {
 	mux.HandleFunc("/v1/user/account/payment", handler.Repo.Payment).Methods("GET")
 	mux.HandleFunc("/v1/user/cart", handler.Repo.GetCart).Methods("GET")
 	mux.HandleFunc("/v1/user/products", handler.Repo.UserProducts).Methods("GET")
+	//add in userPost to delete or edit
+	mux.HandleFunc("/v1/user/rents", handler.Repo.UserRents).Methods("GET")
+	mux.HandleFunc("/v1/user/bookings", handler.Repo.UserBookings).Methods("GET")
 
 	mux.HandleFunc("/v1/user/addproduct", handler.Repo.AddProduct).Methods("GET")
 	mux.HandleFunc("/v1/user/createproduct", handler.Repo.CreateProduct).Methods("POST")

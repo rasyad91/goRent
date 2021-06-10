@@ -165,3 +165,26 @@ func (m *Repository) DeleteRent(w http.ResponseWriter, r *http.Request) {
 	m.App.Session.Put(r.Context(), "flash", fmt.Sprintf("Rent #%d removed from cart!", rentID))
 	http.Redirect(w, r, "/v1/user/cart", http.StatusSeeOther)
 }
+
+func (m *Repository) UserRents(w http.ResponseWriter, r *http.Request) {
+
+	data := make(map[string]interface{})
+	user := m.App.Session.Get(r.Context(), "user").(model.User)
+	data["user"] = user
+	if err := render.Template(w, r, "userRents.page.html", &render.TemplateData{
+		Data: data,
+	}); err != nil {
+		m.App.Error.Println(err)
+	}
+}
+func (m *Repository) UserBookings(w http.ResponseWriter, r *http.Request) {
+
+	data := make(map[string]interface{})
+	user := m.App.Session.Get(r.Context(), "user").(model.User)
+	data["user"] = user
+	if err := render.Template(w, r, "userBookings.page.html", &render.TemplateData{
+		Data: data,
+	}); err != nil {
+		m.App.Error.Println(err)
+	}
+}
