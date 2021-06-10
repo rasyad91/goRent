@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"goRent/internal/model"
 	"goRent/internal/repository"
-	"sync"
 	"time"
 
 	"golang.org/x/sync/errgroup"
@@ -15,8 +14,6 @@ import (
 type DBrepo struct {
 	*sql.DB
 }
-
-var wg sync.WaitGroup
 
 // const (
 // 	layoutISO = "2006-01-02"
@@ -67,45 +64,49 @@ func (m *DBrepo) GetUser(username string) (model.User, error) {
 			r.renter_id = ?
 		order by r.product_id asc`
 	product_query := `select * from products p where p.owner_id = ? order by id asc`
-	booking_query := `select 
+	booking_query := `select
 		r.id, r.owner_id, r.renter_id, r.product_id, r.restriction_id, r.processed, r.start_date, r.end_date, r.duration, r.total_cost, r.created_at, r.updated_at,
 		p.id, p.owner_id, p.brand, p.category, p.title, p.rating, p.description, p.price, p.created_at, p.updated_at
-	from 
-		rents r 
-	left join 
+	from
+		rents r
+	left join
 		products p on (p.id = r.product_id)
-	where 
+	where
 		r.owner_id = ?
 	order by r.product_id asc`
 	//initializing concurrency // linear - 9.791375ms, concurrent - 7.357559ms
 	//timing prior to concurrency
-	x, _ := errgroup.WithContext(ctx)
-	wg.Add(3)
+	x, ctx := errgroup.WithContext(ctx)
 	x.Go(func() error {
-		if err := m.runQuery(&u, rent_query, "rent"); err != nil {
+		if err := m.runQuery(ctx, &u, rent_query, "rent"); err != nil {
 			return err
 		}
 		return nil
 	})
-	go m.runQuery(&u, product_query, "product")
-	go m.runQuery(&u, booking_query, "booking")
-	wg.Wait()
-
-	if err := x.Wait(); err != nil {
-		return model.User{}, err
-	}
+	x.Go(func() error {
+		if err := m.runQuery(ctx, &u, product_query, "product"); err != nil {
+			return err
+		}
+		return nil
+	})
+	x.Go(func() error {
+		if err := m.runQuery(ctx, &u, booking_query, "booking"); err != nil {
+			return err
+		}
+		return nil
+	})
 
 	fmt.Println(u.Rents)
-	return u, nil
+	return u, x.Wait()
 }
-func (m *DBrepo) runQuery(user *model.User, query string, structType string) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 
-	defer wg.Done()
+func (m *DBrepo) runQuery(ctx context.Context, user *model.User, query string, structType string) error {
+	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
+
 	defer cancel()
 	rows, err := m.DB.QueryContext(ctx, query, user.ID)
 	if err != nil {
-		return fmt.Errorf("db GetUser: %v", err)
+		return fmt.Errorf("db GetUser %s: %v", structType, err)
 	}
 	defer rows.Close()
 	for rows.Next() {
@@ -113,34 +114,6 @@ func (m *DBrepo) runQuery(user *model.User, query string, structType string) err
 			r := model.Rent{}
 			if err := rows.Scan(
 				&r.ID,
-				&r.OwnerID,
-				&r.RenterID,
-				&r.ProductID,
-				&r.RestrictionID,
-				&r.Processed,
-				&r.StartDate,
-				&r.EndDate,
-				&r.Duration,
-				&r.TotalCost,
-				&r.CreatedAt,
-				&r.UpdatedAt,
-				&r.Product.ID,
-				&r.Product.OwnerID,
-				&r.Product.Brand,
-				&r.Product.Category,
-				&r.Product.Title,
-				&r.Product.Rating,
-				&r.Product.Description,
-				&r.Product.Price,
-				&r.Product.CreatedAt,
-				&r.Product.UpdatedAt,
-			); err != nil {
-				return fmt.Errorf("db GetUser: %v", err)
-			}
-			user.Rents = append(user.Rents, r)
-		} else if structType == "booking" {
-			r := model.Rent{}
-			if err := rows.Scan(
 				&r.ID,
 				&r.OwnerID,
 				&r.RenterID,
@@ -164,12 +137,43 @@ func (m *DBrepo) runQuery(user *model.User, query string, structType string) err
 				&r.Product.CreatedAt,
 				&r.Product.UpdatedAt,
 			); err != nil {
-				return fmt.Errorf("db GetUser: %v", err)
+				return fmt.Errorf("db GetUser %s: %v", structType, err)
+			}
+			user.Rents = append(user.Rents, r)
+		} else if structType == "booking" {
+			r := model.Rent{}
+			if err := rows.Scan(
+				&r.ID,
+				&r.ID,
+				&r.OwnerID,
+				&r.RenterID,
+				&r.ProductID,
+				&r.RestrictionID,
+				&r.Processed,
+				&r.StartDate,
+				&r.EndDate,
+				&r.Duration,
+				&r.TotalCost,
+				&r.CreatedAt,
+				&r.UpdatedAt,
+				&r.Product.ID,
+				&r.Product.OwnerID,
+				&r.Product.Brand,
+				&r.Product.Category,
+				&r.Product.Title,
+				&r.Product.Rating,
+				&r.Product.Description,
+				&r.Product.Price,
+				&r.Product.CreatedAt,
+				&r.Product.UpdatedAt,
+			); err != nil {
+				return fmt.Errorf("db GetUser %s: %v", structType, err)
 			}
 			user.Bookings = append(user.Bookings, r)
 		} else {
 			r := model.Product{}
 			if err := rows.Scan(
+				&r.ID,
 				&r.ID,
 				&r.OwnerID,
 				&r.Brand,
@@ -182,12 +186,18 @@ func (m *DBrepo) runQuery(user *model.User, query string, structType string) err
 				&r.CreatedAt,
 				&r.UpdatedAt,
 			); err != nil {
-				return fmt.Errorf("db GetUser: %v", err)
+				return fmt.Errorf("db GetUser %s: %v", structType, err)
 			}
 			user.Products = append(user.Products, r)
 		}
 	}
-	return nil
+
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	default:
+		return nil
+	}
 }
 
 func (m *DBrepo) InsertUser(u model.User) error {
