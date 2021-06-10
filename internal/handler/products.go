@@ -133,12 +133,29 @@ func (m *Repository) PostReview(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, fmt.Sprintf("/v1/products/%d", pr.ProductID), http.StatusSeeOther)
 }
 
+// func filterRents(processed bool) func (rents []model.Rent) []model.Rent {
+// 	return func (rents []model.Rent) []model.Rent {
+
+// 		retun
+// 	}
+// }
+func (m *Repository) UserProducts(w http.ResponseWriter, r *http.Request) {
+
+	data := make(map[string]interface{})
+	user := m.App.Session.Get(r.Context(), "user").(model.User)
+	data["products"] = user.Products
+	data["user"] = user
+	if err := render.Template(w, r, "userProduct.page.html", &render.TemplateData{
+		Data: data,
+	}); err != nil {
+		m.App.Error.Println(err)
+	}
+}
 func (m *Repository) AddProduct(w http.ResponseWriter, r *http.Request) {
 
 	data := make(map[string]interface{})
-	u := m.App.Session.Get(r.Context(), "user").(model.User)
-	data["products"] = u.Products
-	if err := render.Template(w, r, "userProduct.page.html", &render.TemplateData{
+
+	if err := render.Template(w, r, "addproduct.page.html", &render.TemplateData{
 		Data: data,
 	}); err != nil {
 		m.App.Error.Println(err)
