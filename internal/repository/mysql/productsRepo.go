@@ -212,17 +212,26 @@ func (m *DBrepo) InsertProduct(p model.Product) error {
 	defer cancel()
 	_, err := m.ExecContext(ctx, "INSERT INTO goRent.products (id,owner_id,brand,category,title,rating,description,price,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?);",
 		p.ID, p.OwnerID, p.Brand, p.Category, p.Title, p.Rating, p.Description, p.Price, p.CreatedAt, p.UpdatedAt)
+
+	for _, v := range p.Images {
+
+		err := m.InsertProductImages(p.ID, v)
+		if err != nil {
+			return err
+		}
+	}
+
 	if err != nil {
 		return fmt.Errorf("db InsertProduct: %v", err)
 	}
 	return nil
 }
 
-func (m *DBrepo) InsertProductImages(p model.Product, s string) error {
+func (m *DBrepo) InsertProductImages(i int, s string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
-	_, err := m.ExecContext(ctx, "INSERT INTO goRent.images (product_id, owner_id, body,created_at,updated_at) VALUES (?,?,?,?,?);",
-		p.ID, p.OwnerID, s, p.CreatedAt, p.UpdatedAt)
+	_, err := m.ExecContext(ctx, "INSERT INTO goRent.images (product_id, url, created_at, updated_at) VALUES (?,?,?,?);",
+		i, s, time.Now(), time.Now())
 	if err != nil {
 		return fmt.Errorf("db InsertProductImages: %v", err)
 	}

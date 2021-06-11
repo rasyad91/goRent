@@ -264,11 +264,9 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	for _, v := range s3ImageInformation {
 
 		s := config.AWSProductImageLink
-		productImageURL = append(productImageURL, s+strconv.Itoa(v.index)+v.imageType)
+		productImageURL = append(productImageURL, s+strconv.Itoa(productIndex)+"_"+strconv.Itoa(v.index)+v.imageType)
 
 	}
-
-	// fmt.Println("this is the product type url", productImageURL)
 
 	var newProduct = model.Product{
 
@@ -287,10 +285,6 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 		UpdatedAt:   time.Now(),
 	}
 
-	_ = newProduct
-
-	fmt.Println("routine ended")
-
 	if len(form.Errors) != 0 {
 		if err := render.Template(w, r, "addproduct.page.html", &render.TemplateData{
 			Form: form,
@@ -301,10 +295,6 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	} else {
 
 		g2, ctx := errgroup.WithContext(r.Context())
-
-		// if err := m.DB.InsertProduct(newProduct); err != nil {
-		// 	m.App.Info.Println("SUCCESSFULLY REGISTERED")
-		// }
 
 		g2.Go(func() error {
 			err := m.DB.InsertProduct(newProduct)
@@ -320,22 +310,29 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 			}
 		})
 
-		// for _, v := range productImageURL {
-		// 	vid := v
-		// 	g2.Go(func() error {
-		// 		err := m.DB.InsertProductImages(newProduct, vid)
-		// 		if err != nil {
-		// 			return err
-		// 		}
+		// index for elastic search
 
-		// 		select {
-		// 		case <-ctx.Done():
-		// 			return ctx.Err()
-		// 		default:
-		// 			return nil
-		// 		}
-		// 	})
-		// }
+		g2.Go(func() error {
+			put1, err := m.App.AWSClient.Index().
+				Index("sample_product_list").
+				Type("sampleproducttype").
+				Id(strconv.Itoa(newProduct.ID)).
+				BodyJson(newProduct).
+				Do(r.Context())
+
+			if err != nil {
+				// Handle error
+				panic(err)
+			}
+			fmt.Printf("Indexed tweet %s to index %s, type %s\n", put1.Id, put1.Index, put1.Type)
+
+			select {
+			case <-ctx.Done():
+				return ctx.Err()
+			default:
+				return nil
+			}
+		})
 
 		if err := g2.Wait(); err != nil {
 			m.App.Error.Println("error from g2", err)
