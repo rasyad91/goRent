@@ -3,28 +3,78 @@
 {{define "content"}}
 {{$passed := index .Data "passedRents"}}
 {{$failed := index .Data "failedRents"}}
-
 <section class="hero py-2">
     <div class="container">
         <!-- Breadcrumbs -->
         <ol class="breadcrumb pl-0 ">
             <li class="breadcrumb-item"><a href="/">Home</a></li>
-            <li class="breadcrumb-item active">Confirmation</li>
+            <li class="breadcrumb-item active">Confirm</li>
         </ol>
         <!-- Hero Content-->
         <div class="hero-content">
-            <h1 class="hero-heading">Confirmation</h1>
+            <h1 class="hero-heading">Confirm</h1>
+        </div>
+        {{with $failed}}
+        <div class="hero-content mb-5">
+            <span class="text-muted">Ops! Someone managed to rent faster than you!</span><br>
+            <span class="text-muted">Please select another date for rent*</span><br>
+            <span class="text-muted text-xs">*Status "Failed"</span>
+        </div>
+        {{else}}
+        <div class="hero-content mb-5">
+            <span class="text-muted">See you again!</span><br>
         </div>
 
-        {{range $passed}}
-            {{.ID}}
         {{end}}
-
-        {{range $failed}}
-           {{.ID}}
-        {{end}}
-        
+        <div class="col-md-12 pb-5">
+            <table class="table table-hover" id="new-res">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Product</th>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range $passed}}
+                    <tr>
+                        <td>{{.ID}}</td>
+                        <td>{{.Product.Title}}</td>
+                        <td>{{shortDate .StartDate}}</td>
+                        <td>{{shortDate .EndDate}}</td>
+                        <td><span class="badge badge-success">Success</span></td>
+                    </tr>
+                    {{end}}
+                    {{range $failed}}
+                    <tr>
+                    <tr>
+                        <td><a href="/v1/products/{{.ProductID}}">{{.ID}}</a></td>
+                        <td><a href="/v1/products/{{.ProductID}}">{{.Product.Title}}</a></td>
+                        <td>{{shortDate .StartDate}}</td>
+                        <td>{{shortDate .EndDate}}</td>
+                        <td><a href="/v1/products/{{.ProductID}}"><span class="badge badge-danger">Failed</span></a>
+                        </td>
+                    </tr>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+        </div>
     </div>
 </section>
+{{end}}
 
+
+{{define "script"}}
+<script>
+    let x = document.getElementById("failed")
+    x.addEventListener("click", e => {
+        attention.promptConfirm({
+            x
+
+        })
+    })
+</script>
 {{end}}
