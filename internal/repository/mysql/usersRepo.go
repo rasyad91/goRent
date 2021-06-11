@@ -49,8 +49,8 @@ func (m *DBrepo) GetUser(username string) (model.User, error) {
 		Scan(
 			&u.ID,
 			&u.Username,
-			&u.Email,
 			&u.Image_URL,
+			&u.Email,
 			&u.Password,
 			&u.AccessLevel,
 			&u.Rating,

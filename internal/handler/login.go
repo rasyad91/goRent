@@ -69,8 +69,8 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	fmt.Println("user: ", eu.ID)
-	fmt.Printf("user: %#v\n", eu)
+
+	fmt.Printf("user: %#v\n", eu.Email)
 
 	// for _, v := range eu.Rents {
 	// 	fmt.Printf("id :#%d processed:%t product:%s start:%s end:%s\n", v.ID, v.Processed, v.Product.Title, v.StartDate, v.EndDate)
