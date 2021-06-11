@@ -25,7 +25,21 @@ func NewRepo(Conn *sql.DB) repository.DatabaseRepo {
 		DB: Conn,
 	}
 }
-
+func (m *DBrepo) EmailExist(e string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	var email string
+	err := m.DB.QueryRowContext(ctx, "SELECT * FROM goRent.Users where email=?", e).Scan(
+		&email,
+	)
+	if err == sql.ErrNoRows {
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+	return nil
+}
 func (m *DBrepo) GetUser(username string) (model.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -209,8 +223,8 @@ func (m *DBrepo) runQuery(ctx context.Context, user *model.User, query string, s
 func (m *DBrepo) InsertUser(u model.User) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
-	_, err := m.ExecContext(ctx, "INSERT INTO goRent.users (username,email,password,postal_code,street_name,block,unit_number,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?);",
-		u.Username, u.Email, u.Password,
+	_, err := m.ExecContext(ctx, "INSERT INTO goRent.users (username,email,password,image_url,postal_code,street_name,block,unit_number,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?);",
+		u.Username, u.Email, u.Password, u.Image_URL,
 		u.Address.PostalCode, u.Address.StreetName, u.Address.Block, u.Address.UnitNumber,
 		time.Now(), time.Now())
 	if err != nil {
@@ -229,6 +243,9 @@ func (m *DBrepo) EditUser(u model.User, editType string) error {
 	} else if editType == "profile" {
 		_, err = m.ExecContext(ctx, "UPDATE goRent.users SET username = ?, email = ? WHERE id = ?", u.Username, u.Email, u.ID)
 		fmt.Println("ProfileChange test:", u)
+	} else if editType == "profileImage" {
+		_, err = m.ExecContext(ctx, "UPDATE goRent.users SET image_url = ? WHERE id = ?", u.Image_URL, u.ID)
+		fmt.Println("ProfileImage test:", u)
 	} else {
 		_, err = m.ExecContext(ctx, "UPDATE goRent.users SET password = ? WHERE id = ?", u.Password, u.ID)
 		fmt.Println("PassWordChange test:", u)

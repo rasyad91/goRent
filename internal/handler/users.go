@@ -13,7 +13,6 @@ import (
 func (m *Repository) UserAccount(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
 	u := m.App.Session.Get(r.Context(), "user").(model.User)
-	fmt.Println(u)
 	data["user"] = model.User{
 		Username: u.Username,
 		Email:    u.Email,
@@ -32,12 +31,7 @@ func (m *Repository) UserAccount(w http.ResponseWriter, r *http.Request) {
 func (m *Repository) EditUserAccount(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
 	u := m.App.Session.Get(r.Context(), "user").(model.User)
-	data["editUser"] = model.User{
-		Username: u.Username,
-		Email:    u.Email,
-		Password: "",
-		Address:  u.Address,
-	}
+	data["editUser"] = u
 	if err := render.Template(w, r, "profile.page.html", &render.TemplateData{
 		Data: data,
 		Form: &form.Form{},
@@ -76,11 +70,24 @@ func (m *Repository) EditUserAccountPost(w http.ResponseWriter, r *http.Request)
 			PostalCode: r.FormValue("postalCode"),
 		}
 	} else if action == "profile" {
-		form.CheckLength("username", 1, 255)
 		form.CheckLength("email", 1, 255)
 		form.CheckEmail("email")
-		u.Username = r.FormValue("username")
-		u.Email = r.FormValue("email")
+		err := m.DB.EmailExist(r.FormValue("email"))
+		if err != nil {
+			fmt.Println("Email taken")
+			form.Errors.Add("email", "Email already taken!")
+		} else {
+			u.Username = r.FormValue("username")
+			u.Email = r.FormValue("email")
+		}
+
+	} else if action == "profileImage" {
+		url, err := storeProfileImage(w, r, -1, m.App.AWSS3Session)
+		if err == nil {
+			u.Image_URL = url
+			fmt.Println("Success in loading image")
+		}
+		fmt.Println(err)
 	} else {
 		oldPassword := r.FormValue("password_old")
 		err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(oldPassword))
@@ -111,15 +118,22 @@ func (m *Repository) EditUserAccountPost(w http.ResponseWriter, r *http.Request)
 		}
 		return
 	}
-	m.DB.EditUser(u, action)
-	fmt.Println("SUCCESSFULLY TRIGGERED DB")
+	err := m.DB.EditUser(u, action)
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println("SUCCESSFULLY TRIGGERED DB")
+	}
 	if action == "address" {
 		m.App.Session.Put(r.Context(), "flash", "Address Updated!")
+	} else if action == "profileImage" {
+		m.App.Session.Put(r.Context(), "flash", "Profile Image Updated!")
 	} else if action == "profile" {
-		m.App.Session.Put(r.Context(), "flash", "Profile Name Updated!")
+		m.App.Session.Put(r.Context(), "flash", "Email Updated!")
 	} else {
 		m.App.Session.Put(r.Context(), "flash", "Password Updated!")
 	}
+	m.App.Session.Put(r.Context(), "user", u)
 	http.Redirect(w, r, "/v1/user/account/profile", http.StatusSeeOther)
 
 }
