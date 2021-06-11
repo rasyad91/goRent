@@ -161,8 +161,8 @@ func (m *Repository) DeleteRent(w http.ResponseWriter, r *http.Request) {
 			u.Rents = append(u.Rents[:i], u.Rents[i+1:]...)
 		}
 	}
-
 	wg.Wait()
+
 	m.App.Session.Put(r.Context(), "user", u)
 	fmt.Println("Time taken: ", time.Since(t))
 

@@ -10,6 +10,7 @@ type DatabaseRepo interface {
 	GetUser(username string) (model.User, error)
 	InsertUser(user model.User) error
 	EditUser(user model.User, editType string) error
+	EmailExist(email string) error
 
 	// Products
 	GetAllProducts() ([]model.Product, error)
