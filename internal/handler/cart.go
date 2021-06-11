@@ -42,44 +42,51 @@ func (m *Repository) PostCheckout(w http.ResponseWriter, r *http.Request) {
 	u := m.App.Session.Get(r.Context(), "user").(model.User)
 
 	g, _ := errgroup.WithContext(r.Context())
-	var mutex sync.Mutex
+	var sm sync.Mutex
 	failedRents := []model.Rent{}
+	passedRents := []model.Rent{}
+
+	rents := u.Rents
 
 	// lock this
-	mutex.Lock()
-	defer mutex.Unlock()
-	rents := u.Rents
-	for i, v := range rents {
-		i, v := i, v
-		// get product id from rents
-		if !v.Processed {
+	sm.Lock()
+	defer sm.Unlock()
+	{
+		defer sm.Unlock()
 
-			fmt.Println("RENT ID: ", v.ID)
-			fmt.Println("PROCESSED: ", v.Processed)
-			g.Go(func() error {
-				fmt.Println("in processing------")
-				fmt.Printf("id: %d, productname: %s, startDate: %s, endDate: %s\n", v.ID, v.Product.Title, v.StartDate, v.EndDate)
-				if err := m.DB.ProcessRent(v); err != nil {
-					if err.Error() == "rent not available" {
-						fmt.Println("in errors.is errRentNotAvailable")
-						failedRents = append(failedRents, v)
-					} else {
+		for i, v := range rents {
+			i, v := i, v
+			// get product id from rents
+			if !v.Processed {
+				fmt.Println("RENT ID: ", v.ID)
+				fmt.Println("PROCESSED: ", v.Processed)
+				g.Go(func() error {
+					fmt.Println("in processing------")
+					fmt.Printf("id: %d, productname: %s, startDate: %s, endDate: %s\n", v.ID, v.Product.Title, v.StartDate, v.EndDate)
+					if err := m.DB.ProcessRent(v); err != nil {
+						if err.Error() == "rent not available" {
+							fmt.Println("errRentNotAvailable: ", v.ID, v.Product.Title, v.StartDate, v.EndDate)
+							failedRents = append(failedRents, v)
+							return nil
+						}
 						fmt.Println("in else")
 						return err
-					}
-				}
-				rents[i].Processed = true
-				fmt.Println("Complete processing------")
-				fmt.Printf("id: %d, processed: %t productname: %s, startDate: %s, endDate: %s\n", v.ID, v.Processed, v.Product.Title, v.StartDate, v.EndDate)
-				return nil
-			})
-		}
-	}
 
-	if err := g.Wait(); err != nil {
-		fmt.Println("in g.wait")
-		fmt.Println(err)
-		return
+					}
+					rents[i].Processed = true
+					passedRents = append(passedRents, rents[i])
+					fmt.Println("Pass processing------")
+					fmt.Printf("id: %d, processed: %t productname: %s, startDate: %s, endDate: %s\n", v.ID, rents[i].Processed, v.Product.Title, v.StartDate, v.EndDate)
+					return nil
+				})
+			}
+		}
+
+		if err := g.Wait(); err != nil {
+			fmt.Println("in g.wait")
+			fmt.Println(err)
+			return
+		}
 	}
 
 	var wg sync.WaitGroup
@@ -108,8 +115,6 @@ func (m *Repository) PostCheckout(w http.ResponseWriter, r *http.Request) {
 
 	// send email
 	m.App.Session.Put(r.Context(), "user", u)
-	m.App.Session.Put(r.Context(), "confirm", true)
-	m.App.Session.Put(r.Context(), "flash", "Your rent is completed!")
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

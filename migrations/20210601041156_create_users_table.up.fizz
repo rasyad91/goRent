@@ -2,6 +2,7 @@ create_table("users") {
   t.Column("id", "integer", {primary: true})
   t.Column("username", "string", {"size": 255})
   t.Column("email", "string", {})
+  t.Column("image_url", "string", {})
   t.Column("password", "string", {"size": 60})
   t.Column("access_level", "integer", {"default": 5})
   t.Column("rating", "float", {"scale": 1, "precision": 2, "default":0})

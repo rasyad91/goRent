@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"sort"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -125,8 +126,13 @@ func (m *Repository) PostReview(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Add to mutex
-	if err := m.DB.CreateProductReview(pr); err != nil {
-		m.App.Error.Println(err)
+	var sm sync.Mutex
+	sm.Lock()
+	{
+		defer sm.Unlock()
+		if err := m.DB.CreateProductReview(pr); err != nil {
+			m.App.Error.Println(err)
+		}
 	}
 
 	m.App.Session.Put(r.Context(), "flash", "You have posted a review!")
