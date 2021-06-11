@@ -3,12 +3,3 @@ create_table("images") {
   t.Column("body", "string", {"size": 255})
 }
 
-add_foreign_key("images", "owner_id", {"users": ["id"]}, {
-    "on_delete": "cascade",
-    "on_update": "cascade",
-})
-
-add_foreign_key("images", "product_id", {"products": ["id"]}, {
-    "on_delete": "cascade",
-    "on_update": "cascade",
-})
