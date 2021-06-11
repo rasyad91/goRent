@@ -206,3 +206,25 @@ func (m *DBrepo) GetProductNextIndex() (int, error) {
 
 	return id + 1, nil
 }
+
+func (m *DBrepo) InsertProduct(p model.Product) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	_, err := m.ExecContext(ctx, "INSERT INTO goRent.products (id,owner_id,brand,category,title,rating,description,price,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?);",
+		p.ID, p.OwnerID, p.Brand, p.Category, p.Title, p.Rating, p.Description, p.Price, p.CreatedAt, p.UpdatedAt)
+	if err != nil {
+		return fmt.Errorf("db InsertProduct: %v", err)
+	}
+	return nil
+}
+
+func (m *DBrepo) InsertProductImages(p model.Product, s string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	_, err := m.ExecContext(ctx, "INSERT INTO goRent.images (product_id, owner_id, body,created_at,updated_at) VALUES (?,?,?,?,?);",
+		p.ID, p.OwnerID, s, p.CreatedAt, p.UpdatedAt)
+	if err != nil {
+		return fmt.Errorf("db InsertProductImages: %v", err)
+	}
+	return nil
+}

@@ -89,6 +89,7 @@ type ProductReview struct {
 	UpdatedAt    time.Time
 }
 
+// may not be required
 type ElasticSearchProductSample struct {
 	ID          int       `json:"ID"`
 	OwnerID     int       `json:"owner_id"`

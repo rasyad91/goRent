@@ -21,9 +21,9 @@ type AppConfig struct {
 }
 
 const (
-	DateLayout          = "02-01-2006"
-	AWSProductBucket    = "wooteam-productslist/product_list/images/"
-	AWSProfileImgLink   = "wooteam-productslist/profile_images/"
-	AWSProductImageLink = "https://wooteam-productslist.s3.ap-southeast-1.amazonaws.com/product_list/images/"
-	AWSProfileImageLink = "https://wooteam-productslist.s3.ap-southeast-1.amazonaws.com/profile_images/"
+	DateLayout           = "02-01-2006"
+	AWSProductBucket     = "wooteam-productslist/product_list/images/"
+	AWSProfileBucketLink = "wooteam-productslist/profile_images/"
+	AWSProductImageLink  = "https://wooteam-productslist.s3.ap-southeast-1.amazonaws.com/product_list/images/"
+	AWSProfileImageLink  = "https://wooteam-productslist.s3.ap-southeast-1.amazonaws.com/profile_images/"
 )
