@@ -97,3 +97,23 @@ func (m *DBrepo) DeleteRent(rentID int) error {
 
 	return nil
 }
+
+func (m *DBrepo) ProcessRent(ctx context.Context, id int) error {
+	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
+	defer cancel()
+
+	tx, err := m.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+
+	// check if rent has already been
+
+	query := `UPDATE FROM rents set processed = true, updated_at = ? where id = ?`
+	if _, err := tx.ExecContext(ctx, query, time.Now(), id); err != nil {
+		tx.Rollback()
+		return fmt.Errorf("db deleterent: %v", err)
+	}
+
+	return nil
+}

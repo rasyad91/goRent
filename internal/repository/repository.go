@@ -20,6 +20,7 @@ type DatabaseRepo interface {
 	GetRentsByProductID(ctx context.Context, id int) ([]model.Rent, error)
 	CreateRent(r model.Rent) (int, error)
 	DeleteRent(rentID int) error
+	ProcessRent(ctx context.Context, id int) error
 
 	// Reviews
 	CreateProductReview(pr model.ProductReview) error
