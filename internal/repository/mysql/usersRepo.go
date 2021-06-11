@@ -25,7 +25,21 @@ func NewRepo(Conn *sql.DB) repository.DatabaseRepo {
 		DB: Conn,
 	}
 }
-
+func (m *DBrepo) EmailExist(e string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	var email string
+	err := m.DB.QueryRowContext(ctx, "SELECT * FROM goRent.Users where email=?", e).Scan(
+		&email,
+	)
+	if err == sql.ErrNoRows {
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+	return nil
+}
 func (m *DBrepo) GetUser(username string) (model.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()

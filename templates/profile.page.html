@@ -10,7 +10,15 @@
                   <!-- Customer Sidebar-->
           <div class="col-lg-3 col-xl-3 mb-3">
             <div class="customer-sidebar card border-0"> 
-              <div class="customer-profile"><a class="d-inline-block" href="#"><img class="img-fluid rounded-circle customer-image" src="https://d19m59y37dris4.cloudfront.net/varkala/1-2-1/img/avatar/avatar-0.jpg" alt=""></a>
+              <div class="customer-profile"><a class="d-inline-block" href="#">
+              {{if $res.Image}}
+                <img class="img-fluid rounded-circle customer-image" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png" style = "width: 300px;height: 300px;border-radius: 50%;background-position: center center;" alt=""></a>
+              {{else}}
+                {{/* <img class="img-fluid rounded-circle customer-image" src="https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/bbyoda-1575303784.jpeg" style = "border-radius:50% 50% 50% 50%;" alt=""></a> */}}
+                <div class="profile-picture">
+                  <img src="https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/bbyoda-1575303784.jpeg" alt="Profile - James Hales">
+                </div>
+              {{end}}
                 <h5>{{$res.Username}}</h5>
                 <p class="text-muted text-sm mb-0">Los Angeles, CA</p>
               </div>

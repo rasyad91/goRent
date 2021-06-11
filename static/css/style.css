@@ -41,6 +41,20 @@
 *::after {
     box-sizing: border-box
 }
+.profile-picture {
+    position:relative;
+    overflow:hidden;
+    border-radius: 50%;
+    height: 200px;
+    width: 200px;
+}
+
+.profile-picture img {
+    position:absolute;
+    height: auto;
+    width: auto;    
+    max-width:100%;
+}
 
 html {
     font-family: sans-serif;

@@ -86,6 +86,14 @@ func (m *Repository) RegisterPost(w http.ResponseWriter, r *http.Request) {
 		wg.Done()
 	}(r.PostFormValue("username"))
 
+	go func(u string) {
+		if err := m.DB.EmailExist(u); err != nil {
+			m.App.Info.Println("YES THIS EMAIL IS ALREADY IN USE")
+			form.Errors.Add("email", "Email already in use")
+		}
+		wg.Done()
+	}(r.PostFormValue("email"))
+
 	fmt.Println("query db for existing Time taken: ", time.Since(t))
 
 	newUser := model.User{
