@@ -1,0 +1,30 @@
+{{template "base" .}}
+
+{{define "content"}}
+{{$passed := index .Data "passedRents"}}
+{{$failed := index .Data "failedRents"}}
+
+<section class="hero py-2">
+    <div class="container">
+        <!-- Breadcrumbs -->
+        <ol class="breadcrumb pl-0 ">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item active">Confirmation</li>
+        </ol>
+        <!-- Hero Content-->
+        <div class="hero-content">
+            <h1 class="hero-heading">Confirmation</h1>
+        </div>
+
+        {{range $passed}}
+            {{.ID}}
+        {{end}}
+
+        {{range $failed}}
+           {{.ID}}
+        {{end}}
+        
+    </div>
+</section>
+
+{{end}}

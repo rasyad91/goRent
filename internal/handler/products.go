@@ -73,7 +73,6 @@ func (m *Repository) ShowProductByID(w http.ResponseWriter, r *http.Request) {
 				userRentofPID = append(userRentofPID, v)
 			}
 		}
-
 		dates = append(helper.ListDatesFromRents(rents), helper.ListDatesFromRents(userRentofPID)...)
 	}
 	fmt.Println(dates)

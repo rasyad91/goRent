@@ -13,10 +13,6 @@ import (
 func (m *Repository) GetCart(w http.ResponseWriter, r *http.Request) {
 
 	data := make(map[string]interface{})
-	u := m.App.Session.Get(r.Context(), "user").(model.User)
-	for _, v := range u.Rents {
-		fmt.Println(v)
-	}
 
 	if err := render.Template(w, r, "cart.page.html", &render.TemplateData{
 		Data: data,
@@ -50,7 +46,6 @@ func (m *Repository) PostCheckout(w http.ResponseWriter, r *http.Request) {
 
 	// lock this
 	sm.Lock()
-	defer sm.Unlock()
 	{
 		defer sm.Unlock()
 
@@ -58,10 +53,8 @@ func (m *Repository) PostCheckout(w http.ResponseWriter, r *http.Request) {
 			i, v := i, v
 			// get product id from rents
 			if !v.Processed {
-				fmt.Println("RENT ID: ", v.ID)
-				fmt.Println("PROCESSED: ", v.Processed)
 				g.Go(func() error {
-					fmt.Println("in processing------")
+					fmt.Println("In processing------")
 					fmt.Printf("id: %d, productname: %s, startDate: %s, endDate: %s\n", v.ID, v.Product.Title, v.StartDate, v.EndDate)
 					if err := m.DB.ProcessRent(v); err != nil {
 						if err.Error() == "rent not available" {
@@ -107,14 +100,55 @@ func (m *Repository) PostCheckout(w http.ResponseWriter, r *http.Request) {
 	}
 	wg.Wait()
 
-	for _, v := range rents {
-		fmt.Println(v)
+	fmt.Println("length of failed rents: ", len(failedRents))
+	for _, rent := range failedRents {
+		fmt.Println()
+		fmt.Println("FAILED RENTS")
+		fmt.Printf("id: %d, processed: %t productname: %s, startDate: %s, endDate: %s\n", rent.ID, rent.Processed, rent.Product.Title, rent.StartDate, rent.EndDate)
+
 	}
 
-	u.Rents = rents
+	fmt.Println("length of passed rents: ", len(passedRents))
+	for _, rent := range passedRents {
+		fmt.Println()
+		fmt.Println("PASSED RENTS")
+		fmt.Printf("id: %d, processed: %t productname: %s, startDate: %s, endDate: %s\n", rent.ID, rent.Processed, rent.Product.Title, rent.StartDate, rent.EndDate)
+
+	}
+
+	u, err := m.DB.GetUser(u.Username)
+	if err != nil {
+		render.ServerError(w, r, err)
+		m.App.Error.Println(err)
+		return
+	}
 
 	// send email
 	m.App.Session.Put(r.Context(), "user", u)
+	m.App.Session.Put(r.Context(), "passedRents", passedRents)
+	m.App.Session.Put(r.Context(), "failedRents", failedRents)
 
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	http.Redirect(w, r, "/v1/user/cart/checkout/confirm", http.StatusSeeOther)
+}
+
+func (m *Repository) CheckoutConfirm(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Println("Get checkoutconfirm")
+	data := make(map[string]interface{})
+
+	data["failedRents"] = []model.Rent{}
+	data["passedRents"] = []model.Rent{}
+
+	if m.App.Session.Get(r.Context(), "failedRents") != nil {
+		data["failedRents"] = m.App.Session.Get(r.Context(), "failedRents").([]model.Rent)
+	}
+	if m.App.Session.Get(r.Context(), "passedRents") != nil {
+		data["passedRents"] = m.App.Session.Get(r.Context(), "passedRents").([]model.Rent)
+	}
+
+	if err := render.Template(w, r, "checkout-confirm.page.html", &render.TemplateData{
+		Data: data,
+	}); err != nil {
+		m.App.Error.Println(err)
+	}
 }

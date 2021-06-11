@@ -70,9 +70,11 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Println("user: ", eu.ID)
-	for _, v := range eu.Rents {
-		fmt.Printf("id :#%d processed:%t product:%s start:%s end:%s\n", v.ID, v.Processed, v.Product.Title, v.StartDate, v.EndDate)
-	}
+	fmt.Printf("user: %#v\n", eu)
+
+	// for _, v := range eu.Rents {
+	// 	fmt.Printf("id :#%d processed:%t product:%s start:%s end:%s\n", v.ID, v.Processed, v.Product.Title, v.StartDate, v.EndDate)
+	// }
 
 	m.App.Session.Put(r.Context(), "userID", eu.ID)
 	m.App.Session.Put(r.Context(), "flash", fmt.Sprintf("Welcome, %s", eu.Username))
