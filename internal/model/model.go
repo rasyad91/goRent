@@ -12,6 +12,7 @@ type User struct {
 	AccessLevel int
 	Rating      float32
 	Address     Address
+	Image_URL   string
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 	Products    []Product    // where ID = Product.OwnerID from products table
