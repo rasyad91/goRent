@@ -10,7 +10,13 @@
                   <!-- Customer Sidebar-->
           <div class="col-lg-3 col-xl-3 mb-3">
             <div class="customer-sidebar card border-0"> 
-              <div class="customer-profile"><a class="d-inline-block" href="#"><img class="img-fluid rounded-circle customer-image" src="https://d19m59y37dris4.cloudfront.net/varkala/1-2-1/img/avatar/avatar-0.jpg" alt=""></a>
+              <div class="customer-profile"><a class="d-inline-block" href="#">
+                {{if $res.Image_URL}}
+                <img class="img-fluid rounded-circle customer-image" src="https://wooteam-productslist.s3.ap-southeast-1.amazonaws.com/profile_images/-1.png" style = "border-radius:50% 50% 50% 50%;" alt=""></a>
+                
+                {{else}}
+                <img class="img-fluid rounded-circle customer-image" src={{$res.Image_URL}} style = "border-radius:50% 50% 50% 50%;" alt=""></a>
+                {{end}}
                 <h5>{{$res.Username}}</h5>
                 <p class="text-muted text-sm mb-0">Los Angeles, CA</p>
               </div>
@@ -28,7 +34,7 @@
                     <svg class="svg-icon svg-icon-heavy mr-2">
                       <use xlink:href="#real-estate-1"> </use>
                     </svg>Payment</span></a>
-                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/products"><span>
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/products"><span>   
                     <svg class="svg-icon svg-icon-heavy mr-2">
                       <use xlink:href="#heart-1"> </use>
                     </svg>Products</span></a>
@@ -53,11 +59,12 @@
                 {{with .Form.Errors.Get "login"}}
                   <label class="text-danger">{{.}}</label>
                 {{end}}
-                  <form method="POST" novalidate>
-                    <input type="hidden" name="csrf_token" value="{{.CSRFToken }}">
-                    <input type="hidden" name="action" value="profile">
-                      <div class="row">
-                        <div class="col-sm-6">
+                <div class = "row">
+                  <div class="col-sm-6">
+                    <form method="POST" novalidate>
+                      <input type="hidden" name="csrf_token" value="{{.CSRFToken }}">
+                      <input type="hidden" name="action" value="profile">
+                        <div class="row">
                           <div class="form-group">
                               <label class="form-label"for="username">Username</label> 
                               {{with $form.Errors.Get "username"}}
@@ -66,7 +73,7 @@
                               <input disabled type="username" class="form-control  {{with .Form.Errors.Get "username"}} is-invalid{{end}}" name="username" placeholder="Username" value="{{$res.Username}}">
                           </div>
                         </div>
-                        <div class="col-sm-6">
+                        <div class = "row">
                           <div class="form-group">
                             <label class="form-label"for="email">Email</label>
                             {{with $form.Errors.Get "email"}}
@@ -75,11 +82,29 @@
                             <input type="email" class="form-control {{with .Form.Errors.Get "email"}} is-invalid{{end}}" name="email" placeholder=" john@gmail.com" value="{{$res.Email}}">
                           </div>
                         </div>
+                      <div class="form-group">
+                          <button type="submit" class="btn btn-outline-dark">Change Email</button>
                       </div>
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-outline-dark">Change Email</button>
-                    </div>
-            </form>
+                    </form>
+                  </div>
+
+                  <div class="col-sm-6" style = "text-align: center; border-left: 2px solid gray;">
+                    <form id="form" enctype="multipart/form-data" method="POST">
+                      <input type="hidden" name="csrf_token" value="{{.CSRFToken }}">
+                      <input type="hidden" name="action" value="profileImage">
+                      <label class="form-label"for="username">Profile Image</label> 
+                      <div >
+                          <label for="profileImage">
+                              <img src="https://i.ibb.co/Mp4mmmG/add-image.png" width="85px">
+                          </label>
+                          <input type="file" id="profileImage" style="display:none" name="profileImage" />
+                      </div>
+                      <div class="form-group">
+                        <button type="submit" class="btn btn-outline-dark btn-lg ml-3">Upload Image</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
             <hr class="mb-5">
             <div class="mb-5">
               <h3 class="mb-5">Change your password</h3>

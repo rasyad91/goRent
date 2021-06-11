@@ -43,7 +43,7 @@ func (m *Repository) RegisterPost(w http.ResponseWriter, r *http.Request) {
 	t := time.Now()
 
 	var wg sync.WaitGroup
-	wg.Add(2)
+	wg.Add(3)
 
 	passwordChan := make(chan []byte)
 
@@ -86,6 +86,14 @@ func (m *Repository) RegisterPost(w http.ResponseWriter, r *http.Request) {
 		wg.Done()
 	}(r.PostFormValue("username"))
 
+	go func(u string) {
+		if err := m.DB.EmailExist(u); err != nil {
+			m.App.Info.Println("YES THIS EMAIL IS ALREADY IN USE")
+			form.Errors.Add("email", "Email already in use")
+		}
+		wg.Done()
+	}(r.PostFormValue("email"))
+
 	fmt.Println("query db for existing Time taken: ", time.Since(t))
 
 	newUser := model.User{
@@ -98,6 +106,7 @@ func (m *Repository) RegisterPost(w http.ResponseWriter, r *http.Request) {
 			UnitNumber: r.FormValue("unitNumber"),
 			PostalCode: r.FormValue("postalCode"),
 		},
+		Image_URL: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
 	}
 
 	fmt.Println("after get user Time taken: ", time.Since(t))
@@ -117,9 +126,12 @@ func (m *Repository) RegisterPost(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-
+	fmt.Println("CREATING NEW USER:", newUser)
 	if err := m.DB.InsertUser(newUser); err != nil {
-		m.App.Info.Println("SUCCESSFULLY REGISTERED")
+		fmt.Println(err)
+
+	} else {
+		m.App.Info.Println("Successfully Registered!")
 	}
 	m.App.Session.Put(r.Context(), "flash", "You've registered successfully!")
 
