@@ -31,12 +31,7 @@ func (m *Repository) UserAccount(w http.ResponseWriter, r *http.Request) {
 func (m *Repository) EditUserAccount(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
 	u := m.App.Session.Get(r.Context(), "user").(model.User)
-	data["editUser"] = model.User{
-		Username: u.Username,
-		Email:    u.Email,
-		Password: "",
-		Address:  u.Address,
-	}
+	data["editUser"] = u
 	if err := render.Template(w, r, "profile.page.html", &render.TemplateData{
 		Data: data,
 		Form: &form.Form{},
@@ -85,6 +80,8 @@ func (m *Repository) EditUserAccountPost(w http.ResponseWriter, r *http.Request)
 			u.Username = r.FormValue("username")
 			u.Email = r.FormValue("email")
 		}
+
+	} else if action == "profileImage" {
 
 	} else {
 		oldPassword := r.FormValue("password_old")

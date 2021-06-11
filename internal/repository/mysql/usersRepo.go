@@ -223,8 +223,8 @@ func (m *DBrepo) runQuery(ctx context.Context, user *model.User, query string, s
 func (m *DBrepo) InsertUser(u model.User) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
-	_, err := m.ExecContext(ctx, "INSERT INTO goRent.users (username,email,password,postal_code,street_name,block,unit_number,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?);",
-		u.Username, u.Email, u.Password,
+	_, err := m.ExecContext(ctx, "INSERT INTO goRent.users (username,email,password,image_url,postal_code,street_name,block,unit_number,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?);",
+		u.Username, u.Email, u.Password, u.Image_URL,
 		u.Address.PostalCode, u.Address.StreetName, u.Address.Block, u.Address.UnitNumber,
 		time.Now(), time.Now())
 	if err != nil {
