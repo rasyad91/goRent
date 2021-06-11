@@ -8,8 +8,11 @@ import (
 	"goRent/internal/model"
 	"goRent/internal/render"
 	"net/http"
+	"net/url"
+	"path/filepath"
 	"sort"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -208,6 +211,7 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 				return err
 			} else {
 				defer file.Close()
+				// uploader := s3manager.NewUploader(m.App.AWSS3Session)
 				s3imgType, s3err := storeImagesS3(w, r, id, productIndex, m.App.AWSS3Session)
 				if s3err != nil {
 					m.App.Error.Println("S3 error", err)
@@ -350,6 +354,7 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, sess *awsS3.Session) (string, error) {
 
 	const MAX_UPLOAD_SIZE = 1024 * 1024 // 1MB
+
 	uploader := s3manager.NewUploader(sess)
 
 	r.Body = http.MaxBytesReader(w, r.Body, MAX_UPLOAD_SIZE)
@@ -383,20 +388,19 @@ func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, 
 		return "", fmt.Errorf("only .jpeg and .png files are allowed: %s", err)
 	}
 
-	var s3fileExtension string
-	if filetype == "image/jpeg" {
-		s3fileExtension = ".jpeg"
-	} else {
-		s3fileExtension = ".png"
-	}
+	// Reset the file
+	file.Seek(0, 0)
 
-	s3FileName := strconv.Itoa(productIndex) + "_" + strconv.Itoa(i) + s3fileExtension
+	s3FileName := strconv.Itoa(productIndex) + "_" + strconv.Itoa(i) + filepath.Ext(header.Filename)
 
 	_, err = uploader.Upload(&s3manager.UploadInput{
-		Bucket: aws.String(config.AWSProductBucket),
-		ACL:    aws.String("public-read"),
-		Key:    aws.String(s3FileName),
-		Body:   file,
+		Bucket:               aws.String(config.AWSProductBucket),
+		ACL:                  aws.String("public-read"),
+		Key:                  aws.String(s3FileName),
+		Body:                 file,
+		ContentType:          aws.String(filetype),
+		ServerSideEncryption: aws.String("AES256"),
+		StorageClass:         aws.String("INTELLIGENT_TIERING"),
 	})
 
 	if err != nil {
@@ -405,7 +409,7 @@ func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, 
 	}
 	fmt.Println("upload to S3 bucket was successful; please check")
 
-	return s3fileExtension, nil
+	return filepath.Ext(header.Filename), nil
 
 	//return amz link:
 }
@@ -467,4 +471,62 @@ func storeProfileImage(w http.ResponseWriter, r *http.Request, owner_ID int, ses
 		fmt.Println("upload to S3 bucket was successful; please check")
 	}
 
+}
+
+func (m *Repository) EditProduct(w http.ResponseWriter, r *http.Request) {
+
+	data := make(map[string]interface{})
+
+	x := r.URL.Query()
+	fmt.Println(x)
+	res := strings.ToLower(url.QueryEscape(x["edit"][0])) //hockey+sticks
+
+	productIdEdit, err := strconv.Atoi(res)
+	if err != nil {
+		m.App.Error.Println("error occured while converting product index in query string to int", err)
+	}
+
+	product, err := m.DB.GetProductByID(r.Context(), productIdEdit)
+
+	data["product"] = product
+
+	fmt.Println("this shows product infomation", product)
+	// user := m.App.Session.Get(r.Context(), "user").(model.User)
+	// data["products"] = user.Products
+	// data["user"] = user
+	if err := render.Template(w, r, "editproduct.page.html", &render.TemplateData{
+		Data: data,
+		Form: &form.Form{},
+	}); err != nil {
+		m.App.Error.Println(err)
+	}
+}
+
+func (m *Repository) EditProductPost(w http.ResponseWriter, r *http.Request) {
+
+	data := make(map[string]interface{})
+
+	x := r.URL.Query()
+	fmt.Println(x)
+	res := strings.ToLower(url.QueryEscape(x["edit"][0])) //hockey+sticks
+
+	productIdEdit, err := strconv.Atoi(res)
+	if err != nil {
+		m.App.Error.Println("error occured while converting product index in query string to int", err)
+	}
+
+	product, err := m.DB.GetProductByID(r.Context(), productIdEdit)
+
+	data["product"] = product
+
+	fmt.Println("this shows product infomation", product)
+	// user := m.App.Session.Get(r.Context(), "user").(model.User)
+	// data["products"] = user.Products
+	// data["user"] = user
+	if err := render.Template(w, r, "editproduct.page.html", &render.TemplateData{
+		Data: data,
+		Form: &form.Form{},
+	}); err != nil {
+		m.App.Error.Println(err)
+	}
 }

@@ -198,4 +198,85 @@ INSERT INTO `gorent`.`products` (
     '9.99',
     '2021-06-01',
     '2021-06-01'
+),(
+    '3', 
+    'DVD Ltd',
+    'CD', 
+    'Rent', 
+    '0', 
+    'Based on Jonathan Larsons bohemian rock muscial, rent tells the story of a group of social outcasts struggling to live in the moment yet survive the realities of New yorks gritty East Village',
+    '9.99',
+    '2021-06-01',
+    '2021-06-01'
+),(
+    '3', 
+    'DVD LTD',
+    'CD', 
+    'The Godfather', 
+    '0', 
+    'Based on Jonathan Larsons bohemian rock muscial, rent tells the story of a group of social outcasts struggling to live in the moment yet survive the realities of New yorks gritty East Village',
+    '8.99',
+    '2021-06-01',
+    '2021-06-01'
+),(
+    '3', 
+    'DVD LTD',
+    'CD', 
+    'The Wizard of Oz', 
+    '0', 
+    'If I was on a desert island, Id bring The Wizard of Oz with me," says Elizabeth Daley, dean of the USC School of Cinematic Arts. "It always makes me feel alive. I could watch it over and over." And people have, generation after generation. In fact, its the most-watched film of all time, according to the Library of Congress',
+    '4.99',
+    '2021-06-01',
+    '2021-06-01'
+),(
+    '3', 
+    'Franklin',
+    'Hockey', 
+    'Blackhawk Portable Soccer Goal', 
+    '0', 
+    'Durable Construction: Our durable, weather-resistant soccer goals make practicing shots fun and easy. Portable Transport: The fiberglass and steel construction add stability while being easy to set up and take down. Easy to Secure: This portable soccer goal includes tie-down ground stakes for greater stability.',
+    '4.99',
+    '2021-06-01',
+    '2021-06-01'
+),(
+    '1', 
+    'MBB',
+    'Gym', 
+    'Master Core & Abdominal Workout', 
+    '0', 
+    'MBB Core & Abdominal Workout chair is crafted with sturdy iron and steel, which is durable for long-time use. The Solid Iron frame comes with huge weight capacity of 300lbs. All of heavy-duty steel tube frames are finished with a powder-coated painting that offers reliable durability. Comfortable rubber seat cushion effectively reduces impact force generated during exercise.',
+    '20.99',
+    '2021-06-01',
+    '2021-06-01'
+),(
+    '2', 
+    'Super Z',
+    'Sports', 
+    'Assortment of Balls', 
+    '0', 
+    'Black nylon-mesh ball bag is perfect for sports equipment, beach trips, events, and much more! Holds anything from balls for team practice to swimming gear and camping supplies. The extra thick drawstring opening not only makes access to your equipment easy, but also provides a secure and tight closure.',
+    '10.99',
+    '2021-06-01',
+    '2021-06-01'
+),(
+    '2', 
+    'Franklin Sports',
+    'Baseball', 
+    'Electronic Baseball Pitching Machine', 
+    '0', 
+    'Flashing indicator: A flashing red indicator light shows when the ball pitches, making it easy to prepare in your baseball stance. You get all the fun of a batting cage right in the comfort of your own backyard. Six balls included: This batting machine includes six white aero strike balls. You should not use regulation baseballs or tee balls with this baseball',
+    '10.99',
+    '2021-06-01',
+    '2021-06-01'
+),(
+    '2', 
+    'Juvale Sports',
+    'Agility Ladder', 
+    'Electronic Baseball Pitching Machine', 
+    '0', 
+    'FULLY ADJUSTABLE GEAR: Customize your practice set up, workout, exercise drills to improve footwork on the field or court. Improve quickness coming out of the starting blocks for track and field. BUILD EXPLOSIVENESS: The Resistance Parachute simulates sled workout creating drag and increasing leg drive and top end running speed that translates to any sport, not just football.',
+    '10.99',
+    '2021-06-01',
+    '2021-06-01'
 );
+
