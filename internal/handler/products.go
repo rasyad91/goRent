@@ -338,15 +338,14 @@ func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, 
 	//return amz link:
 }
 
-func storeProfileImage(w http.ResponseWriter, r *http.Request, owner_ID int, sess *awsS3.Session) (string, error) {
+func storeProfileImage(w http.ResponseWriter, r *http.Request, owner_ID int, sess *awsS3.Session) error {
 	const MAX_UPLOAD_SIZE = 1024 * 1024 // 1MB
 	uploader := s3manager.NewUploader(sess)
-
 	r.Body = http.MaxBytesReader(w, r.Body, MAX_UPLOAD_SIZE)
 
 	if err := r.ParseMultipartForm(MAX_UPLOAD_SIZE); err != nil {
 		http.Error(w, "The uploaded file is too big. Please choose an file that's less than 1MB in size", http.StatusBadRequest)
-		return config.AWSProfileImageLink + "-1.png", err
+		return err
 	}
 
 	// fileName := "file" + strconv.Itoa(owner_ID) //file1
@@ -354,7 +353,7 @@ func storeProfileImage(w http.ResponseWriter, r *http.Request, owner_ID int, ses
 	file, fileHeader, err := r.FormFile("profileImage")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		return config.AWSProfileImageLink + "-1.png", err
+		return err
 	}
 	_ = fileHeader
 
@@ -364,13 +363,13 @@ func storeProfileImage(w http.ResponseWriter, r *http.Request, owner_ID int, ses
 	_, err = file.Read(buff)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return config.AWSProfileImageLink + "-1.png", err
+		return err
 	}
 
 	filetype := http.DetectContentType(buff)
 	if filetype != "image/jpeg" && filetype != "image/png" {
 		http.Error(w, "The provided file format is not allowed. Please upload a JPEG or PNG image", http.StatusBadRequest)
-		return config.AWSProfileImageLink + "-1.png", err
+		return err
 	}
 
 	var s3fileExtension string
@@ -395,7 +394,7 @@ func storeProfileImage(w http.ResponseWriter, r *http.Request, owner_ID int, ses
 	} else {
 		fmt.Println("upload to S3 bucket was successful; please check")
 	}
-	return config.AWSProfileImageLink + s3FileName, nil
+	return nil
 
 }
 

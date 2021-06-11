@@ -82,8 +82,10 @@ func (m *Repository) EditUserAccountPost(w http.ResponseWriter, r *http.Request)
 		}
 
 	} else if action == "profileImage" {
-		url, err := storeProfileImage(w, r, -1, m.App.AWSS3Session)
-		u.Image_URL = url
+		err := storeProfileImage(w, r, -1, m.App.AWSS3Session)
+		if err == nil {
+			u.Image_URL = config.AWSProfileImageLink + u.ID + s3fileExtension
+		}
 		fmt.Println(err)
 	} else {
 		oldPassword := r.FormValue("password_old")
