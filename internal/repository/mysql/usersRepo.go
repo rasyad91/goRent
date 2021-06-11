@@ -243,6 +243,9 @@ func (m *DBrepo) EditUser(u model.User, editType string) error {
 	} else if editType == "profile" {
 		_, err = m.ExecContext(ctx, "UPDATE goRent.users SET username = ?, email = ? WHERE id = ?", u.Username, u.Email, u.ID)
 		fmt.Println("ProfileChange test:", u)
+	} else if editType == "profileImage" {
+		_, err = m.ExecContext(ctx, "UPDATE goRent.users SET image_url = ? WHERE id = ?", u.Image_URL, u.ID)
+		fmt.Println("ProfileImage test:", u)
 	} else {
 		_, err = m.ExecContext(ctx, "UPDATE goRent.users SET password = ? WHERE id = ?", u.Password, u.ID)
 		fmt.Println("PassWordChange test:", u)

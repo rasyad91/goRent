@@ -84,7 +84,7 @@
                   </div>
 
                   <div class="col-sm-6" style = "text-align: center; border-left: 2px solid gray;">
-                    <form id="form" enctype="multipart/form-data" action="/v1/user/createproduct" method="POST">
+                    <form id="form" enctype="multipart/form-data" method="POST">
                       <input type="hidden" name="csrf_token" value="{{.CSRFToken }}">
                       <input type="hidden" name="action" value="profileImage">
                       <label class="form-label"for="username">Profile Image</label> 

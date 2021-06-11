@@ -82,7 +82,9 @@ func (m *Repository) EditUserAccountPost(w http.ResponseWriter, r *http.Request)
 		}
 
 	} else if action == "profileImage" {
-
+		url, err := storeProfileImage(w, r, u.ID, m.App.AWSS3Session)
+		u.Image_URL = url
+		fmt.Println(err)
 	} else {
 		oldPassword := r.FormValue("password_old")
 		err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(oldPassword))
@@ -121,6 +123,8 @@ func (m *Repository) EditUserAccountPost(w http.ResponseWriter, r *http.Request)
 	}
 	if action == "address" {
 		m.App.Session.Put(r.Context(), "flash", "Address Updated!")
+	} else if action == "profileImage" {
+		m.App.Session.Put(r.Context(), "flash", "Profile Image Updated!")
 	} else if action == "profile" {
 		m.App.Session.Put(r.Context(), "flash", "Email Updated!")
 	} else {
