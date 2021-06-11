@@ -51,9 +51,7 @@
                 <div class="cart mb-5">
                     <div class="cart-body">
                         <!-- Product-->
-                        {{range $index := (unprocessedRents $u.Rents)}}
-
-
+                        {{range (unprocessedRents $u.Rents)}}
                         <div class="cart-item">
                             <div class="row d-flex align-items-center text-left text-md-center">
                                 <div class="col-12 col-md-5"><a class="cart-remove close mt-3 d-md-none" href="#"><i
@@ -62,10 +60,8 @@
                                             href="/v1/products/{{.Product.ID}}"><img class="cart-item-img" src=""
                                                 alt="..."></a>
                                         <div class="cart-title text-left"><a class="text-dark link-animated"
-                                                href="/v1/products/{{.Product.ID}}"><strong>{{.Product.Title}}</strong></a>
-                                            <br><span class="text-muted text-sm">Brand: {{.Product.Brand}}</span>
-                                            <br><span class="text-muted text-sm">Category: {{.Product.Category}}</span>
-                                            <br><span class="text-muted text-sm">Price: {{.Product.Price}}</span>
+                                                href="/v1/products/{{.ProductID}}"><strong>{{.Product.Title}}</strong></a>
+                                            <br><span class="text-muted text-sm">Price: ${{.Product.Price}}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -87,7 +83,7 @@
                                         <div class="col-md-3">
                                             <div class="row">
                                                 <div class="col-6 d-md-none text-muted">Total price </div>
-                                                <div class="col-6 col-md-12 text-right text-md-center">${{.TotalCost}}
+                                                <div class="col-6 col-md-12 text-right text-md-center">${{format2DP .TotalCost}}
                                                 </div>
                                             </div>
                                         </div>

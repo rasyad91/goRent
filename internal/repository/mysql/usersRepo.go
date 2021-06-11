@@ -96,7 +96,6 @@ func (m *DBrepo) GetUser(username string) (model.User, error) {
 		return nil
 	})
 
-	fmt.Println(u.Rents)
 	return u, x.Wait()
 }
 

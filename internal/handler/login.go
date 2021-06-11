@@ -69,6 +69,10 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+	fmt.Println("user: ", eu.ID)
+	for _, v := range eu.Rents {
+		fmt.Printf("id :#%d processed:%t product:%s start:%s end:%s\n", v.ID, v.Processed, v.Product.Title, v.StartDate, v.EndDate)
+	}
 
 	m.App.Session.Put(r.Context(), "userID", eu.ID)
 	m.App.Session.Put(r.Context(), "flash", fmt.Sprintf("Welcome, %s", eu.Username))
@@ -96,7 +100,6 @@ func (m *Repository) Logout(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 	}
 	http.SetCookie(w, &delCookie)
-	fmt.Println("Setting Cookie here")
 	_ = m.App.Session.RenewToken(r.Context())
 	_ = m.App.Session.Destroy(r.Context())
 	_ = m.App.Session.RenewToken(r.Context())

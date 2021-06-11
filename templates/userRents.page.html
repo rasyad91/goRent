@@ -1,7 +1,7 @@
 {{template "base" .}}
 
 {{define "content"}}
-
+{{$csrf := index .CSRFToken}}
 <section class="pb-4 py-3">
       <div class="container">
       {{$res := index .Data "user"}}
@@ -53,10 +53,11 @@
               <div class="cart-wrapper">
                 <div class="cart-header">
                   <div class="row">
-                    <div class="col-6">Rentals</div>
+                    <div class="col-4">Rentals</div>
                     <div class="col-2 text-center">Price</div>
                     <div class="col-2 text-center">Start Date</div>
                     <div class="col-2 text-center">End Date</div>
+                    <div class="col-2 text-center">Delete</div>
                   </div>
                 </div>
                 <div class="cart-body">
@@ -65,7 +66,7 @@
                   <!-- Product-->
                   <div class="cart-item">
                     <div class="row d-flex align-items-center text-center">
-                      <div class="col-6">
+                      <div class="col-4">
                         <div class="d-flex align-items-center"><a href="detail.html"><img class="cart-item-img" src="https://d19m59y37dris4.cloudfront.net/varkala/1-2-1/img/product/product-square-ian-dooley-347968-unsplash.jpg" alt="..."></a>
                           <div class="cart-title text-left"><a class="text-dark" href="detail.html"><strong>{{$r.Product.Title}}</strong></a>
                           </div>
@@ -74,6 +75,14 @@
                       <div class="col-2">{{$r.Product.Price}}</div>
                       <div class="col-2">{{$r.StartDate.Format "2006-01-02"}}</div>
                       <div class="col-2">{{$r.EndDate.Format "2006-01-02"}}</div>
+                      <div class="col-2">
+                        <form id="removeRent" action="/v1/products/removeRent" method="POST">
+                            <input type="hidden" name="rent_id" value="{{$r.ID}}">
+                            <input type="hidden" name="csrf_token" value="{{$csrf }}">
+                            <button id="addRent" value="1" class="btn btn-outline-dark btn-block" type="submit">
+                                <i class="fas fa-trash"></i></button>
+                        </form>
+                    </div>
                     </div>
                   </div>
                 {{end}}

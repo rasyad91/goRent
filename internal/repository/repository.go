@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"goRent/internal/model"
+	"time"
 )
 
 type DatabaseRepo interface {
@@ -22,6 +23,8 @@ type DatabaseRepo interface {
 	GetRentsByProductID(ctx context.Context, id int) ([]model.Rent, error)
 	CreateRent(r model.Rent) (int, error)
 	DeleteRent(rentID int) error
+	ProcessRent(rent model.Rent) error
+	IsRentAvailable(ctx context.Context, productId int, startDate, endDate time.Time) (bool, error)
 
 	// Reviews
 	CreateProductReview(pr model.ProductReview) error

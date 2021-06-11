@@ -2,9 +2,14 @@ package mysql
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"goRent/internal/model"
 	"time"
+)
+
+const (
+	ErrRentNotAvailable = "rent not available"
 )
 
 func (m *DBrepo) CreateRent(r model.Rent) (int, error) {
@@ -96,4 +101,79 @@ func (m *DBrepo) DeleteRent(rentID int) error {
 	}
 
 	return nil
+}
+
+func (m *DBrepo) ProcessRent(rent model.Rent) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	tx, err := m.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+
+	available, err := m.IsRentAvailable(ctx, rent.ProductID, rent.StartDate, rent.EndDate)
+	if err != nil {
+		return err
+	}
+	fmt.Println("available result: ", available)
+	if !available {
+		return errors.New(ErrRentNotAvailable)
+	}
+
+	query := `UPDATE rents set processed = true, updated_at = ? where id = ?`
+	if _, err := tx.ExecContext(ctx, query, time.Now(), rent.ID); err != nil {
+		tx.Rollback()
+		return fmt.Errorf("db processrent: %v", err)
+	}
+
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("db processrent: %v", err)
+	}
+
+	return nil
+}
+
+// IsRentAvailable returns true if there is no clashing date, and product is available for rent
+func (m *DBrepo) IsRentAvailable(ctx context.Context, productId int, startDate, endDate time.Time) (bool, error) {
+	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
+	defer cancel()
+
+	tx, err := m.BeginTx(ctx, nil)
+	if err != nil {
+		fmt.Println(err)
+		return false, err
+	}
+
+	if _, err := tx.ExecContext(ctx, `SET @sd := ?;`, startDate); err != nil {
+		fmt.Println(err)
+		return false, err
+	}
+	if _, err := tx.ExecContext(ctx, `SET @ed := ?;`, endDate); err != nil {
+		fmt.Println(err)
+		return false, err
+	}
+
+	query := `SELECT count(*)
+			FROM rents 
+			WHERE 	processed = true AND
+					product_id = ? AND
+					(
+						(start_date BETWEEN @sd AND @ed) OR
+						(end_date BETWEEN @sd AND @ed) OR
+						(start_date <= @sd AND  end_date >= @ed)
+					);
+			`
+
+	var count int
+	if err := tx.QueryRowContext(ctx, query, productId).Scan(&count); err != nil {
+		fmt.Println(err)
+		return false, err
+	}
+
+	if count != 0 {
+		return false, nil
+	}
+
+	return true, nil
 }
