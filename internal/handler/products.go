@@ -425,12 +425,11 @@ func storeProfileImage(w http.ResponseWriter, r *http.Request, owner_ID int, ses
 
 	// fileName := "file" + strconv.Itoa(owner_ID) //file1
 
-	file, fileHeader, err := r.FormFile("profileImage")
+	file, header, err := r.FormFile("profileImage")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return "", err
 	}
-	_ = fileHeader
 
 	defer file.Close()
 
@@ -447,22 +446,29 @@ func storeProfileImage(w http.ResponseWriter, r *http.Request, owner_ID int, ses
 		return "", err
 	}
 
-	var s3fileExtension string
-	if filetype == "image/jpeg" {
-		s3fileExtension = ".jpeg"
-	} else {
-		s3fileExtension = ".png"
-	}
+	// Reset the file
+	file.Seek(0, 0)
 
-	s3FileName := strconv.Itoa(owner_ID) + s3fileExtension
 	// s3FileName := "-1" + s3fileExtension
 
+	s3FileName := "-1" + filepath.Ext(header.Filename)
+
 	_, err = uploader.Upload(&s3manager.UploadInput{
-		Bucket: aws.String("wooteam-productslist/profile_images/"),
-		ACL:    aws.String("public-read"),
-		Key:    aws.String(s3FileName),
-		Body:   file,
+		Bucket:               aws.String(config.AWSProfileBucketLink),
+		ACL:                  aws.String("public-read"),
+		Key:                  aws.String(s3FileName),
+		Body:                 file,
+		ContentType:          aws.String(filetype),
+		ServerSideEncryption: aws.String("AES256"),
+		StorageClass:         aws.String("INTELLIGENT_TIERING"),
 	})
+
+	// _, err = uploader.Upload(&s3manager.UploadInput{
+	// 	Bucket: aws.String("wooteam-productslist/profile_images/"),
+	// 	ACL:    aws.String("public-read"),
+	// 	Key:    aws.String(s3FileName),
+	// 	Body:   file,
+	// })
 
 	if err != nil {
 		fmt.Println("error with uploading file", err)
