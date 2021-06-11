@@ -152,3 +152,22 @@ func (m *Repository) CheckoutConfirm(w http.ResponseWriter, r *http.Request) {
 		m.App.Error.Println(err)
 	}
 }
+
+// Sample email
+// msg := model.MailData{
+// 	To:       reservation.Email,
+// 	From:     "me@here.com",
+// 	Subject:  "Reservation Confirmation",
+// 	Content:  "",
+// 	Template: "basic.html",
+// }
+// msg.Content = fmt.Sprintf(`
+// 	<strong>Reservation Confirmation</strong><br>
+// 	Dear Mr/Ms %s, <br>
+// 	This is to confirm your reservation from %s to %s.
+// `,
+// 	reservation.LastName,
+// 	reservation.StartDate.Format(datelayout),
+// 	reservation.EndDate.Format(datelayout),
+// )
+// m.App.MailChan <- msg

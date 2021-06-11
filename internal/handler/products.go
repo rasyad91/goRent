@@ -271,7 +271,6 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-
 }
 
 func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, sess *awsS3.Session) (string, error) {
