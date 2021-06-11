@@ -82,9 +82,10 @@ func (m *Repository) EditUserAccountPost(w http.ResponseWriter, r *http.Request)
 		}
 
 	} else if action == "profileImage" {
-		err := storeProfileImage(w, r, -1, m.App.AWSS3Session)
+		url, err := storeProfileImage(w, r, -1, m.App.AWSS3Session)
 		if err == nil {
-			u.Image_URL = config.AWSProfileImageLink + u.ID + s3fileExtension
+			u.Image_URL = url
+			fmt.Println("Success in loading image")
 		}
 		fmt.Println(err)
 	} else {
