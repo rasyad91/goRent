@@ -82,7 +82,7 @@ func (m *Repository) EditUserAccountPost(w http.ResponseWriter, r *http.Request)
 		}
 
 	} else if action == "profileImage" {
-		url, err := storeProfileImage(w, r, u.ID, m.App.AWSS3Session)
+		url, err := storeProfileImage(w, r, -1, m.App.AWSS3Session)
 		u.Image_URL = url
 		fmt.Println(err)
 	} else {
@@ -130,6 +130,7 @@ func (m *Repository) EditUserAccountPost(w http.ResponseWriter, r *http.Request)
 	} else {
 		m.App.Session.Put(r.Context(), "flash", "Password Updated!")
 	}
+	m.App.Session.Put(r.Context(), "user", u)
 	http.Redirect(w, r, "/v1/user/account/profile", http.StatusSeeOther)
 
 }

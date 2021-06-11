@@ -346,7 +346,7 @@ func storeProfileImage(w http.ResponseWriter, r *http.Request, owner_ID int, ses
 
 	if err := r.ParseMultipartForm(MAX_UPLOAD_SIZE); err != nil {
 		http.Error(w, "The uploaded file is too big. Please choose an file that's less than 1MB in size", http.StatusBadRequest)
-		return "wooteam-productslist/profile_images/-1.png", err
+		return config.AWSProfileImageLink + "-1.png", err
 	}
 
 	// fileName := "file" + strconv.Itoa(owner_ID) //file1
@@ -354,7 +354,7 @@ func storeProfileImage(w http.ResponseWriter, r *http.Request, owner_ID int, ses
 	file, fileHeader, err := r.FormFile("profileImage")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		return "wooteam-productslist/profile_images/-1.png", err
+		return config.AWSProfileImageLink + "-1.png", err
 	}
 	_ = fileHeader
 
@@ -364,13 +364,13 @@ func storeProfileImage(w http.ResponseWriter, r *http.Request, owner_ID int, ses
 	_, err = file.Read(buff)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return "wooteam-productslist/profile_images/-1.png", err
+		return config.AWSProfileImageLink + "-1.png", err
 	}
 
 	filetype := http.DetectContentType(buff)
 	if filetype != "image/jpeg" && filetype != "image/png" {
 		http.Error(w, "The provided file format is not allowed. Please upload a JPEG or PNG image", http.StatusBadRequest)
-		return "wooteam-productslist/profile_images/-1.png", err
+		return config.AWSProfileImageLink + "-1.png", err
 	}
 
 	var s3fileExtension string
@@ -395,7 +395,7 @@ func storeProfileImage(w http.ResponseWriter, r *http.Request, owner_ID int, ses
 	} else {
 		fmt.Println("upload to S3 bucket was successful; please check")
 	}
-	return "wooteam-productslist/profile_images/" + s3FileName, nil
+	return config.AWSProfileImageLink + s3FileName, nil
 
 }
 
