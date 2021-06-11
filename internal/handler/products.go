@@ -45,12 +45,7 @@ func (m *Repository) ShowProductByID(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return err
 		}
-		select {
-		case <-ctx.Done():
-			return ctx.Err()
-		default:
-			return nil
-		}
+		return nil
 	})
 
 	g.Go(func() error {
@@ -59,12 +54,7 @@ func (m *Repository) ShowProductByID(w http.ResponseWriter, r *http.Request) {
 			return err
 		}
 		dates = helper.ListDatesFromRents(rents)
-		select {
-		case <-ctx.Done():
-			return ctx.Err()
-		default:
-			return nil
-		}
+		return nil
 	})
 
 	if err := g.Wait(); err != nil {
@@ -72,12 +62,13 @@ func (m *Repository) ShowProductByID(w http.ResponseWriter, r *http.Request) {
 		m.App.Error.Println(err)
 		return
 	}
-
+	fmt.Println(dates)
 	if helper.IsAuthenticated(r) {
 		user := m.App.Session.Get(r.Context(), "user").(model.User)
 		// append dates that are already booked and processed in system and dates that user has rent but not yet processed for that user
 		dates = append(helper.ListDatesFromRents(rents), helper.ListDatesFromRents(user.Rents)...)
 	}
+	fmt.Println(dates)
 
 	data := make(map[string]interface{})
 	data["product"] = p
@@ -191,7 +182,6 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	for i := 1; i < 5; i++ {
 		id := i
 		g.Go(func() error {
-
 			fileName := "file" + strconv.Itoa(id) //file1/2/3/4/
 			file, header, err := r.FormFile(fileName)
 			if err != nil || header.Size == 0 {
@@ -200,13 +190,11 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 				return err
 			} else {
 				defer file.Close()
-
 				s3imgType, s3err := storeImagesS3(w, r, id, productIndex, m.App.AWSS3Session)
 				if s3err != nil {
 					m.App.Error.Println("S3 error", err)
 					fmt.Println("")
 					form.Errors.Add("fileupload", "Please only use .jpeg/ .png files not exceeding 1MB in size")
-
 				} else {
 					s3ImageInformation = append(s3ImageInformation, imageIndex{index: id, imageType: s3imgType})
 				}

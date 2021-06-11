@@ -92,7 +92,7 @@ func (m *Repository) PostRent(w http.ResponseWriter, r *http.Request) {
 		Duration:  len(rentDates),
 		StartDate: startDate,
 		EndDate:   endDate,
-		Product:   model.Product{Title: productTitle},
+		Product:   model.Product{Title: productTitle, Price: float32(price)},
 	}
 
 	t := time.Now()
@@ -112,6 +112,9 @@ func (m *Repository) PostRent(w http.ResponseWriter, r *http.Request) {
 
 	rent.ID = <-c
 	u.Rents = append(u.Rents, rent)
+	for _, v := range u.Rents {
+		fmt.Println(v)
+	}
 
 	m.App.Session.Put(r.Context(), "user", u)
 	fmt.Println("Time taken: ", time.Since(t))

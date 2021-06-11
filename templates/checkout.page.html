@@ -84,7 +84,7 @@
                     {{range $index := (unprocessedRents $u.Rents)}}
                     <tr>
                         <th class="py-4 text-muted font-weight-normal">{{.Product.Title}}</th>
-                        <td class="py-4 text-right text-muted font-weight-normal">${{.TotalCost}}</td>
+                        <td class="py-4 text-right text-muted font-weight-normal">${{format2DP .TotalCost}}</td>
                     </tr>
                     {{end}}
                     <tr>
@@ -96,7 +96,7 @@
                         <td class="py-4 text-right h3 font-weight-normal border-dark">
                             ${{format2DP (totalCostInCart (unprocessedRents $u.Rents))}}</td>
                     </tr>
-                    <form action="/v1/user/cart/checkout/confirm">
+                    <form method="POST" action="/v1/user/cart/checkout/confirm">
                         <input type="hidden" name="csrf_token" value="{{$csrf}}">
                         <tr>
                             <th class="pt-5 pb-4 border-dark" colspan="2">
