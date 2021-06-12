@@ -134,10 +134,31 @@ func (m *Repository) PostCheckout(w http.ResponseWriter, r *http.Request) {
 func (m *Repository) CheckoutConfirm(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("Get checkoutconfirm")
+	u := m.App.Session.Get(r.Context(), "user").(model.User)
 	data := make(map[string]interface{})
 
 	data["failedRents"] = []model.Rent{}
 	data["passedRents"] = []model.Rent{}
+
+	msg := model.MailData{
+		To:       "rasyadsubandrio@gmail.com",
+		From:     "gorent.help@gmail.com",
+		Subject:  "Rent confirm",
+		Content:  "",
+		Template: "basic.html",
+	}
+
+	msg.Content = fmt.Sprintf(`
+					Hi %s,
+
+					Your rents have been confirmed.
+					Thank you for helping with our goal to reduce the consumption footprint.
+					
+					GoRent
+						`, u.Username,
+	)
+
+	m.App.MailChan <- msg
 
 	if m.App.Session.Get(r.Context(), "failedRents") != nil {
 		data["failedRents"] = m.App.Session.Get(r.Context(), "failedRents").([]model.Rent)
@@ -152,22 +173,3 @@ func (m *Repository) CheckoutConfirm(w http.ResponseWriter, r *http.Request) {
 		m.App.Error.Println(err)
 	}
 }
-
-// Sample email
-// msg := model.MailData{
-// 	To:       reservation.Email,
-// 	From:     "me@here.com",
-// 	Subject:  "Reservation Confirmation",
-// 	Content:  "",
-// 	Template: "basic.html",
-// }
-// msg.Content = fmt.Sprintf(`
-// 	<strong>Reservation Confirmation</strong><br>
-// 	Dear Mr/Ms %s, <br>
-// 	This is to confirm your reservation from %s to %s.
-// `,
-// 	reservation.LastName,
-// 	reservation.StartDate.Format(datelayout),
-// 	reservation.EndDate.Format(datelayout),
-// )
-// m.App.MailChan <- msg
