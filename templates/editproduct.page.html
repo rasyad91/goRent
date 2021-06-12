@@ -6,39 +6,55 @@
       <div class="mb-3">
          <div class="col-9">
             <hr class="mb-3" style="color:gray">
-            <h2 class="mb-3">Create a new product</h2>
+            <h2 class="mb-3">Edit an existing product</h2>
             <div class="container">
                {{$form := index .Form}}
                {{$res := index .Data "product"}}
                <form id="form" enctype="multipart/form-data" action="/v1/user/editproduct" method="post">
-               <input type="hidden" name="csrf_token" value="{{.CSRFToken }}">
+               <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
                <input type="hidden" name="productid" value="{{$res.ID}}">
                   <div class="row">
                      <div class="col-8">
                         <div class="row">
                            <div class="col-sm text-center mb-3">
                               <label for="file1">
-                                 <img src="https://i.ibb.co/Mp4mmmG/add-image.png" width="85px">
+                                 {{if index $res.Images 0}}
+                                 <img id="output1" src="{{index $res.Images 0}}" width="85px">
+                                 {{else}}
+                                 <img id="output1" src="https://i.ibb.co/Mp4mmmG/add-image.png" width="85px">
+                                 {{end}}
                               </label>
-                              <input type="file" id="file1" style="display:none" name="file1" />
+                              <input type="file" id="file1" style="display:none" name="file1" accept="image/*" onchange="loadFile1(event)"/>
                            </div>
                            <div class="col-sm text-center mb-3">
                               <label for="file2">
-                                 <img src="https://i.ibb.co/Mp4mmmG/add-image.png" width="85px">
-                              </label>
-                              <input type="file" id="file2" style="display:none" name="file2" />
+                                 {{if index $res.Images 1}}                              
+                                 <img id="output2" src="{{index $res.Images 1}}" width="85px">
+                                 {{else}}
+                                 <img id="output2" src="https://i.ibb.co/Mp4mmmG/add-image.png" width="85px">
+                                 {{end}}                              
+                                 </label>
+                              <input type="file" id="file2" style="display:none" name="file2" accept="image/*" onchange="loadFile2(event)"/>
                            </div>
                            <div class="col-sm text-center mb-3">
                               <label for="file3">
-                                 <img src="https://i.ibb.co/Mp4mmmG/add-image.png" width="85px">
-                              </label>
-                              <input type="file" id="file3" style="display:none" name="file3" />
+                                 {{if index $res.Images 2}}                              
+                                 <img id="output3" src="{{index $res.Images 2}}" width="85px">
+                                 {{else}}
+                                 <img id="output3" src="https://i.ibb.co/Mp4mmmG/add-image.png" width="85px">
+                                 {{end}}                              
+                                 </label>
+                              <input type="file" id="file3" style="display:none" name="file3" accept="image/*" onchange="loadFile3(event)"/>
                            </div>
                            <div class="col-sm text-center mb-3">
                               <label for="file4">
-                                 <img src="https://i.ibb.co/Mp4mmmG/add-image.png" width="85px">
-                              </label>
-                              <input type="file" id="file4" style="display:none" name="file4" />
+                                 {{if index $res.Images 3}}                              
+                                 <img id="output4" src="{{index $res.Images 3}}" width="85px">
+                                 {{else}}
+                                 <img id="output4" src="https://i.ibb.co/Mp4mmmG/add-image.png" width="85px">
+                                 {{end}}                              
+                                 </label>
+                              <input type="file" id="file4" style="display:none" name="file4" accept="image/*" onchange="loadFile4(event)"/>
                            </div>
                         </div>
                      </div>
@@ -56,7 +72,7 @@
                {{with $form.Errors.Get "productname"}}
                <span for="productname" class="text-danger float-right">{{.}}</span>
                {{end}}
-               <input type="text" class="form-control" name="productname" placeholder={{$res.Title}}>
+               <input type="text" class="form-control" name="productname" placeholder={{$res.Title}} value ={{$res.Title}}>
                <div class="form-text">Remember that a good product name attracts the most renters!</div>
             </div>
             <div class="form-group col ">
@@ -64,23 +80,23 @@
                {{with $form.Errors.Get "price"}}
                <span for="price" class="text-danger float-right">{{.}}</span>
                {{end}}
-               <input type="number" step="0.01" class="form-control" name="price" placeholder={{$res.Price}}>
+               <input type="number" step="0.01" class="form-control" name="price" placeholder={{$res.Price}} value={{$res.Price}}>
                <div class="form-text">Price refers to the amount it costs to rent your item <strong>per</strong> day
                </div>
             </div>
          </div>
-         <div class="form-group row mb-3 ml-1">
+         <div class="form-group row mb-3 ml-1 w-50">
             <div class="form-group col">
                <label class="form-label" for="brand">Brand</label>
                {{with $form.Errors.Get "brand"}}
                <span for="brand" class="text-danger float-right">{{.}}</span>
                {{end}}
-               <input type="brand" class="form-control" name="brand" placeholder={{$res.Brand}}>
+               <input type="brand" class="form-control" name="brand" placeholder={{$res.Brand}} value={{$res.Brand}}>
                <div class="form-text">Enter Yonex, if it's a yonex badminton racket. Canon, for a canon camera etc</div>
             </div>
-            <div class="form-group col">
+            <div class="form-group" style="display:none">
                <label for="exampleFormControlSelect2">Select your product's category</label>
-               <select multiple class="form-control" name="category">
+               <select multiple class="form-control" name="category" >
                   <option>Books > Programming</option>
                   <option>Sports > Hockey</option>
                   <option>Sports > Badminton</option>
@@ -99,7 +115,7 @@
              {{with $form.Errors.Get "productdescription"}}
             <span for="productdescription" class="text-danger float-right">{{.}}</span>
             {{end}}
-            <textarea class="form-control" name="productdescription" rows="4" placeholder={{$res.Description}}></textarea>
+            <textarea class="form-control" name="productdescription" rows="4" placeholder="Leave this section blank if you are not making any changes to your existing product description"></textarea>
             <div class="form-text">A good description will help you rent out your items faster. You may want to include
                as many details as possible. For example, if you are renting badminton rackets, you may also want include
                how many shuttlecocks are included in the rent etc. Maximum 400 words.</div>
@@ -111,4 +127,27 @@
       </div>
    </div>
 </div>
+
+
+{{end}}
+
+{{define "script"}}
+<script>
+var loadFile1 = function(event) {
+	var image = document.getElementById('output');
+	image.src = URL.createObjectURL(event.target.files[0]);
+};
+var loadFile2 = function(event) {
+	var image = document.getElementById('output2');
+	image.src = URL.createObjectURL(event.target.files[0]);
+};
+var loadFile3 = function(event) {
+	var image = document.getElementById('output3');
+	image.src = URL.createObjectURL(event.target.files[0]);
+};
+var loadFile4 = function(event) {
+	var image = document.getElementById('output4');
+	image.src = URL.createObjectURL(event.target.files[0]);
+};
+</script>
 {{end}}

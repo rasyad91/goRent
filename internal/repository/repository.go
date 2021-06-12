@@ -18,6 +18,7 @@ type DatabaseRepo interface {
 	GetProductNextIndex() (int, error)
 	InsertProduct(model.Product) error
 	InsertProductImages(i int, s string) error
+	UpdateProducts(p model.Product) error
 
 	// Rents
 	GetRentsByProductID(ctx context.Context, id int) ([]model.Rent, error)

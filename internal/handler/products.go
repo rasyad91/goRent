@@ -511,26 +511,189 @@ func (m *Repository) EditProductPost(w http.ResponseWriter, r *http.Request) {
 
 	data := make(map[string]interface{})
 
-	x := r.URL.Query()
-	fmt.Println(x)
-	res := strings.ToLower(url.QueryEscape(x["edit"][0])) //hockey+sticks
-
-	productIdEdit, err := strconv.Atoi(res)
-	if err != nil {
-		m.App.Error.Println("error occured while converting product index in query string to int", err)
+	type imageIndex struct {
+		index     int
+		imageType string
 	}
 
-	product, err := m.DB.GetProductByID(r.Context(), productIdEdit)
+	var (
+		productPrice       float32
+		s3ImageInformation []imageIndex
+		productDescription string
+	)
+
+	form := form.New(r.PostForm)
+
+	var productID = r.FormValue("productid")
+
+	productIDInt, err := strconv.Atoi(productID)
+
+	if err != nil {
+		m.App.Error.Println("error converting string to int", err)
+	}
+
+	product, err := m.DB.GetProductByID(r.Context(), productIDInt)
+
+	if err != nil {
+		m.App.Error.Println("error retrieving information from db using productID", err)
+	}
 
 	data["product"] = product
-
 	fmt.Println("this shows product infomation", product)
-	// user := m.App.Session.Get(r.Context(), "user").(model.User)
-	// data["products"] = user.Products
-	// data["user"] = user
+	g, ctx := errgroup.WithContext(r.Context())
+
+	for i := 1; i < 5; i++ {
+		id := i
+		g.Go(func() error {
+			fileName := "file" + strconv.Itoa(id) //file1/2/3/4/
+			file, header, err := r.FormFile(fileName)
+			if err != nil || header.Size == 0 {
+				// http.Error(w, err.Error(), http.StatusBadRequest)
+				fmt.Println(err)
+				return err
+			} else {
+				defer file.Close()
+				s3imgType, s3err := storeImagesS3(w, r, id, 1, m.App.AWSS3Session)
+				if s3err != nil {
+					m.App.Error.Println("S3 error", err)
+					fmt.Println("")
+					form.Errors.Add("fileupload", "Please only use .jpeg/ .png files not exceeding 1MB in size")
+				} else {
+					s3ImageInformation = append(s3ImageInformation, imageIndex{index: id, imageType: s3imgType})
+				}
+			}
+			select {
+			case <-ctx.Done():
+				return ctx.Err()
+			default:
+				return nil
+			}
+		})
+	}
+	g.Go(func() error {
+
+		form.Required("productname", "price", "brand")
+		form.CheckLength("productname", 1, 255)
+		productPrice = form.ProcessPrice("price")
+		if len(r.FormValue("productdescription")) == 0 {
+			//retain old value.
+			fmt.Println("triggered1")
+			productDescription = product.Description
+		} else {
+			fmt.Println("triggered2")
+			form.CheckLength("productdescription", 1, 400)
+			productDescription = r.FormValue("productdescription")
+
+		}
+
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+			return nil
+		}
+	})
+
+	if err := g.Wait(); err != nil {
+		m.App.Error.Println(err)
+		// form.Errors.Add("fileupload", "A miniumum of 4 images are required")
+	}
+
+	// sort.Slice(imageIndex)
+	fmt.Println("this is the unsorted index", s3ImageInformation)
+
+	sort.Slice(s3ImageInformation, func(i, j int) bool {
+		return s3ImageInformation[i].index < s3ImageInformation[j].index
+	})
+
+	fmt.Println("this is the sorted index", s3ImageInformation)
+
+	s3ImageInformation = append(s3ImageInformation, imageIndex{index: id, imageType: s3imgType})
+
+	var productImageURL []string
+	for _, v := range s3ImageInformation {
+
+		s := config.AWSProductImageLink
+		productImageURL = append(productImageURL, s+strconv.Itoa(1)+"_"+strconv.Itoa(v.index)+v.imageType)
+
+	}
+
+	var editedProduct = model.Product{
+
+		ID:          productIDInt,
+		Brand:       r.FormValue("brand"),
+		Title:       r.FormValue("productname"),
+		Description: productDescription,
+		Price:       productPrice,
+		Images:      []string{"https://wooteam-productslist.s3.ap-southeast-1.amazonaws.com/product_list/images/50_1.jpeg"},
+	}
+
+	if len(form.Errors) != 0 {
+		if err := render.Template(w, r, "editproduct.page.html", &render.TemplateData{
+			Data: data,
+			Form: form,
+		}); err != nil {
+			m.App.Error.Println(err)
+		}
+		return
+
+	} else {
+
+		g2, ctx := errgroup.WithContext(r.Context())
+
+		g2.Go(func() error {
+			err := m.DB.UpdateProducts(editedProduct)
+			if err != nil {
+				return err
+			}
+
+			select {
+			case <-ctx.Done():
+				return ctx.Err()
+			default:
+				return nil
+			}
+		})
+
+		// index for elastic search
+
+		g2.Go(func() error {
+			put1, err := m.App.AWSClient.Index().
+				Index("sample_product_list").
+				Type("sampleproducttype").
+				Id(strconv.Itoa(editedProduct.ID)).
+				BodyJson(editedProduct).
+				Do(r.Context())
+
+			if err != nil {
+				// Handle error
+				panic(err)
+			}
+			fmt.Printf("Indexed tweet %s to index %s, type %s\n", put1.Id, put1.Index, put1.Type)
+
+			select {
+			case <-ctx.Done():
+				return ctx.Err()
+			default:
+				return nil
+			}
+		})
+
+		if err := g2.Wait(); err != nil {
+			m.App.Error.Println("error from g2", err)
+			// form.Errors.Add("fileupload", "A miniumum of 4 images are required")
+		}
+
+		m.App.Session.Put(r.Context(), "flash", "You've successfully edited your product!")
+		m.App.Info.Println("Register: redirecting to user's account page")
+		productRedirectLink := fmt.Sprintf("/v1/products/%s", productID)
+		http.Redirect(w, r, productRedirectLink, http.StatusSeeOther)
+
+	}
+
 	if err := render.Template(w, r, "editproduct.page.html", &render.TemplateData{
 		Data: data,
-		Form: &form.Form{},
+		Form: form,
 	}); err != nil {
 		m.App.Error.Println(err)
 	}

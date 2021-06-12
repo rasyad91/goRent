@@ -16,27 +16,27 @@
                         <div class="row">
                            <div class="col-sm text-center mb-3">
                               <label for="file1">
-                                 <img src="https://i.ibb.co/Mp4mmmG/add-image.png" width="85px">
+                                 <img id="output" src="https://i.ibb.co/Mp4mmmG/add-image.png" width="85px">
                               </label>
-                              <input type="file" id="file1" style="display:none" name="file1" />
+                              <input type="file" id="file1" style="display:none" name="file1" accept="image/*" onchange="loadFile1(event)"/>
                            </div>
                            <div class="col-sm text-center mb-3">
                               <label for="file2">
-                                 <img src="https://i.ibb.co/Mp4mmmG/add-image.png" width="85px">
+                                 <img id="output2" src="https://i.ibb.co/Mp4mmmG/add-image.png" width="85px">
                               </label>
-                              <input type="file" id="file2" style="display:none" name="file2" />
+                              <input type="file" id="file2" style="display:none" name="file2" accept="image/*" onchange="loadFile2(event)"/>
                            </div>
                            <div class="col-sm text-center mb-3">
                               <label for="file3">
-                                 <img src="https://i.ibb.co/Mp4mmmG/add-image.png" width="85px">
+                                 <img id="output3" src="https://i.ibb.co/Mp4mmmG/add-image.png" width="85px">
                               </label>
-                              <input type="file" id="file3" style="display:none" name="file3" />
+                              <input type="file" id="file3" style="display:none" name="file3" accept="image/*" onchange="loadFile3(event)"/>
                            </div>
                            <div class="col-sm text-center mb-3">
                               <label for="file4">
-                                 <img src="https://i.ibb.co/Mp4mmmG/add-image.png" width="85px">
+                                 <img id="output4" src="https://i.ibb.co/Mp4mmmG/add-image.png" width="85px">
                               </label>
-                              <input type="file" id="file4" style="display:none" name="file4" />
+                              <input type="file" id="file4" style="display:none" name="file4" accept="image/*" onchange="loadFile4(event)"/>
                            </div>
                         </div>
                      </div>
@@ -109,4 +109,25 @@
       </div>
    </div>
 </div>
+{{end}}
+
+{{define "script"}}
+<script>
+var loadFile1 = function(event) {
+	var image = document.getElementById('output');
+	image.src = URL.createObjectURL(event.target.files[0]);
+};
+var loadFile2 = function(event) {
+	var image = document.getElementById('output2');
+	image.src = URL.createObjectURL(event.target.files[0]);
+};
+var loadFile3 = function(event) {
+	var image = document.getElementById('output3');
+	image.src = URL.createObjectURL(event.target.files[0]);
+};
+var loadFile4 = function(event) {
+	var image = document.getElementById('output4');
+	image.src = URL.createObjectURL(event.target.files[0]);
+};
+</script>
 {{end}}
