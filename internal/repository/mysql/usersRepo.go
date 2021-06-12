@@ -29,7 +29,7 @@ func (m *DBrepo) EmailExist(e string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 	var email string
-	err := m.DB.QueryRowContext(ctx, "SELECT * FROM goRent.Users where email=?", e).Scan(
+	err := m.DB.QueryRowContext(ctx, "SELECT * FROM gorent.users where email=?", e).Scan(
 		&email,
 	)
 	if err == sql.ErrNoRows {
@@ -45,7 +45,7 @@ func (m *DBrepo) GetUser(username string) (model.User, error) {
 	defer cancel()
 
 	u := model.User{}
-	if err := m.DB.QueryRowContext(ctx, "SELECT id,username,image_url,email,password,access_level,rating,postal_code,street_name, block,unit_number,created_at, updated_at FROM goRent.Users where username=?", username).
+	if err := m.DB.QueryRowContext(ctx, "SELECT id,username,image_url,email,password,access_level,rating,postal_code,street_name, block,unit_number,created_at, updated_at FROM gorent.users where username=?", username).
 		Scan(
 			&u.ID,
 			&u.Username,
@@ -223,7 +223,7 @@ func (m *DBrepo) runQuery(ctx context.Context, user *model.User, query string, s
 func (m *DBrepo) InsertUser(u model.User) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
-	_, err := m.ExecContext(ctx, "INSERT INTO goRent.users (username,email,password,image_url,postal_code,street_name,block,unit_number,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?);",
+	_, err := m.ExecContext(ctx, "INSERT INTO gorent.users (username,email,password,image_url,postal_code,street_name,block,unit_number,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?);",
 		u.Username, u.Email, u.Password, u.Image_URL,
 		u.Address.PostalCode, u.Address.StreetName, u.Address.Block, u.Address.UnitNumber,
 		time.Now(), time.Now())
@@ -238,16 +238,16 @@ func (m *DBrepo) EditUser(u model.User, editType string) error {
 	defer cancel()
 	err := error(nil)
 	if editType == "address" {
-		_, err = m.ExecContext(ctx, "UPDATE goRent.users SET block = ?, street_name = ?, unit_number = ?, postal_code = ? WHERE id = ?", u.Address.Block, u.Address.StreetName, u.Address.UnitNumber, u.Address.PostalCode, u.ID)
+		_, err = m.ExecContext(ctx, "UPDATE gorent.users SET block = ?, street_name = ?, unit_number = ?, postal_code = ? WHERE id = ?", u.Address.Block, u.Address.StreetName, u.Address.UnitNumber, u.Address.PostalCode, u.ID)
 		fmt.Println("AddressChange test:", u)
 	} else if editType == "profile" {
-		_, err = m.ExecContext(ctx, "UPDATE goRent.users SET username = ?, email = ? WHERE id = ?", u.Username, u.Email, u.ID)
+		_, err = m.ExecContext(ctx, "UPDATE gorent.users SET username = ?, email = ? WHERE id = ?", u.Username, u.Email, u.ID)
 		fmt.Println("ProfileChange test:", u)
 	} else if editType == "profileImage" {
-		_, err = m.ExecContext(ctx, "UPDATE goRent.users SET image_url = ? WHERE id = ?", u.Image_URL, u.ID)
+		_, err = m.ExecContext(ctx, "UPDATE gorent.users SET image_url = ? WHERE id = ?", u.Image_URL, u.ID)
 		fmt.Println("ProfileImage test:", u)
 	} else {
-		_, err = m.ExecContext(ctx, "UPDATE goRent.users SET password = ? WHERE id = ?", u.Password, u.ID)
+		_, err = m.ExecContext(ctx, "UPDATE gorent.users SET password = ? WHERE id = ?", u.Password, u.ID)
 		fmt.Println("PassWordChange test:", u)
 	}
 	if err != nil {
