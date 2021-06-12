@@ -242,7 +242,7 @@ func (m *DBrepo) GetProductNextIndex() (int, error) {
 func (m *DBrepo) InsertProduct(p model.Product) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
-	_, err := m.ExecContext(ctx, "INSERT INTO goRent.products (id,owner_id,brand,category,title,rating,description,price,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?);",
+	_, err := m.ExecContext(ctx, "INSERT INTO products (id,owner_id,brand,category,title,rating,description,price,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?);",
 		p.ID, p.OwnerID, p.Brand, p.Category, p.Title, p.Rating, p.Description, p.Price, p.CreatedAt, p.UpdatedAt)
 
 	for _, v := range p.Images {
@@ -262,7 +262,7 @@ func (m *DBrepo) InsertProduct(p model.Product) error {
 func (m *DBrepo) InsertProductImages(i int, s string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
-	_, err := m.ExecContext(ctx, "INSERT INTO goRent.images (product_id, url, created_at, updated_at) VALUES (?,?,?,?);",
+	_, err := m.ExecContext(ctx, "INSERT INTO gorent.images (product_id, url, created_at, updated_at) VALUES (?,?,?,?);",
 		i, s, time.Now(), time.Now())
 	if err != nil {
 		return fmt.Errorf("db InsertProductImages: %v", err)
