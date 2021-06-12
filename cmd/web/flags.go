@@ -7,20 +7,27 @@ import (
 )
 
 var (
-	accessKey   *string
-	secretKey   *string
-	esUrl       *string
-	sniff       *bool
-	region      *string
-	port        *string
-	identifier  *string
-	domain      *string
+	accessKey *string
+	secretKey *string
+	esUrl     *string
+	sniff     *bool
+	region    *string
+
+	port       *string
+	identifier *string
+	domain     *string
+
 	dbUser      *string
 	dbPassword  *string
 	dbName      *string
 	dbHost      *string
 	dbPort      *string
 	dbParseTime *bool
+
+	mailhost     *string
+	mailport     *int
+	mailUsername *string
+	mailPassword *string
 )
 
 func init() {
@@ -41,5 +48,12 @@ func init() {
 	esUrl = flag.String("esUrl", "", "Elasticsearch URL")
 	sniff = flag.Bool("sniff", false, "Enable or disable sniffing")
 	region = flag.String("region", "", "AWS Region name")
+
+	// email flags
+	mailhost = flag.String("mailhost", "localhost", "mail host")
+	mailport = flag.Int("mailport", 1025, "mail port")
+	mailUsername = flag.String("mailuser", "", "mailuser")
+	mailPassword = flag.String("mailpassword", "", "mailpassword")
+
 	flag.Parse()
 }

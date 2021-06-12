@@ -3,6 +3,7 @@ package handler
 import (
 	"goRent/internal/config"
 	"goRent/internal/driver/mysqlDriver"
+	"goRent/internal/model"
 	"goRent/internal/render"
 	"goRent/internal/repository"
 	"goRent/internal/repository/mysql"
@@ -32,6 +33,18 @@ func New(r *Repository) {
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
 	// m.App.Session.Put(r.Context(), "flash", "let's see")
 	data := make(map[string]interface{})
+
+	// x := model.MailData{}
+
+	msg := model.MailData{
+		To:       "hello@emai.com",
+		From:     "me@here.com",
+		Subject:  "Reservation Confirmation",
+		Content:  "hello",
+		Template: "basic.html",
+	}
+
+	m.App.MailChan <- msg
 
 	if err := render.Template(w, r, "home.page.html", &render.TemplateData{
 		Data: data,

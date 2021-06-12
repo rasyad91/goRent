@@ -12,6 +12,7 @@ import (
 type AppConfig struct {
 	Session       *scs.SessionManager
 	Domain        string
+	Production    bool
 	PreferenceMap map[string]string
 	Info          *log.Logger
 	Error         *log.Logger

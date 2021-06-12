@@ -111,6 +111,7 @@ func main() {
 	render.New(app)
 	app.Info.Printf("Handlers initialized...")
 
+	app.MailChan = make(chan model.MailData)
 	app.Info.Printf("Listen for mail channel...")
 	listenForMail()
 	defer close(app.MailChan)
