@@ -8,8 +8,11 @@ import (
 	"goRent/internal/model"
 	"goRent/internal/render"
 	"net/http"
+	"net/url"
+	"path/filepath"
 	"sort"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -172,14 +175,18 @@ func (m *Repository) AddProduct(w http.ResponseWriter, r *http.Request) {
 
 func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 
-	// data := make(map[string]interface{})
-	// var imageIndex []int
 	type imageIndex struct {
 		index     int
 		imageType string
 	}
 
-	var s3ImageInformation []imageIndex
+	var (
+		productCategory    string
+		productPrice       float32
+		s3ImageInformation []imageIndex
+	)
+
+	u := m.App.Session.Get(r.Context(), "user").(model.User)
 
 	form := form.New(r.PostForm)
 
@@ -190,6 +197,7 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	}
 
 	g, ctx := errgroup.WithContext(r.Context())
+	var imgCount int = 0
 
 	for i := 1; i < 5; i++ {
 		id := i
@@ -202,12 +210,14 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 				return err
 			} else {
 				defer file.Close()
+				// uploader := s3manager.NewUploader(m.App.AWSS3Session)
 				s3imgType, s3err := storeImagesS3(w, r, id, productIndex, m.App.AWSS3Session)
 				if s3err != nil {
 					m.App.Error.Println("S3 error", err)
 					fmt.Println("")
 					form.Errors.Add("fileupload", "Please only use .jpeg/ .png files not exceeding 1MB in size")
 				} else {
+					imgCount++
 					s3ImageInformation = append(s3ImageInformation, imageIndex{index: id, imageType: s3imgType})
 				}
 			}
@@ -219,30 +229,30 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 			}
 		})
 	}
+	g.Go(func() error {
+
+		form.Required("productname", "price", "brand", "productdescription")
+		form.CheckLength("productname", 1, 255)
+		form.CheckLength("price", 1, 5)
+		form.CheckLength("productdescription", 1, 400)
+		productCategory = form.RetrieveCategory("category")
+		productPrice = form.ProcessPrice("price")
+
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+			return nil
+		}
+	})
 
 	if err := g.Wait(); err != nil {
 		m.App.Error.Println(err)
-		form.Errors.Add("fileupload", "A miniumum of 4 images are required")
-
+		if imgCount == 0 {
+			form.Errors.Add("fileupload", "Please at least upload one image")
+		}
+		// form.Errors.Add("fileupload", "A miniumum of 4 images are required")
 	}
-
-	form.Required("productname", "price", "brand", "productdescription")
-	form.CheckLength("productname", 1, 255)
-	form.CheckLength("price", 1, 5)
-	form.CheckLength("productdescription", 1, 400)
-
-	productname := r.FormValue("productname")
-	price := r.FormValue("price")
-	brand := r.FormValue("brand")
-	productdescription := r.FormValue("productdescription")
-	category := r.FormValue("category")
-
-	fmt.Println("product name", productname)
-	fmt.Println("price", price)
-	fmt.Println("brand", brand)
-	fmt.Println("productdescription", productdescription)
-	fmt.Println("category", category)
-	fmt.Println("routine ended")
 
 	// sort.Slice(imageIndex)
 	fmt.Println("this is the unsorted index", s3ImageInformation)
@@ -256,12 +266,27 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	var productImageURL []string
 	for _, v := range s3ImageInformation {
 
-		s := "samples3URLstring"
-		productImageURL = append(productImageURL, s+strconv.Itoa(v.index)+v.imageType)
+		s := config.AWSProductImageLink
+		productImageURL = append(productImageURL, s+strconv.Itoa(productIndex)+"_"+strconv.Itoa(v.index)+v.imageType)
 
 	}
 
-	fmt.Println("this is the product type url", productImageURL)
+	var newProduct = model.Product{
+
+		ID:          productIndex,
+		OwnerID:     u.ID,
+		OwnerName:   u.Username,
+		Brand:       r.FormValue("brand"),
+		Category:    productCategory,
+		Title:       r.FormValue("productname"),
+		Rating:      0,
+		Description: r.FormValue("productdescription"),
+		Price:       productPrice,
+		Reviews:     []model.ProductReview{},
+		Images:      productImageURL,
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
+	}
 
 	if len(form.Errors) != 0 {
 		if err := render.Template(w, r, "addproduct.page.html", &render.TemplateData{
@@ -270,12 +295,64 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 			m.App.Error.Println(err)
 		}
 		return
+	} else {
+
+		g2, ctx := errgroup.WithContext(r.Context())
+
+		g2.Go(func() error {
+			err := m.DB.InsertProduct(newProduct)
+			if err != nil {
+				return err
+			}
+
+			select {
+			case <-ctx.Done():
+				return ctx.Err()
+			default:
+				return nil
+			}
+		})
+
+		// index for elastic search
+
+		g2.Go(func() error {
+			put1, err := m.App.AWSClient.Index().
+				Index("sample_product_list").
+				Type("sampleproducttype").
+				Id(strconv.Itoa(newProduct.ID)).
+				BodyJson(newProduct).
+				Do(r.Context())
+
+			if err != nil {
+				// Handle error
+				panic(err)
+			}
+			fmt.Printf("Indexed tweet %s to index %s, type %s\n", put1.Id, put1.Index, put1.Type)
+
+			select {
+			case <-ctx.Done():
+				return ctx.Err()
+			default:
+				return nil
+			}
+		})
+
+		if err := g2.Wait(); err != nil {
+			m.App.Error.Println("error from g2", err)
+			// form.Errors.Add("fileupload", "A miniumum of 4 images are required")
+		}
+
+		m.App.Session.Put(r.Context(), "flash", "You've successfully created your product!")
+		m.App.Info.Println("Register: redirecting to user's account page")
+		http.Redirect(w, r, "/v1/user/products", http.StatusSeeOther)
+
 	}
 }
 
 func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, sess *awsS3.Session) (string, error) {
 
 	const MAX_UPLOAD_SIZE = 1024 * 1024 // 1MB
+
 	uploader := s3manager.NewUploader(sess)
 
 	r.Body = http.MaxBytesReader(w, r.Body, MAX_UPLOAD_SIZE)
@@ -309,20 +386,19 @@ func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, 
 		return "", fmt.Errorf("only .jpeg and .png files are allowed: %s", err)
 	}
 
-	var s3fileExtension string
-	if filetype == "image/jpeg" {
-		s3fileExtension = ".jpeg"
-	} else {
-		s3fileExtension = ".png"
-	}
+	// Reset the file
+	file.Seek(0, 0)
 
-	s3FileName := strconv.Itoa(productIndex) + "_" + strconv.Itoa(i) + s3fileExtension
+	s3FileName := strconv.Itoa(productIndex) + "_" + strconv.Itoa(i) + filepath.Ext(header.Filename)
 
 	_, err = uploader.Upload(&s3manager.UploadInput{
-		Bucket: aws.String(config.AWSProductBucket),
-		ACL:    aws.String("public-read"),
-		Key:    aws.String(s3FileName),
-		Body:   file,
+		Bucket:               aws.String(config.AWSProductBucket),
+		ACL:                  aws.String("public-read"),
+		Key:                  aws.String(s3FileName),
+		Body:                 file,
+		ContentType:          aws.String(filetype),
+		ServerSideEncryption: aws.String("AES256"),
+		StorageClass:         aws.String("INTELLIGENT_TIERING"),
 	})
 
 	if err != nil {
@@ -331,7 +407,7 @@ func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, 
 	}
 	fmt.Println("upload to S3 bucket was successful; please check")
 
-	return s3fileExtension, nil
+	return filepath.Ext(header.Filename), nil
 
 	//return amz link:
 }
@@ -348,12 +424,11 @@ func storeProfileImage(w http.ResponseWriter, r *http.Request, owner_ID int, ses
 
 	// fileName := "file" + strconv.Itoa(owner_ID) //file1
 
-	file, fileHeader, err := r.FormFile("profileImage")
+	file, header, err := r.FormFile("profileImage")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return "", err
 	}
-	_ = fileHeader
 
 	defer file.Close()
 
@@ -370,22 +445,29 @@ func storeProfileImage(w http.ResponseWriter, r *http.Request, owner_ID int, ses
 		return "", err
 	}
 
-	var s3fileExtension string
-	if filetype == "image/jpeg" {
-		s3fileExtension = ".jpeg"
-	} else {
-		s3fileExtension = ".png"
-	}
+	// Reset the file
+	file.Seek(0, 0)
 
-	s3FileName := strconv.Itoa(owner_ID) + s3fileExtension
 	// s3FileName := "-1" + s3fileExtension
 
+	s3FileName := "-1" + filepath.Ext(header.Filename)
+
 	_, err = uploader.Upload(&s3manager.UploadInput{
-		Bucket: aws.String("wooteam-productslist/profile_images/"),
-		ACL:    aws.String("public-read"),
-		Key:    aws.String(s3FileName),
-		Body:   file,
+		Bucket:               aws.String(config.AWSProfileBucketLink),
+		ACL:                  aws.String("public-read"),
+		Key:                  aws.String(s3FileName),
+		Body:                 file,
+		ContentType:          aws.String(filetype),
+		ServerSideEncryption: aws.String("AES256"),
+		StorageClass:         aws.String("INTELLIGENT_TIERING"),
 	})
+
+	// _, err = uploader.Upload(&s3manager.UploadInput{
+	// 	Bucket: aws.String("wooteam-productslist/profile_images/"),
+	// 	ACL:    aws.String("public-read"),
+	// 	Key:    aws.String(s3FileName),
+	// 	Body:   file,
+	// })
 
 	if err != nil {
 		fmt.Println("error with uploading file", err)
@@ -396,6 +478,60 @@ func storeProfileImage(w http.ResponseWriter, r *http.Request, owner_ID int, ses
 
 }
 
-// func checkEmptyUpload(w http.ResponseWriter, r *http.Request, i int, ch chan<- error, wg *sync.WaitGroup) {
+func (m *Repository) EditProduct(w http.ResponseWriter, r *http.Request) {
 
-// }
+	data := make(map[string]interface{})
+
+	x := r.URL.Query()
+	fmt.Println(x)
+	res := strings.ToLower(url.QueryEscape(x["edit"][0])) //hockey+sticks
+
+	productIdEdit, err := strconv.Atoi(res)
+	if err != nil {
+		m.App.Error.Println("error occured while converting product index in query string to int", err)
+	}
+
+	product, err := m.DB.GetProductByID(r.Context(), productIdEdit)
+
+	data["product"] = product
+
+	fmt.Println("this shows product infomation", product)
+	// user := m.App.Session.Get(r.Context(), "user").(model.User)
+	// data["products"] = user.Products
+	// data["user"] = user
+	if err := render.Template(w, r, "editproduct.page.html", &render.TemplateData{
+		Data: data,
+		Form: &form.Form{},
+	}); err != nil {
+		m.App.Error.Println(err)
+	}
+}
+
+func (m *Repository) EditProductPost(w http.ResponseWriter, r *http.Request) {
+
+	data := make(map[string]interface{})
+
+	x := r.URL.Query()
+	fmt.Println(x)
+	res := strings.ToLower(url.QueryEscape(x["edit"][0])) //hockey+sticks
+
+	productIdEdit, err := strconv.Atoi(res)
+	if err != nil {
+		m.App.Error.Println("error occured while converting product index in query string to int", err)
+	}
+
+	product, err := m.DB.GetProductByID(r.Context(), productIdEdit)
+
+	data["product"] = product
+
+	fmt.Println("this shows product infomation", product)
+	// user := m.App.Session.Get(r.Context(), "user").(model.User)
+	// data["products"] = user.Products
+	// data["user"] = user
+	if err := render.Template(w, r, "editproduct.page.html", &render.TemplateData{
+		Data: data,
+		Form: &form.Form{},
+	}); err != nil {
+		m.App.Error.Println(err)
+	}
+}

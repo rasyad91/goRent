@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/url"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -67,4 +68,36 @@ func (f *Form) Required(fields ...string) {
 
 func (f *Form) Valid() bool {
 	return len(f.Errors) == 0
+}
+
+//retrieves category informatin
+func (f *Form) RetrieveCategory(field string) string {
+	var startWordIndex int
+	value := strings.TrimSpace(f.Get(field))
+
+	categoryArray := strings.Split(value, "")
+
+	lastIndex := len(categoryArray) - 1
+
+	for p := lastIndex; p > -1; p-- {
+		if categoryArray[p] == ">" {
+			startWordIndex = p + 2
+			break
+		}
+	}
+	categoryArray = categoryArray[startWordIndex:]
+	res := strings.Join(categoryArray, "")
+	return res
+}
+
+//retrieves category informatin
+func (f *Form) ProcessPrice(field string) float32 {
+
+	value := f.Get(field)
+	res, err := strconv.ParseFloat(value, 64)
+	if err != nil {
+		f.Errors.Add(field, fmt.Sprintf("%s should not contain alphabets or any letters", field))
+	}
+
+	return float32(res)
 }
