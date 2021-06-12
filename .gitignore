@@ -1,5 +1,6 @@
 .DS_Store
 *.log
+*.sh
 run.sh
 run-dev.sh
 
