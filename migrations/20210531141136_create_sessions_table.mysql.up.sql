@@ -1,4 +1,4 @@
-use goRent;
+use gorent;
 
 CREATE TABLE sessions (
 	token CHAR(43) PRIMARY KEY,
