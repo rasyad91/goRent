@@ -26,50 +26,40 @@ func routes() http.Handler {
 	mux.HandleFunc("/register", handler.Repo.Register).Methods("GET")
 	mux.HandleFunc("/register", handler.Repo.RegisterPost).Methods("POST")
 
-	mux.HandleFunc("/user/{userID}/account", handler.Repo.UserAccount).Methods("GET")
-
-	// mux.HandleFunc("/user/{userID}/bookings", handler.Repo.UserBookings).Methods("GET")
-	// mux.HandleFunc("/user/{userID}/rents", handler.Repo.UserRents).Methods("GET")
-	// mux.HandleFunc("/user/{userID}/products", handler.Repo.UserProducts).Methods("GET")
-
-	mux.HandleFunc("/user/logout", handler.Repo.Logout).Methods("GET")
-	mux.HandleFunc("/v1/user/account", handler.Repo.UserAccount).Methods("GET")
-	mux.HandleFunc("/v1/user/account/profile", handler.Repo.EditUserAccount).Methods("GET")
-	mux.HandleFunc("/v1/user/account/profile", handler.Repo.EditUserAccountPost).Methods("POST")
-	mux.HandleFunc("/v1/user/account/payment", handler.Repo.Payment).Methods("GET")
-	mux.HandleFunc("/v1/user/cart", handler.Repo.GetCart).Methods("GET")
-	mux.HandleFunc("/v1/user/products", handler.Repo.UserProducts).Methods("GET")
-	//add in userPost to delete or edit
-	mux.HandleFunc("/v1/user/rents", handler.Repo.UserRents).Methods("GET")
-	mux.HandleFunc("/v1/user/bookings", handler.Repo.UserBookings).Methods("GET")
-
-	mux.HandleFunc("/v1/user/addproduct", handler.Repo.AddProduct).Methods("GET")
-	mux.HandleFunc("/v1/user/createproduct", handler.Repo.CreateProduct).Methods("POST")
-
-	mux.HandleFunc("/v1/user/editproduct", handler.Repo.EditProduct).Methods("GET")
-	mux.HandleFunc("/v1/user/editproduct", handler.Repo.EditProductPost).Methods("POST")
-
-	mux.PathPrefix("/auth").Subrouter().Use(Auth)
-
 	mux.HandleFunc("/v1/products/{productID}", handler.Repo.ShowProductByID).Methods("GET")
-	mux.HandleFunc("/v1/products/addRent", handler.Repo.PostRent).Methods("POST")
-	mux.HandleFunc("/v1/products/removeRent", handler.Repo.DeleteRent).Methods("POST")
 
-	mux.HandleFunc("/v1/products/{productID}/review", handler.Repo.PostReview).Methods("POST")
+	u := mux.PathPrefix("/v1/user").Subrouter()
+	u.Use(Auth)
 
-	mux.HandleFunc("/v1/user/cart", handler.Repo.GetCart).Methods("GET")
-	mux.HandleFunc("/v1/user/cart/checkout", handler.Repo.GetCheckout).Methods("GET")
-	mux.HandleFunc("/v1/user/cart/checkout/confirm", handler.Repo.PostCheckout).Methods("POST")
-	mux.HandleFunc("/v1/user/cart/checkout/confirm", handler.Repo.CheckoutConfirm).Methods("GET")
+	u.HandleFunc("/logout", handler.Repo.Logout).Methods("GET")
+
+	u.HandleFunc("/account", handler.Repo.UserAccount).Methods("GET")
+	u.HandleFunc("/account/profile", handler.Repo.EditUserAccount).Methods("GET")
+	u.HandleFunc("/account/profile", handler.Repo.EditUserAccountPost).Methods("POST")
+	u.HandleFunc("/account/payment", handler.Repo.Payment).Methods("GET")
+
+	u.HandleFunc("/cart", handler.Repo.GetCart).Methods("GET")
+	u.HandleFunc("/products", handler.Repo.UserProducts).Methods("GET")
+	u.HandleFunc("/rents", handler.Repo.UserRents).Methods("GET")
+	u.HandleFunc("/bookings", handler.Repo.UserBookings).Methods("GET")
+
+	u.HandleFunc("/cart", handler.Repo.GetCart).Methods("GET")
+	u.HandleFunc("/cart/checkout", handler.Repo.GetCheckout).Methods("GET")
+	u.HandleFunc("/cart/checkout/confirm", handler.Repo.PostCheckout).Methods("POST")
+	u.HandleFunc("/cart/checkout/confirm", handler.Repo.CheckoutConfirm).Methods("GET")
+
+	u.HandleFunc("/addproduct", handler.Repo.AddProduct).Methods("GET")
+	u.HandleFunc("/createproduct", handler.Repo.CreateProduct).Methods("POST")
+
+	u.HandleFunc("/editproduct", handler.Repo.EditProduct).Methods("GET")
+	u.HandleFunc("/editproduct", handler.Repo.EditProductPost).Methods("POST")
+
+	u.HandleFunc("/v1/products/addRent", handler.Repo.PostRent).Methods("POST")
+	u.HandleFunc("/v1/products/removeRent", handler.Repo.DeleteRent).Methods("POST")
+	u.HandleFunc("/v1/products/{productID}/review", handler.Repo.PostReview).Methods("POST")
 
 	fileServer := http.FileServer(http.Dir("./static/"))
 	mux.PathPrefix("/static/").Handler(http.StripPrefix("/static", fileServer))
-
-	// static files
-
-	// fileServer := http.FileServer(http.Dir("/static/"))
-	// mux.Handle("/static/", http.StripPrefix("/static", fileServer))
-	// mux.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 
 	return mux
 }

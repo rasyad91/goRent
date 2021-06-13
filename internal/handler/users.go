@@ -28,6 +28,7 @@ func (m *Repository) UserAccount(w http.ResponseWriter, r *http.Request) {
 		m.App.Error.Println(err)
 	}
 }
+
 func (m *Repository) EditUserAccount(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
 	u := m.App.Session.Get(r.Context(), "user").(model.User)
