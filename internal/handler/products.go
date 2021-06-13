@@ -211,7 +211,7 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 			} else {
 				defer file.Close()
 				// uploader := s3manager.NewUploader(m.App.AWSS3Session)
-				s3imgType, s3err := storeImagesS3(w, r, id, productIndex, m.App.AWSS3Session)
+				s3imgType, s3err := storeImagesS3(w, r, id, productIndex, m.App.AWSS3Session, false)
 				if s3err != nil {
 					m.App.Error.Println("S3 error", err)
 					fmt.Println("")
@@ -349,7 +349,7 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, sess *awsS3.Session) (string, error) {
+func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, sess *awsS3.Session, edit bool) (string, error) {
 
 	const MAX_UPLOAD_SIZE = 1024 * 1024 // 1MB
 
@@ -389,8 +389,12 @@ func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, 
 	// Reset the file
 	file.Seek(0, 0)
 
-	s3FileName := strconv.Itoa(productIndex) + "_" + strconv.Itoa(i) + filepath.Ext(header.Filename)
-
+	var s3FileName string
+	if !edit {
+		s3FileName = fmt.Sprintf(strconv.Itoa(productIndex) + "_" + strconv.Itoa(i) + filepath.Ext(header.Filename))
+	} else {
+		s3FileName = fmt.Sprintf("edited_" + strconv.Itoa(productIndex) + "_" + strconv.Itoa(i) + filepath.Ext(header.Filename))
+	}
 	_, err = uploader.Upload(&s3manager.UploadInput{
 		Bucket:               aws.String(config.AWSProductBucket),
 		ACL:                  aws.String("public-read"),
@@ -409,7 +413,6 @@ func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, 
 
 	return filepath.Ext(header.Filename), nil
 
-	//return amz link:
 }
 
 func storeProfileImage(w http.ResponseWriter, r *http.Request, owner_ID int, sess *awsS3.Session) (string, error) {
@@ -448,8 +451,6 @@ func storeProfileImage(w http.ResponseWriter, r *http.Request, owner_ID int, ses
 	// Reset the file
 	file.Seek(0, 0)
 
-	// s3FileName := "-1" + s3fileExtension
-
 	s3FileName := "-1" + filepath.Ext(header.Filename)
 
 	_, err = uploader.Upload(&s3manager.UploadInput{
@@ -461,13 +462,6 @@ func storeProfileImage(w http.ResponseWriter, r *http.Request, owner_ID int, ses
 		ServerSideEncryption: aws.String("AES256"),
 		StorageClass:         aws.String("INTELLIGENT_TIERING"),
 	})
-
-	// _, err = uploader.Upload(&s3manager.UploadInput{
-	// 	Bucket: aws.String("wooteam-productslist/profile_images/"),
-	// 	ACL:    aws.String("public-read"),
-	// 	Key:    aws.String(s3FileName),
-	// 	Body:   file,
-	// })
 
 	if err != nil {
 		fmt.Println("error with uploading file", err)
@@ -553,7 +547,7 @@ func (m *Repository) EditProductPost(w http.ResponseWriter, r *http.Request) {
 				return err
 			} else {
 				defer file.Close()
-				s3imgType, s3err := storeImagesS3(w, r, id, 1, m.App.AWSS3Session)
+				s3imgType, s3err := storeImagesS3(w, r, id, productIDInt, m.App.AWSS3Session, true)
 				if s3err != nil {
 					m.App.Error.Println("S3 error", err)
 					fmt.Println("")
@@ -605,18 +599,47 @@ func (m *Repository) EditProductPost(w http.ResponseWriter, r *http.Request) {
 	sort.Slice(s3ImageInformation, func(i, j int) bool {
 		return s3ImageInformation[i].index < s3ImageInformation[j].index
 	})
+	// s3ImageInformation = append(s3ImageInformation, imageIndex{index: id, imageType: s3imgType})
 
 	fmt.Println("this is the sorted index", s3ImageInformation)
 
-	s3ImageInformation = append(s3ImageInformation, imageIndex{index: id, imageType: s3imgType})
+	// var productImageURL []string
 
-	var productImageURL []string
-	for _, v := range s3ImageInformation {
+	//all the existing product images
+	var productImageURL = product.Images
+
+	// for _, v := range s3ImageInformation {
+
+	// 	s := config.AWSProductImageLink
+	// 	productImageURL = append(productImageURL, s+strconv.Itoa(1)+"_"+strconv.Itoa(v.index)+v.imageType)
+
+	// }
+
+	var imagesMap = make(map[int]int)
+
+	for k := range product.Images {
+		imagesMap[k] = k
+	}
+
+	fmt.Println("pleaese show me all images in imagesMap", imagesMap)
+
+	for k, v := range s3ImageInformation {
 
 		s := config.AWSProductImageLink
-		productImageURL = append(productImageURL, s+strconv.Itoa(1)+"_"+strconv.Itoa(v.index)+v.imageType)
+
+		if _, ok := imagesMap[v.index-1]; !ok {
+			productImageURL = append(productImageURL, s+"edited_"+strconv.Itoa(productIDInt)+"_"+strconv.Itoa(v.index)+v.imageType)
+		} else {
+			fmt.Println("not OK got called")
+			fmt.Println(productImageURL[v.index-1])
+			fmt.Println("the k value:", k)
+			productImageURL[v.index-1] = s + strconv.Itoa(productIDInt) + "_" + strconv.Itoa(v.index) + v.imageType
+			fmt.Println(productImageURL[v.index-1])
+		}
 
 	}
+
+	fmt.Println("this is the slice of new product image", productImageURL)
 
 	var editedProduct = model.Product{
 
