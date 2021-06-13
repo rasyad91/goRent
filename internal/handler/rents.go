@@ -27,14 +27,6 @@ func (m *Repository) PostRent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !helper.IsAuthenticated(r) {
-		m.App.Session.Put(r.Context(), "url", fmt.Sprintf("/v1/products/%d", productID))
-		m.App.Session.Put(r.Context(), "warning", "Sorry! You have to login first to make a booking.")
-		m.App.Info.Println("user not logged in to make rent, redirecting to login")
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		return
-	}
-
 	u := m.App.Session.Get(r.Context(), "user").(model.User)
 
 	start := r.PostFormValue("start_date")

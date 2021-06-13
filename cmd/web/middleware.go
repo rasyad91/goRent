@@ -18,6 +18,7 @@ func SessionLoad(next http.Handler) http.Handler {
 func Auth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if !helper.IsAuthenticated(r) {
+			app.Session.Put(r.Context(), "url", r.URL.String())
 			app.Session.Put(r.Context(), "warning", "Please login first")
 			http.Redirect(w, r, "/login", http.StatusFound)
 			return

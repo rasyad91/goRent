@@ -17,6 +17,7 @@ func (m *DBrepo) GetProductByID(ctx context.Context, id int) (model.Product, err
 	p := model.Product{}
 	g, ctx := errgroup.WithContext(ctx)
 
+	// query products
 	g.Go(func() error {
 		query := `select 
 						p.id, p.owner_id, p.brand, p.category, p.title, p.rating, p.description, p.price, p.created_at, p.updated_at

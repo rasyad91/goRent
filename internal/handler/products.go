@@ -187,11 +187,9 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	)
 
 	u := m.App.Session.Get(r.Context(), "user").(model.User)
-
 	form := form.New(r.PostForm)
 
 	productIndex, err := m.DB.GetProductNextIndex()
-
 	if err != nil {
 		m.App.Error.Println("error occured when retriving product ID from DB query", err)
 	}
@@ -202,10 +200,9 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	for i := 1; i < 5; i++ {
 		id := i
 		g.Go(func() error {
-			fileName := "file" + strconv.Itoa(id) //file1/2/3/4/
+			fileName := "file" + strconv.Itoa(id)
 			file, header, err := r.FormFile(fileName)
 			if err != nil || header.Size == 0 {
-				// http.Error(w, err.Error(), http.StatusBadRequest)
 				fmt.Println(err)
 				return err
 			} else {
@@ -603,7 +600,7 @@ func (m *Repository) EditProductPost(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("this is the sorted index", s3ImageInformation)
 
-	// var productImageURL []string
+	// s3ImageInformation = append(s3ImageInformation, imageIndex{index: id, imageType: s3imgType})
 
 	//all the existing product images
 	var productImageURL = product.Images
