@@ -93,7 +93,7 @@
           </div>
           <hr>
           <h5><a href="#">My Rented Products</a></h5>
-          {{$rents := $res.Rents}}
+          {{$rents := processedRents $res.Rents}}
           <div
             class="swiper-container swiper-container-initialized swiper-container-horizontal swiper-container-pointer-events">
             <div class="swiper-wrapper" id="swiper-wrapper-dde3f11d71d76b66" aria-live="polite"

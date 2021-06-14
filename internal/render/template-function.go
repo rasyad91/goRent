@@ -15,6 +15,7 @@ var function = template.FuncMap{
 	"floatToInt":       FloatToInt,
 	"substract":        Substract,
 	"unprocessedRents": UnprocessedRents,
+	"processedRents":   ProcessedRents,
 	"multiply":         Multiply,
 	"add":              Add,
 	"totalCostInCart":  TotalCostInCart,
@@ -57,6 +58,16 @@ func UnprocessedRents(rents []model.Rent) []model.Rent {
 	unprocessed := []model.Rent{}
 	for _, r := range rents {
 		if !r.Processed {
+			unprocessed = append(unprocessed, r)
+		}
+	}
+	return unprocessed
+}
+
+func ProcessedRents(rents []model.Rent) []model.Rent {
+	unprocessed := []model.Rent{}
+	for _, r := range rents {
+		if r.Processed {
 			unprocessed = append(unprocessed, r)
 		}
 	}
