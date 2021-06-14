@@ -34,18 +34,18 @@
                         <div class="col-md-4 mb-3">
                             <div class="card">
                                 <div class="card-img-top product-swap-image">
-                                    
-                                        {{if $a}}
-                                        {{if eq $u.ID .OwnerID}}
-                                        <div class="product-badge badge badge-warning">My product</div>
-                                        {{end}}
-                                        {{end}}
-                                        <a href="/v1/products/{{.ID}}"><img class="card-img img-fluid product-swap-image-front"
-                                            src="{{index .Images 0}}" alt="product"></a>
-                                        {{if gt (len .Images) 1}}
-                                        <img class="card-img img-fluid" src="{{index .Images 1}}" alt="product">
-                                        {{end}}
-                                    
+
+                                    {{if $a}}
+                                    {{if eq $u.ID .OwnerID}}
+                                    <div class="product-badge badge badge-warning">My product</div>
+                                    {{end}}
+                                    {{end}}
+                                    <a href="/v1/products/{{.ID}}"><img
+                                            class="card-img img-fluid product-swap-image-front"
+                                            src="{{index .Images 0}}" alt="product">
+                                    </a>
+
+
                                 </div>
                                 <div class="card-body">
                                     <div class="position-relative">
