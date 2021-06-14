@@ -80,7 +80,8 @@
                 <a class="text-muted" href="/searchresult?q={{$res.Category}}">{{$res.Category}}</a></li>
               <li>
                 <strong>Owner:</strong>
-                <a class="text-muted" href="/searchresult?q={{$res.Category}}">{{$res.OwnerName}}</a></li>
+                {{$res.OwnerName}}
+              </li>
             </ul>
 
             <form id="addRent" action="/v1/products/addRent" method="POST">

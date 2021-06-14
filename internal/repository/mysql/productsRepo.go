@@ -5,10 +5,13 @@ import (
 	"database/sql"
 	"fmt"
 	"goRent/internal/model"
+	"sync"
 	"time"
 
 	"golang.org/x/sync/errgroup"
 )
+
+var productLock sync.RWMutex
 
 func (m *DBrepo) GetProductByID(ctx context.Context, id int) (model.Product, error) {
 	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
@@ -235,6 +238,9 @@ func (m *DBrepo) GetAllProducts() ([]model.Product, error) {
 }
 
 func (m *DBrepo) GetProductNextIndex() (int, error) {
+
+	productLock.Lock()
+	defer productLock.Unlock()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
