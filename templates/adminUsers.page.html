@@ -7,6 +7,7 @@
     {{$res := index .Data "user"}}
     {{$AllUser := index .Data "AllUsers"}}
     {{$form := index .Form}}
+    {{$csrf := index .CSRFToken}}
     <div class="row">
       <!-- Customer Sidebar-->
           <div class="col-lg-3 col-xl-3 mb-3">
@@ -54,6 +55,7 @@
                         <th>Username</th>
                         <th>Access Level</th>
                         <th>Grant Access</th>
+                        <th>Remove Access</th>
                         <th>Delete All</th>
                     </tr>
                     {{range $user := $AllUser}}
@@ -64,7 +66,7 @@
                         <td class="py-4 text-center text-muted font-weight-normal">
                             <div class="col-1">
                                 <form method="POST" novalidate>
-                                    <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+                                    <input type="hidden" name="csrf_token" value="{{$csrf}}">
                                     <input type="hidden" name="action" value="accessGrant">
                                     <input type="hidden" name="userid" value={{$user.ID}}>
                                     <button type = "submit">
@@ -73,7 +75,30 @@
                                 </form>
                             </div>
                         </td>
-                        <td class="py-4 text-center text-muted font-weight-normal"><div class="col-1"><a class="btn" href="#"><i class="fas fa-trash"></i></a></div></td>
+                        <td class="py-4 text-center text-muted font-weight-normal">
+                            <div class="col-1">
+                                <form method="POST" novalidate>
+                                    <input type="hidden" name="csrf_token" value="{{$csrf}}">
+                                    <input type="hidden" name="action" value="removeAccess">
+                                    <input type="hidden" name="userid" value={{$user.ID}}>
+                                    <button type = "submit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                        <td class="py-4 text-center text-muted font-weight-normal">
+                            <div class="col-1">
+                                <form method="POST" novalidate>
+                                    <input type="hidden" name="csrf_token" value="{{$csrf}}">
+                                    <input type="hidden" name="action" value="massiveDelete">
+                                    <input type="hidden" name="userid" value={{$user.ID}}>
+                                    <button type = "submit">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
                     </tr>
                     {{end}}
                 </tbody>

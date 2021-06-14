@@ -48,13 +48,20 @@ func (m *Repository) AdminAccountPost(w http.ResponseWriter, r *http.Request) {
 	if action == "accessGrant" {
 		userID := r.FormValue("userid")
 		err := m.DB.GrantAccess(userID)
-		fmt.Println(err)
+		if err != nil {
+			m.App.Session.Put(r.Context(), "warning", "Access not granted")
+		} else {
+			m.App.Session.Put(r.Context(), "flash", "Access Granted!")
+		}
 
-	} else {
-
-	}
-	if action == "accessGrant" {
-		m.App.Session.Put(r.Context(), "flash", "Address Updated!")
+	} else if action == "removeAccess" {
+		userID := r.FormValue("userid")
+		err := m.DB.RemoveAccess(userID)
+		if err != nil {
+			m.App.Session.Put(r.Context(), "warning", "Access not reverted!")
+		} else {
+			m.App.Session.Put(r.Context(), "flash", "Access removed successfully!")
+		}
 	}
 	result, _ := m.DB.GetAllUsers()
 	data["AllUsers"] = result

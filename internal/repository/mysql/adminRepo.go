@@ -42,3 +42,13 @@ func (m *DBrepo) GrantAccess(u string) error {
 	}
 	return nil
 }
+
+func (m *DBrepo) RemoveAccess(u string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	_, err := m.ExecContext(ctx, "UPDATE users SET access_level = 5 where id = ?", u)
+	if err != nil {
+		return fmt.Errorf("db InsertUser: %v", err)
+	}
+	return nil
+}

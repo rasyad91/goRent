@@ -348,6 +348,8 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 
 		m.App.Session.Put(r.Context(), "flash", "You've successfully created your product!")
 		m.App.Info.Println("Register: redirecting to user's account page")
+		eu, _ := m.DB.GetUser(u.Username)
+		m.App.Session.Put(r.Context(), "user", eu)
 		http.Redirect(w, r, "/v1/user/products", http.StatusSeeOther)
 
 	}
