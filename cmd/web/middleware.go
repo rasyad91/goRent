@@ -33,7 +33,6 @@ func Auth(next http.Handler) http.Handler {
 func LastGetURL(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
-			fmt.Println(r.URL.String())
 			if strings.HasPrefix(r.URL.String(), "/v1") {
 				app.Session.Put(r.Context(), "url", r.URL.String())
 			}
