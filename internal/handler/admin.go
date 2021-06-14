@@ -35,6 +35,26 @@ func (m *Repository) AdminAccount(w http.ResponseWriter, r *http.Request) {
 				})
 			}
 
+		} else if sortby[0] == "access" {
+			if sortType[0] == "asc" {
+				sort.SliceStable(result, func(i, j int) bool {
+					return result[i].AccessLevel < result[j].AccessLevel
+				})
+			} else {
+				sort.SliceStable(result, func(i, j int) bool {
+					return result[i].AccessLevel > result[j].AccessLevel
+				})
+			}
+		} else if sortby[0] == "id" {
+			if sortType[0] == "asc" {
+				sort.SliceStable(result, func(i, j int) bool {
+					return result[i].ID < result[j].ID
+				})
+			} else {
+				sort.SliceStable(result, func(i, j int) bool {
+					return result[i].ID > result[j].ID
+				})
+			}
 		}
 	}
 

@@ -45,7 +45,15 @@
             <table class="table border-bottom border-dark mb-5">
                 <tbody>
                     <tr  style= "vertical-align: center;">
-                        <th>UserID</th>
+                        <th>UserID                            <div class="btn-group-vertical">
+                            {{/* <div style=" display: flex;flex-direction: column;"> */}}
+                                <a href="?sortby=id&sort=asc">
+                                    <i class="fas fa-sort-up"></i>
+                                </a>
+                                <a href="?sortby=id&sort=desc">
+                                    <i class="fas fa-sort-down"></i>
+                                </a>
+                            </div></th>
                         <th class="text-center "> <div styel = "  display: flex;
   justify-content: center;">Image</div></th>
                         <th>     
@@ -60,7 +68,15 @@
                                 </a>
                             </div>
                         </th>
-                        <th>Access Level</th>
+                        <th>Access Level                             <div class="btn-group-vertical">
+                            {{/* <div style=" display: flex;flex-direction: column;"> */}}
+                                <a href="?sortby=access&sort=asc">
+                                    <i class="fas fa-sort-up"></i>
+                                </a>
+                                <a href="?sortby=access&sort=desc">
+                                    <i class="fas fa-sort-down"></i>
+                                </a>
+                            </div></th>
                         <th>Grant Access</th>
                         <th>Remove Access</th>
                         <th>Delete All</th>
