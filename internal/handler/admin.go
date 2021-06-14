@@ -63,7 +63,14 @@ func (m *Repository) AdminAccountPost(w http.ResponseWriter, r *http.Request) {
 			m.App.Session.Put(r.Context(), "flash", "Access removed successfully!")
 		}
 	} else if action == "massiveDelete" {
+		userID := r.FormValue("userid")
 		fmt.Println("GIGANTIC MASSIVE DELETE!!")
+		err := m.DB.DeleteUser(userID)
+		if err != nil {
+			m.App.Session.Put(r.Context(), "warning", "User not removed!")
+		} else {
+			m.App.Session.Put(r.Context(), "flash", "User removed successfully!")
+		}
 	}
 	result, _ := m.DB.GetAllUsers()
 	data["AllUsers"] = result

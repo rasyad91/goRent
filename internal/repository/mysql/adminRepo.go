@@ -36,7 +36,7 @@ func (m *DBrepo) GrantAccess(u string) error {
 	defer cancel()
 	_, err := m.ExecContext(ctx, "UPDATE users SET access_level = 1 where id = ?", u)
 	if err != nil {
-		return fmt.Errorf("db InsertUser: %v", err)
+		return fmt.Errorf("db GrantAccess: %v", err)
 	}
 	return nil
 }
@@ -46,7 +46,7 @@ func (m *DBrepo) RemoveAccess(u string) error {
 	defer cancel()
 	_, err := m.ExecContext(ctx, "UPDATE users SET access_level = 5 where id = ?", u)
 	if err != nil {
-		return fmt.Errorf("db InsertUser: %v", err)
+		return fmt.Errorf("db RemoveAccess: %v", err)
 	}
 	return nil
 }
@@ -78,4 +78,14 @@ func (m *DBrepo) GetAllRents() ([]model.Rent, error) {
 		result = append(result, r)
 	}
 	return result, nil
+}
+
+func (m *DBrepo) DeleteUser(u string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	_, err := m.ExecContext(ctx, "DELETE FROM users where id = ?", u)
+	if err != nil {
+		return fmt.Errorf("db DeleteUsers: %v", err)
+	}
+	return nil
 }

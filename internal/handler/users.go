@@ -14,14 +14,15 @@ func (m *Repository) UserAccount(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
 	u := m.App.Session.Get(r.Context(), "user").(model.User)
 	data["user"] = model.User{
-		Username:  u.Username,
-		Email:     u.Email,
-		Password:  "",
-		Address:   u.Address,
-		Products:  u.Products,
-		Rents:     u.Rents,
-		Bookings:  u.Bookings,
-		Image_URL: u.Image_URL,
+		Username:    u.Username,
+		Email:       u.Email,
+		Password:    "",
+		Address:     u.Address,
+		Products:    u.Products,
+		Rents:       u.Rents,
+		Bookings:    u.Bookings,
+		Image_URL:   u.Image_URL,
+		AccessLevel: u.AccessLevel,
 	}
 	if err := render.Template(w, r, "account.page.html", &render.TemplateData{
 		Data: data,
@@ -48,11 +49,12 @@ func (m *Repository) EditUserAccountPost(w http.ResponseWriter, r *http.Request)
 	form := form.New(r.PostForm)
 
 	data["editUser"] = model.User{
-		Username:  u.Username,
-		Email:     u.Email,
-		Password:  "",
-		Address:   u.Address,
-		Image_URL: u.Image_URL,
+		Username:    u.Username,
+		Email:       u.Email,
+		Password:    "",
+		Address:     u.Address,
+		Image_URL:   u.Image_URL,
+		AccessLevel: u.AccessLevel,
 	}
 	if err := r.ParseForm(); err != nil {
 		m.App.Error.Println(err)
