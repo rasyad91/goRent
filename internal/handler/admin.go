@@ -68,3 +68,41 @@ func (m *Repository) AdminAccountPost(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/admin/overview", http.StatusSeeOther)
 
 }
+func (m *Repository) AdminProducts(w http.ResponseWriter, r *http.Request) {
+	data := make(map[string]interface{})
+	u := m.App.Session.Get(r.Context(), "user").(model.User)
+	data["user"] = u
+	if u.AccessLevel != 1 {
+		m.App.Session.Put(r.Context(), "warning", fmt.Sprintf("Sorry! You do not have access to this!"))
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+	}
+	result, _ := m.DB.GetAllProducts()
+	data["AllProducts"] = result
+	if err := render.Template(w, r, "adminProducts.page.html", &render.TemplateData{
+		Data: data,
+		Form: &form.Form{},
+	}); err != nil {
+		m.App.Error.Println(err)
+	}
+
+}
+
+func (m *Repository) AdminRentals(w http.ResponseWriter, r *http.Request) {
+	data := make(map[string]interface{})
+	u := m.App.Session.Get(r.Context(), "user").(model.User)
+	data["user"] = u
+	if u.AccessLevel != 1 {
+		m.App.Session.Put(r.Context(), "warning", fmt.Sprintf("Sorry! You do not have access to this!"))
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+	}
+	result, _ := m.DB.GetAllRents()
+	data["AllRents"] = result
+	fmt.Println(result)
+	if err := render.Template(w, r, "adminRentals.page.html", &render.TemplateData{
+		Data: data,
+		Form: &form.Form{},
+	}); err != nil {
+		m.App.Error.Println(err)
+	}
+
+}

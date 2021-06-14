@@ -52,3 +52,32 @@ func (m *DBrepo) RemoveAccess(u string) error {
 	}
 	return nil
 }
+
+func (m *DBrepo) GetAllRents() ([]model.Rent, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	result := []model.Rent{}
+	rows, _ := m.DB.QueryContext(ctx, "SELECT id, owner_id, renter_id, product_id, processed, duration,total_cost, start_date, end_date FROM gorent.rents order by product_id ")
+	defer rows.Close()
+	for rows.Next() {
+		r := model.Rent{}
+		if err := rows.Scan(
+			&r.ID,
+			&r.OwnerID,
+			&r.RenterID,
+			&r.ProductID,
+			&r.Processed,
+			&r.Duration,
+			&r.TotalCost,
+			&r.StartDate,
+			&r.EndDate,
+		); err != nil {
+			fmt.Println("ERROR", err)
+			if err == sql.ErrNoRows {
+				return []model.Rent{}, err
+			}
+		}
+		result = append(result, r)
+	}
+	return result, nil
+}

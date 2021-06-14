@@ -10,6 +10,7 @@ type DatabaseRepo interface {
 	GetAllUsers() ([]model.User, error)
 	GrantAccess(userid string) error
 	RemoveAccess(userid string) error
+	GetAllRents() ([]model.Rent, error)
 	// Users
 	GetUser(username string) (model.User, error)
 	InsertUser(user model.User) error

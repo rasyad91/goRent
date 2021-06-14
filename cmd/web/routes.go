@@ -58,6 +58,8 @@ func routes() http.Handler {
 	a.Use(Auth)
 	a.HandleFunc("/overview", handler.Repo.AdminAccount).Methods("GET")
 	a.HandleFunc("/overview", handler.Repo.AdminAccountPost).Methods("POST")
+	a.HandleFunc("/products", handler.Repo.AdminProducts).Methods("GET")
+	a.HandleFunc("/rents", handler.Repo.AdminRentals).Methods("GET")
 
 	p := mux.PathPrefix("/v1/products").Subrouter()
 	p.Use(Auth)

@@ -17,27 +17,19 @@
                 <h5>{{$res.Username}}</h5>
               </div>
               <nav class="list-group customer-nav">
-                <a class="active list-group-item d-flex justify-content-between align-items-center" href="/v1/user/account">
+                <a class="active list-group-item d-flex justify-content-between align-items-center" href="/admin/overview">
                   <span>
                     <svg class="svg-icon svg-icon-heavy mr-2">
                     </svg>Overview</span>
                 </a>
-                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/account/profile"><span>
-                    <svg class="svg-icon svg-icon-heavy mr-2">
-                    </svg>Edit Profile</span>
-                </a>
-                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/products"><span>   
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/admin/products"><span>   
                     <svg class="svg-icon svg-icon-heavy mr-2">
                       <use xlink:href="#heart-1"> </use>
                     </svg>Products</span></a>
-                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/rents"><span>
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/admin/rents"><span>
                     <svg class="svg-icon svg-icon-heavy mr-2">
                       <use xlink:href="#heart-1"> </use>
                     </svg>Rentals</span></a>
-                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/bookings"><span>
-                    <svg class="svg-icon svg-icon-heavy mr-2">
-                      <use xlink:href="#heart-1"> </use>
-                    </svg>Bookings</span></a>
                 <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/logout"><span>
                     <svg class="svg-icon svg-icon-heavy mr-2">
                     </svg>Log out</span>
@@ -51,6 +43,7 @@
             <table class="table border-bottom border-dark mb-5">
                 <tbody>
                     <tr>
+                        <th>UserID</th>
                         <th>Image</th>
                         <th>Username</th>
                         <th>Access Level</th>
@@ -60,6 +53,7 @@
                     </tr>
                     {{range $user := $AllUser}}
                     <tr>
+                        <th class="py-4 text-muted font-weight-normal">{{$user.ID}}</th>   
                         <th class="py-4 text-muted font-weight-normal"><img class="cart-item-img" src={{$user.Image_URL}} alt="..."></a></th>
                         <th class="py-4 text-muted font-weight-normal">{{$user.Username}}</th>
                         <td class="py-4 text-center text-muted font-weight-normal">{{$user.AccessLevel}}</td>
