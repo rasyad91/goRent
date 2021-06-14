@@ -18,7 +18,6 @@
                     <input type="hidden" name="csrf_token" value="{{.CSRFToken }}">
                     <div class="form-group row mb-3">
                         <div class="form-group col ">
-
                             <label class="form-label"for="username">Username</label> 
                             {{with $form.Errors.Get "username"}}
                             <span for="username"  class="text-danger float-right">{{.}}</span>

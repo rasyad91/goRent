@@ -11,9 +11,9 @@
                   <!-- Customer Sidebar-->
           <div class="col-lg-3 col-xl-3 mb-3">
             <div class="customer-sidebar card border-0"> 
-              <div class="customer-profile"><a class="d-inline-block" href="#"><img class="img-fluid rounded-circle customer-image" src="https://d19m59y37dris4.cloudfront.net/varkala/1-2-1/img/avatar/avatar-0.jpg" alt=""></a>
+              <div class="customer-profile"><a class="d-inline-block" href="#">
+                <img class="img-fluid rounded-circle customer-image" src={{$res.Image_URL}} style = "border-radius:50% 50% 50% 50%;" alt=""></a>
                 <h5>{{$res.Username}}</h5>
-                <p class="text-muted text-sm mb-0">Los Angeles, CA</p>
               </div>
               <nav class="list-group customer-nav">
                 <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/account">
@@ -84,7 +84,7 @@
                             </ul><span class="text-muted text-uppercase">{{len $p.Reviews}} reviews</span>
                         </div>
                       </div>
-                      <div class="col-1"><a class="btn" href="#"><i class="fas fa-edit"></i></a></div>
+                      <div class="col-1"><a class="btn" href="/v1/user/editproduct?edit={{$p.ID}}"><i class="fas fa-edit"></i></a></div>
                       <div class="col-1"><a class="btn" href="#"><i class="fas fa-trash"></i></a></div>
                     </div>
                   </div>
