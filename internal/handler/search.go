@@ -88,9 +88,10 @@ func searchQuery(client *elastic.Client, searchKeywords ...string) []model.Produ
 	}
 
 	searchResult, err := client.Search().
-		Index("sample_product_list"). // search in index "tweets"
-		Query(query).                 // specify the query
-		Pretty(true).                 // pretty print request and response JSON
+		// Index("sample_product_list"). // search in index "tweets"
+		Index("product_list"). // search in index "tweets"
+		Query(query).          // specify the query
+		Pretty(true).          // pretty print request and response JSON
 		From(0).
 		Size(20).
 		Do(context.Background()) // execute
@@ -151,7 +152,7 @@ func trialMultiSearchQuery(client *elastic.Client, min, max string, searchKeywor
 	query := elastic.NewBoolQuery().Must(stringQuery, priceQuery)
 
 	searchResult, err := client.Search().
-		Index("sample_product_list").
+		Index("product_list").
 		// Type("sampleproducttype"). // search in type
 		Query(query).
 		Do(context.Background()) // execute

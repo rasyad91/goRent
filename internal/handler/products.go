@@ -316,8 +316,13 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 
 		g2.Go(func() error {
 			put1, err := m.App.AWSClient.Index().
-				Index("sample_product_list").
-				Type("sampleproducttype").
+				// Index("sample_product_list").
+				// Type("sampleproducttype").
+				// Id(strconv.Itoa(newProduct.ID)).
+				// BodyJson(newProduct).
+				// Do(r.Context())
+				Index("product_list").
+				Type("product").
 				Id(strconv.Itoa(newProduct.ID)).
 				BodyJson(newProduct).
 				Do(r.Context())
@@ -683,8 +688,8 @@ func (m *Repository) EditProductPost(w http.ResponseWriter, r *http.Request) {
 
 		g2.Go(func() error {
 			put1, err := m.App.AWSClient.Index().
-				Index("sample_product_list").
-				Type("sampleproducttype").
+				Index("product_list").
+				Type("product").
 				Id(strconv.Itoa(editedProduct.ID)).
 				BodyJson(editedProduct).
 				Do(r.Context())
