@@ -68,24 +68,28 @@ func (m *DBrepo) GetUser(username string) (model.User, error) {
 	}
 	// add in concurrency here - 1 get Rent 1 get Product
 	// get rents
-	rent_query := `select 
+	rent_query := `select
 			r.id, r.owner_id, r.renter_id, r.product_id, r.restriction_id, r.processed, r.start_date, r.end_date, r.duration, r.total_cost, r.created_at, r.updated_at,
-			p.id, p.owner_id, p.brand, p.category, p.title, p.rating, p.description, p.price, p.created_at, p.updated_at
-		from 
-			rents r 
-		left join 
+			p.id, p.owner_id, p.brand, p.category, p.title, p.rating, p.description, p.price, p.created_at, p.updated_at, i.url
+		from
+			rents r
+		left join
 			products p on (p.id = r.product_id)
-		where 
+		left join (select product_id,min(url) url from images group by 1) i on p.id = i.product_id
+		where
 			r.renter_id = ?
 		order by r.product_id asc`
-	product_query := `select * from products p where p.owner_id = ? order by id asc`
+	product_query := `select p.*, i.url from products p 
+		left join (select product_id,min(url) url from images group by 1) i on p.id = i.product_id 
+		where p.owner_id = ? order by id asc`
 	booking_query := `select
 		r.id, r.owner_id, r.renter_id, r.product_id, r.restriction_id, r.processed, r.start_date, r.end_date, r.duration, r.total_cost, r.created_at, r.updated_at,
-		p.id, p.owner_id, p.brand, p.category, p.title, p.rating, p.description, p.price, p.created_at, p.updated_at
+		p.id, p.owner_id, p.brand, p.category, p.title, p.rating, p.description, p.price, p.created_at, p.updated_at, i.url
 	from
 		rents r
 	left join
 		products p on (p.id = r.product_id)
+	left join (select product_id,min(url) url from images group by 1) i on p.id = i.product_id
 	where
 		r.owner_id = ?
 	order by r.product_id asc`
@@ -123,6 +127,7 @@ func (m *DBrepo) runQuery(ctx context.Context, user *model.User, query string, s
 		return fmt.Errorf("db GetUser %s: %v", structType, err)
 	}
 	defer rows.Close()
+	var urlString string
 	for rows.Next() {
 		if structType == "rent" {
 			r := model.Rent{}
@@ -149,12 +154,14 @@ func (m *DBrepo) runQuery(ctx context.Context, user *model.User, query string, s
 				&r.Product.Price,
 				&r.Product.CreatedAt,
 				&r.Product.UpdatedAt,
+				&urlString,
 			); err != nil {
 				if err == sql.ErrNoRows {
 					return err
 				}
 				return fmt.Errorf("db GetUser %s: %v", structType, err)
 			}
+			r.Product.Images = append(r.Product.Images, urlString)
 			user.Rents = append(user.Rents, r)
 		} else if structType == "booking" {
 			r := model.Rent{}
@@ -181,12 +188,14 @@ func (m *DBrepo) runQuery(ctx context.Context, user *model.User, query string, s
 				&r.Product.Price,
 				&r.Product.CreatedAt,
 				&r.Product.UpdatedAt,
+				&urlString,
 			); err != nil {
 				if err == sql.ErrNoRows {
 					return err
 				}
 				return fmt.Errorf("db GetUser %s: %v", structType, err)
 			}
+			r.Product.Images = append(r.Product.Images, urlString)
 			user.Bookings = append(user.Bookings, r)
 		} else {
 			r := model.Product{}
@@ -202,12 +211,14 @@ func (m *DBrepo) runQuery(ctx context.Context, user *model.User, query string, s
 				// &p.Images,
 				&r.CreatedAt,
 				&r.UpdatedAt,
+				&urlString,
 			); err != nil {
 				if err == sql.ErrNoRows {
 					return err
 				}
 				return fmt.Errorf("db GetUser %s: %v", structType, err)
 			}
+			r.Images = append(r.Images, urlString)
 			user.Products = append(user.Products, r)
 		}
 	}

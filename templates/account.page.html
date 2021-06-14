@@ -58,7 +58,7 @@
                 <figure class="card card-product">
                   <div class="card">
                     <a href="/v1/products/{{$p.ID}}"><img
-                        src="https://miro.medium.com/max/2400/1*mk1-6aYaf_Bes1E3Imhc0A.jpeg" class="card-img-top"
+                        src={{index $p.Images 0}} class="card-img-top"
                         style='height: 100%; width: 100%; object-fit: contain'></a>
                     <figcaption class="info-wrap">
                       <!--- passed 1 ---->
@@ -98,7 +98,7 @@
                 <figure class="card card-product">
                   <div class="card">
                     <a href="/v1/products/{{$r.ProductID}}"><img
-                        src="https://miro.medium.com/max/2400/1*mk1-6aYaf_Bes1E3Imhc0A.jpeg" class="card-img-top"
+                        src={{index $r.Product.Images 0}} class="card-img-top"
                         style='height: 100%; width: 100%; object-fit: contain'></a>
                     <figcaption class="info-wrap">
                       <!--- passed 1 ---->
@@ -139,7 +139,7 @@
                 <figure class="card card-product">
                   <div class="card">
                     <a href="/v1/products/{{$b.ProductID}}"><img
-                        src="https://miro.medium.com/max/2400/1*mk1-6aYaf_Bes1E3Imhc0A.jpeg" class="card-img-top"
+                        src={{index $b.Product.Images 0}} class="card-img-top"
                         style='height: 100%; width: 100%; object-fit: contain'></a>
                     <figcaption class="info-wrap">
                       <!--- passed 1 ---->
