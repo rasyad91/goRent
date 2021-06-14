@@ -87,9 +87,10 @@
                                     <input type="hidden" name="csrf_token" value="{{$csrf}}">
                                     <input type="hidden" name="action" value="massiveDelete">
                                     <input type="hidden" name="userid" value={{$user.ID}}>
-                                    <button type = "submit">
+                                    <button type = "submit" onclick= "clicked(event)">
                                         <i class="fas fa-trash"></i>
                                     </button>
+                                    {{/* <input type="submit" onclick="clicked(event)" /> */}}
                                 </form>
                             </div>
                         </td>
@@ -101,4 +102,15 @@
     </div>
   </div>
 </section>
+{{end}}
+
+{{define "script"}}
+<script>
+function clicked(e)
+{
+    if(!confirm('Are you sure?')) {
+        e.preventDefault();
+    }
+}
+</script>
 {{end}}

@@ -29,8 +29,6 @@ func (m *DBrepo) GetAllUsers() ([]model.User, error) {
 		}
 		result = append(result, u)
 	}
-	fmt.Println("INSIDE GETALLUSERS")
-	fmt.Println(result)
 	return result, nil
 }
 func (m *DBrepo) GrantAccess(u string) error {
