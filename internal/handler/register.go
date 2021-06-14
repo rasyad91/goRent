@@ -106,7 +106,7 @@ func (m *Repository) RegisterPost(w http.ResponseWriter, r *http.Request) {
 			UnitNumber: r.FormValue("unitNumber"),
 			PostalCode: r.FormValue("postalCode"),
 		},
-		Image_URL: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+		Image_URL: "https://wooteam-productslist.s3.ap-southeast-1.amazonaws.com/profile_images/-1.jpeg",
 	}
 
 	fmt.Println("after get user Time taken: ", time.Since(t))

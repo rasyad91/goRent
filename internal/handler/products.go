@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"fmt"
 	"goRent/internal/config"
 	"goRent/internal/form"
@@ -415,16 +416,16 @@ func storeProfileImage(w http.ResponseWriter, r *http.Request, owner_ID int, ses
 	r.Body = http.MaxBytesReader(w, r.Body, MAX_UPLOAD_SIZE)
 
 	if err := r.ParseMultipartForm(MAX_UPLOAD_SIZE); err != nil {
-		http.Error(w, "The uploaded file is too big. Please choose an file that's less than 1MB in size", http.StatusBadRequest)
-		return "", err
+		// http.Error(w, "The uploaded file is too big. Please choose an file that's less than 1MB in size", http.StatusBadRequest)
+		return "https://wooteam-productslist.s3.ap-southeast-1.amazonaws.com/profile_images/-1.jpeg", err
 	}
 
 	// fileName := "file" + strconv.Itoa(owner_ID) //file1
 
 	file, header, err := r.FormFile("profileImage")
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return "", err
+		// http.Error(w, "file error here", http.StatusBadRequest)
+		return "https://wooteam-productslist.s3.ap-southeast-1.amazonaws.com/profile_images/-1.jpeg", err
 	}
 
 	defer file.Close()
@@ -432,14 +433,16 @@ func storeProfileImage(w http.ResponseWriter, r *http.Request, owner_ID int, ses
 	buff := make([]byte, 512)
 	_, err = file.Read(buff)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return "", err
+		// http.Error(w, "buff error", http.StatusInternalServerError)
+
+		// http.Error(w, err.Error(), http.StatusInternalServerError)
+		return "https://wooteam-productslist.s3.ap-southeast-1.amazonaws.com/profile_images/-1.jpeg", err
 	}
 
 	filetype := http.DetectContentType(buff)
 	if filetype != "image/jpeg" && filetype != "image/png" {
-		http.Error(w, "The provided file format is not allowed. Please upload a JPEG or PNG image", http.StatusBadRequest)
-		return "", err
+		// http.Error(w, "The provided file format is not allowed. Please upload a JPEG or PNG image", http.StatusBadRequest)
+		return "https://wooteam-productslist.s3.ap-southeast-1.amazonaws.com/profile_images/-1.jpeg", errors.New("The provided file format is not allowed. Please upload a JPEG or PNG image")
 	}
 
 	// Reset the file
@@ -447,7 +450,7 @@ func storeProfileImage(w http.ResponseWriter, r *http.Request, owner_ID int, ses
 
 	// s3FileName := "-1" + s3fileExtension
 
-	s3FileName := "-1" + filepath.Ext(header.Filename)
+	s3FileName := strconv.Itoa(owner_ID) + filepath.Ext(header.Filename)
 
 	_, err = uploader.Upload(&s3manager.UploadInput{
 		Bucket:               aws.String(config.AWSProfileBucketLink),
@@ -468,6 +471,7 @@ func storeProfileImage(w http.ResponseWriter, r *http.Request, owner_ID int, ses
 
 	if err != nil {
 		fmt.Println("error with uploading file", err)
+		return "https://wooteam-productslist.s3.ap-southeast-1.amazonaws.com/profile_images/-1.jpeg", err
 	} else {
 		fmt.Println("upload to S3 bucket was successful; please check")
 	}
