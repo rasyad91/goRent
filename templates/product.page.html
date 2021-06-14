@@ -165,6 +165,7 @@
       {{if ne $user.ID $res.OwnerID}}
       <div class="fade tab-pane" id="leave-review" role="tabpanel">
         <form class="form" id="reviewForm" method="post" action="/v1/products/{{$res.ID}}/review">
+          
           <input type="hidden" name="csrf_token" value="{{$csrf}}">
           <input type="hidden" name="product_id" value="{{$res.ID}}">
 
@@ -221,17 +222,9 @@
   const rangepicker = new DateRangePicker(elem, {
     format: "dd-mm-yyyy",
     minDate: dateToday,
-    datesDisabled: [{
-        {
-          range $b
-        }
-      }
+    datesDisabled: [{{range $b}}
       "{{.}}",
-      {
-        {
-          end
-        }
-      }
+      {{end}}
     ]
   });
 </script>
