@@ -85,7 +85,11 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, m.App.Session.PopString(r.Context(), "url"), http.StatusSeeOther)
 		return
 	}
-
+	if eu.AccessLevel == 1 {
+		fmt.Println("Hitting login admin redirect")
+		http.Redirect(w, r, "/admin/overview", http.StatusSeeOther)
+		return
+	}
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
