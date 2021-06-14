@@ -5,14 +5,19 @@ import (
 	"errors"
 	"fmt"
 	"goRent/internal/model"
+	"sync"
 	"time"
 )
+
+var rentLock sync.Mutex
 
 const (
 	ErrRentNotAvailable = "rent not available"
 )
 
 func (m *DBrepo) CreateRent(r model.Rent) (int, error) {
+	rentLock.Lock()
+	defer rentLock.Unlock()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -45,6 +50,10 @@ func (m *DBrepo) CreateRent(r model.Rent) (int, error) {
 }
 
 func (m *DBrepo) GetRentsByProductID(ctx context.Context, id int) ([]model.Rent, error) {
+
+	rentLock.Lock()
+	defer rentLock.Unlock()
+
 	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
 	defer cancel()
 
@@ -92,6 +101,10 @@ func (m *DBrepo) GetRentsByProductID(ctx context.Context, id int) ([]model.Rent,
 }
 
 func (m *DBrepo) DeleteRent(rentID int) error {
+
+	rentLock.Lock()
+	defer rentLock.Unlock()
+
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
@@ -106,6 +119,10 @@ func (m *DBrepo) DeleteRent(rentID int) error {
 }
 
 func (m *DBrepo) ProcessRent(rent model.Rent) error {
+
+	rentLock.Lock()
+	defer rentLock.Unlock()
+
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
