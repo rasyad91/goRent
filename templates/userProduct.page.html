@@ -37,6 +37,12 @@
                     <svg class="svg-icon svg-icon-heavy mr-2">
                       <use xlink:href="#heart-1"> </use>
                     </svg>Bookings</span></a>
+                                    {{if eq $res.AccessLevel 1}}
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/admin/overview"><span>
+                    <svg class="svg-icon svg-icon-heavy mr-2">
+                      <use xlink:href="#heart-1"> </use>
+                    </svg>Admin Portal</span></a>
+                {{end}}
                 <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/logout"><span>
                     <svg class="svg-icon svg-icon-heavy mr-2">
                     </svg>Log out</span>
