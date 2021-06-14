@@ -54,9 +54,12 @@ func routes() http.Handler {
 	u.HandleFunc("/editproduct", handler.Repo.EditProduct).Methods("GET")
 	u.HandleFunc("/editproduct", handler.Repo.EditProductPost).Methods("POST")
 
-	u.HandleFunc("/v1/products/addRent", handler.Repo.PostRent).Methods("POST")
-	u.HandleFunc("/v1/products/removeRent", handler.Repo.DeleteRent).Methods("POST")
-	u.HandleFunc("/v1/products/{productID}/review", handler.Repo.PostReview).Methods("POST")
+	p := mux.PathPrefix("/v1/products").Subrouter()
+	p.Use(Auth)
+
+	p.HandleFunc("/addRent", handler.Repo.PostRent).Methods("POST")
+	p.HandleFunc("/removeRent", handler.Repo.DeleteRent).Methods("POST")
+	p.HandleFunc("/{productID}/review", handler.Repo.PostReview).Methods("POST")
 
 	fileServer := http.FileServer(http.Dir("./static/"))
 	mux.PathPrefix("/static/").Handler(http.StripPrefix("/static", fileServer))
