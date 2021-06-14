@@ -26,7 +26,7 @@ var (
 		Title:       "Nike Vaporfly",
 		Rating:      0,
 		Description: "Super Limited Edition Nike shoe. Weaar once and these shoes will make you take off. Experience the all new air jordans today!",
-		Price:       49.99,
+		Price:       29.99,
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
 		Images:      []string{"https://wooteam-productslist.s3-ap-southeast-1.amazonaws.com/product_list/images/2_1.jpeg"},
