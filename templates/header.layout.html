@@ -28,12 +28,14 @@
             </div>
           </a>
         </li>
+        {{if ne $u.AccessLevel 1}}
         <li class="list-inline-item position-relative mr-3">
           <a class="text-dark text-hover-primary" href="/v1/user/cart">
             <i class="fas fa-shopping-cart mr-2 fa-lg"></i>
             <div class="navbar-icon-badge">{{ len (unprocessedRents $u.Rents) }}</div>
           </a>
         </li>
+        {{end}}
         {{else}}
         <li class="mr-5 nav-item dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <a class="text-dark text-hover-primary" href="/login">

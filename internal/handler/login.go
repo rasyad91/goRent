@@ -80,6 +80,8 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 	m.App.Session.Put(r.Context(), "userID", eu.ID)
 	m.App.Session.Put(r.Context(), "flash", fmt.Sprintf("Welcome, %s", eu.Username))
 	m.App.Session.Put(r.Context(), "user", eu)
+	m.App.Session.Put(r.Context(), "accesslevel", eu.AccessLevel)
+
 	url := m.App.Session.Get(r.Context(), "url")
 	fmt.Println("WHY THIS NOT WORKING", eu.AccessLevel == 1)
 	if eu.AccessLevel == 1 {

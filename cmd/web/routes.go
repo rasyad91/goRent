@@ -30,7 +30,7 @@ func routes() http.Handler {
 	mux.HandleFunc("/v1/products/{productID}", handler.Repo.ShowProductByID).Methods("GET")
 
 	u := mux.PathPrefix("/v1/user").Subrouter()
-	u.Use(Auth)
+	u.Use(Authenticate)
 
 	u.HandleFunc("/logout", handler.Repo.Logout).Methods("GET")
 	u.HandleFunc("/account", handler.Repo.UserAccount).Methods("GET")
@@ -55,14 +55,16 @@ func routes() http.Handler {
 	u.HandleFunc("/editproduct", handler.Repo.EditProductPost).Methods("POST")
 
 	a := mux.PathPrefix("/admin").Subrouter()
-	a.Use(Auth)
+	// a.Use(Authenticate)
+	a.Use(Authorized)
+
 	a.HandleFunc("/overview", handler.Repo.AdminAccount).Methods("GET")
 	a.HandleFunc("/overview", handler.Repo.AdminAccountPost).Methods("POST")
 	a.HandleFunc("/products", handler.Repo.AdminProducts).Methods("GET")
 	a.HandleFunc("/rents", handler.Repo.AdminRentals).Methods("GET")
 
 	p := mux.PathPrefix("/v1/products").Subrouter()
-	p.Use(Auth)
+	p.Use(Authenticate)
 	p.HandleFunc("/addRent", handler.Repo.PostRent).Methods("POST")
 	p.HandleFunc("/removeRent", handler.Repo.DeleteRent).Methods("POST")
 	p.HandleFunc("/{productID}/review", handler.Repo.PostReview).Methods("POST")

@@ -16,7 +16,7 @@ func SessionLoad(next http.Handler) http.Handler {
 }
 
 // Auth checks for authentication
-func Auth(next http.Handler) http.Handler {
+func Authenticate(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if !helper.IsAuthenticated(r) {
 			app.Session.Put(r.Context(), "warning", "Please login first")
@@ -24,7 +24,20 @@ func Auth(next http.Handler) http.Handler {
 			return
 		}
 		w.Header().Add("Cache-Control", "no-store")
+		next.ServeHTTP(w, r)
+	})
+}
 
+func Authorized(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if !helper.IsAdmin(r) {
+			w.Header().Set("Connection", "closec")
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			w.Header().Set("Cache-Control", "no-store, no-cache, must-revalidate, post-check=0, pre-check=0")
+			http.ServeFile(w, r, "./static/401.html")
+			return
+		}
+		w.Header().Add("Cache-Control", "no-store")
 		next.ServeHTTP(w, r)
 	})
 }

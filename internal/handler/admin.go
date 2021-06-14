@@ -14,10 +14,7 @@ func (m *Repository) AdminAccount(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
 	u := m.App.Session.Get(r.Context(), "user").(model.User)
 	data["user"] = u
-	if u.AccessLevel != 1 {
-		m.App.Session.Put(r.Context(), "warning", fmt.Sprintf("Sorry! You do not have access to this!"))
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-	}
+
 	result, _ := m.DB.GetAllUsers()
 	sortby, ok := r.URL.Query()["sortby"]
 	sortType, sortok := r.URL.Query()["sort"]
