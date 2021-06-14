@@ -45,7 +45,7 @@ func (m *DBrepo) GetUser(username string) (model.User, error) {
 	defer cancel()
 
 	u := model.User{}
-	if err := m.DB.QueryRowContext(ctx, "SELECT id,username,image_url,email,password,access_level,rating,postal_code,street_name, block,unit_number,created_at, updated_at FROM gorent.users where username=?", username).
+	if err := m.DB.QueryRowContext(ctx, "SELECT id,username,email,image_url,password,access_level,rating,postal_code,street_name, block,unit_number,created_at, updated_at FROM gorent.users where username=?", username).
 		Scan(
 			&u.ID,
 			&u.Username,

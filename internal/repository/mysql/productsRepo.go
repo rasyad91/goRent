@@ -94,7 +94,7 @@ func (m *DBrepo) GetProductByID(ctx context.Context, id int) (model.Product, err
 	})
 
 	g.Go(func() error {
-		query := `select url from images where product_id = ?`
+		query := `select url from images where product_id = ? `
 		rows, err := m.DB.QueryContext(ctx, query, id)
 
 		if err != nil {
@@ -112,7 +112,6 @@ func (m *DBrepo) GetProductByID(ctx context.Context, id int) (model.Product, err
 				return fmt.Errorf("db getproductbyid: %v", err)
 			}
 			p.Images = append(p.Images, imgUrl)
-
 		}
 		if err := rows.Err(); err != nil {
 			return err

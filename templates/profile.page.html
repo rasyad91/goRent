@@ -11,15 +11,8 @@
           <div class="col-lg-3 col-xl-3 mb-3">
             <div class="customer-sidebar card border-0"> 
               <div class="customer-profile"><a class="d-inline-block" href="#">
-                {{if $res.Image_URL}}
                 <img class="img-fluid rounded-circle customer-image" src={{$res.Image_URL}} style = "border-radius:50% 50% 50% 50%;" alt=""></a>
-                
-                {{else}}
-                <img class="img-fluid rounded-circle customer-image" src="https://wooteam-productslist.s3.ap-southeast-1.amazonaws.com/profile_images/-1.png" style = "border-radius:50% 50% 50% 50%;" alt=""></a>
-
-                {{end}}
                 <h5>{{$res.Username}}</h5>
-                <p class="text-muted text-sm mb-0">Los Angeles, CA</p>
               </div>
               <nav class="list-group customer-nav">
                 <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/account">
@@ -31,19 +24,15 @@
                     <svg class="svg-icon svg-icon-heavy mr-2">
                     </svg>Edit Profile</span>
                 </a>
-                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/account/payment"><span>
-                    <svg class="svg-icon svg-icon-heavy mr-2">
-                      <use xlink:href="#real-estate-1"> </use>
-                    </svg>Payment</span></a>
                 <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/products"><span>   
                     <svg class="svg-icon svg-icon-heavy mr-2">
                       <use xlink:href="#heart-1"> </use>
                     </svg>Products</span></a>
-                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/cart"><span>
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/rents"><span>
                     <svg class="svg-icon svg-icon-heavy mr-2">
                       <use xlink:href="#heart-1"> </use>
                     </svg>Rentals</span></a>
-                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/cart"><span>
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/bookings"><span>
                     <svg class="svg-icon svg-icon-heavy mr-2">
                       <use xlink:href="#heart-1"> </use>
                     </svg>Bookings</span></a>
@@ -103,6 +92,9 @@
                       <div class="form-group">
                         <button type="submit" class="btn btn-outline-dark btn-lg ml-3">Upload Image</button>
                       </div>
+                        {{with $form.Errors.Get "imageError"}}
+                          <span for="imageError"  class="text-danger float-right">{{.}}</span>
+                        {{end}}
                     </form>
                   </div>
                 </div>

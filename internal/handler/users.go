@@ -14,13 +14,14 @@ func (m *Repository) UserAccount(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
 	u := m.App.Session.Get(r.Context(), "user").(model.User)
 	data["user"] = model.User{
-		Username: u.Username,
-		Email:    u.Email,
-		Password: "",
-		Address:  u.Address,
-		Products: u.Products,
-		Rents:    u.Rents,
-		Bookings: u.Bookings,
+		Username:  u.Username,
+		Email:     u.Email,
+		Password:  "",
+		Address:   u.Address,
+		Products:  u.Products,
+		Rents:     u.Rents,
+		Bookings:  u.Bookings,
+		Image_URL: u.Image_URL,
 	}
 	if err := render.Template(w, r, "account.page.html", &render.TemplateData{
 		Data: data,
@@ -47,10 +48,11 @@ func (m *Repository) EditUserAccountPost(w http.ResponseWriter, r *http.Request)
 	form := form.New(r.PostForm)
 
 	data["editUser"] = model.User{
-		Username: u.Username,
-		Email:    u.Email,
-		Password: "",
-		Address:  u.Address,
+		Username:  u.Username,
+		Email:     u.Email,
+		Password:  "",
+		Address:   u.Address,
+		Image_URL: u.Image_URL,
 	}
 	if err := r.ParseForm(); err != nil {
 		m.App.Error.Println(err)
@@ -83,10 +85,15 @@ func (m *Repository) EditUserAccountPost(w http.ResponseWriter, r *http.Request)
 		}
 
 	} else if action == "profileImage" {
-		url, err := storeProfileImage(w, r, -1, m.App.AWSS3Session)
+		url, err := storeProfileImage(w, r, u.ID, m.App.AWSS3Session)
+		// url, err := storeProfileImage(w, r, -1, m.App.AWSS3Session)
+
 		if err == nil {
 			u.Image_URL = url
 			fmt.Println("Success in loading image")
+			fmt.Println(url)
+		} else {
+			form.Errors.Add("imageError", err.Error())
 		}
 		fmt.Println(err)
 	} else {
@@ -117,6 +124,7 @@ func (m *Repository) EditUserAccountPost(w http.ResponseWriter, r *http.Request)
 		}); err != nil {
 			m.App.Error.Println(err)
 		}
+		fmt.Println("userimage", u.Image_URL)
 		return
 	}
 	err := m.DB.EditUser(u, action)
@@ -140,7 +148,8 @@ func (m *Repository) EditUserAccountPost(w http.ResponseWriter, r *http.Request)
 }
 func (m *Repository) Payment(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
-
+	u := m.App.Session.Get(r.Context(), "user").(model.User)
+	data["user"] = u
 	if err := render.Template(w, r, "payment.page.html", &render.TemplateData{
 		Data: data,
 	}); err != nil {
