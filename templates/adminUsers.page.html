@@ -40,12 +40,26 @@
       <!-- /Customer Sidebar-->
       <div class="col-lg-9 col-xl-9 mb-5 mb-lg-0">
             <h5 class="mb-5">GoRent Users</h5>
+                <a href="/admin/overview?sortby=username&sort=asc">Sort
+                </a>
             <table class="table border-bottom border-dark mb-5">
                 <tbody>
-                    <tr>
+                    <tr  style= "vertical-align: center;">
                         <th>UserID</th>
-                        <th>Image</th>
-                        <th>Username</th>
+                        <th class="text-center "> <div styel = "  display: flex;
+  justify-content: center;">Image</div></th>
+                        <th>     
+                            Username
+                            <div class="btn-group-vertical">
+                            {{/* <div style=" display: flex;flex-direction: column;"> */}}
+                                <a href="?sortby=username&sort=asc">
+                                    <i class="fas fa-sort-up"></i>
+                                </a>
+                                <a href="?sortby=username&sort=desc">
+                                    <i class="fas fa-sort-down"></i>
+                                </a>
+                            </div>
+                        </th>
                         <th>Access Level</th>
                         <th>Grant Access</th>
                         <th>Remove Access</th>

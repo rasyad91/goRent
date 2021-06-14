@@ -6,6 +6,8 @@ import (
 	"goRent/internal/model"
 	"goRent/internal/render"
 	"net/http"
+	"sort"
+	"strings"
 )
 
 func (m *Repository) AdminAccount(w http.ResponseWriter, r *http.Request) {
@@ -17,6 +19,25 @@ func (m *Repository) AdminAccount(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 	result, _ := m.DB.GetAllUsers()
+	sortby, ok := r.URL.Query()["sortby"]
+	sortType, sortok := r.URL.Query()["sort"]
+	fmt.Println("SORTBY:", sortby)
+	fmt.Println("SORT:", sortType)
+	if ok && sortok {
+		if sortby[0] == "username" {
+			if sortType[0] == "asc" {
+				sort.SliceStable(result, func(i, j int) bool {
+					return strings.ToLower(result[i].Username) < strings.ToLower(result[j].Username)
+				})
+			} else {
+				sort.SliceStable(result, func(i, j int) bool {
+					return strings.ToLower(result[i].Username) > strings.ToLower(result[j].Username)
+				})
+			}
+
+		}
+	}
+
 	data["AllUsers"] = result
 	if err := render.Template(w, r, "adminUsers.page.html", &render.TemplateData{
 		Data: data,
