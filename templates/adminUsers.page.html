@@ -4,8 +4,9 @@
 
 <section class="pb-4 py-3">
   <div class="container">
-
     {{$res := index .Data "user"}}
+    {{$AllUser := index .Data "AllUsers"}}
+    {{$form := index .Form}}
     <div class="row">
       <!-- Customer Sidebar-->
           <div class="col-lg-3 col-xl-3 mb-3">
@@ -45,98 +46,40 @@
           </div>
       <!-- /Customer Sidebar-->
       <div class="col-lg-9 col-xl-9 mb-5 mb-lg-0">
-            <h5 class="mb-5">Order Summary</h5>
+            <h5 class="mb-5">GoRent Users</h5>
             <table class="table border-bottom border-dark mb-5">
                 <tbody>
-                    {{range $index := (unprocessedRents $u.Rents)}}
                     <tr>
-                        <th class="py-4 text-muted font-weight-normal">{{.Product.Title}}</th>
-                        <td class="py-4 text-right text-muted font-weight-normal">${{format2DP .TotalCost}}</td>
+                        <th>Image</th>
+                        <th>Username</th>
+                        <th>Access Level</th>
+                        <th>Grant Access</th>
+                        <th>Delete All</th>
+                    </tr>
+                    {{range $user := $AllUser}}
+                    <tr>
+                        <th class="py-4 text-muted font-weight-normal"><img class="cart-item-img" src={{$user.Image_URL}} alt="..."></a></th>
+                        <th class="py-4 text-muted font-weight-normal">{{$user.Username}}</th>
+                        <td class="py-4 text-center text-muted font-weight-normal">{{$user.AccessLevel}}</td>
+                        <td class="py-4 text-center text-muted font-weight-normal">
+                            <div class="col-1">
+                                <form method="POST" novalidate>
+                                    <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+                                    <input type="hidden" name="action" value="accessGrant">
+                                    <input type="hidden" name="userid" value={{$user.ID}}>
+                                    <button type = "submit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                        <td class="py-4 text-center text-muted font-weight-normal"><div class="col-1"><a class="btn" href="#"><i class="fas fa-trash"></i></a></div></td>
                     </tr>
                     {{end}}
-                    <tr>
-                        <th class="py-4 font-weight-normal text-muted">Self-Pickup</th>
-                        <td class="py-4 text-right font-weight-normal text-muted">$0.00</td>
-                    </tr>
-                    <tr>
-                        <th class="py-4 text-uppercase font-weight-normal border-dark align-bottom">Total</th>
-                        <td class="py-4 text-right h3 font-weight-normal border-dark">
-                            ${{format2DP (totalCostInCart (unprocessedRents $u.Rents))}}</td>
-                    </tr>
-                    <form method="POST" action="/v1/user/cart/checkout/confirm">
-                        <input type="hidden" name="csrf_token" value="{{$csrf}}">
-                        <tr>
-                            <th class="pt-5 pb-4 border-dark" colspan="2">
-                                <div class="custom-control custom-radio">
-                                    <input class="custom-control-input" id="payment0" type="radio" name="payment"
-                                        checked="">
-                                    <label class="custom-control-label text-sm font-weight-normal collapsed"
-                                        for="payment0" data-toggle="collapse" data-target="#paymentinfo_0"
-                                        aria-expanded="false">Pay on
-                                        delivery</label>
-                                </div>
-                            </th>
-                        </tr>
-                        <tr>
-                            <th class="py-4" colspan="2">
-                                <div class="custom-control custom-radio">
-                                    <input class="custom-control-input" id="payment1" type="radio" name="payment">
-                                    <label class="custom-control-label text-sm font-weight-normal" for="payment1"
-                                        data-toggle="collapse" data-target="#paymentinfo_1" aria-expanded="true">Card
-                                        payment</label>
-                                </div>
-                            </th>
-                        </tr>
                 </tbody>
             </table>
-            <p class="text-muted text-sm">Your personal data will be used to process your order, support your
-                experience
-                throughout this website, and for other purposes described in our <a href="#">privacy policy</a>.</p>
-            <p class="text-muted text-sm mb-5">I have read and agree to the website <a href="#">terms and
-                    conditions</a>. * </p>
-            <button class="btn btn-outline-dark btn-block mb-5">Place order</button>
-            </form>
-            <!-- this should be <button type="submit"> on your site-->
-      
-      
-      
-      
-      
-      
-      
-      
-      
       </div>
     </div>
   </div>
 </section>
-{{end}}
-
-{{define "script"}}
-<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
-
-<script>
-  var swiper = new Swiper('.swiper-container', {
-    autoHeight: true,
-    spaceBetween: 20,
-    slidesPerView: 3,
-    direction: getDirection(),
-    navigation: {
-      nextEl: '.swiper-button-next',
-      prevEl: '.swiper-button-prev',
-    },
-    on: {
-      resize: function () {
-        swiper.changeDirection(getDirection());
-      },
-    },
-  });
-
-  function getDirection() {
-    var windowWidth = window.innerWidth;
-    var direction = window.innerWidth <= 760 ? 'vertical' : 'horizontal';
-
-    return direction;
-  }
-</script>
 {{end}}

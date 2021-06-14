@@ -57,6 +57,7 @@ func routes() http.Handler {
 	a := mux.PathPrefix("/admin").Subrouter()
 	a.Use(Auth)
 	a.HandleFunc("/overview", handler.Repo.AdminAccount).Methods("GET")
+	a.HandleFunc("/overview", handler.Repo.AdminAccountPost).Methods("POST")
 
 	p := mux.PathPrefix("/v1/products").Subrouter()
 	p.Use(Auth)

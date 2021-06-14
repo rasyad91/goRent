@@ -44,6 +44,7 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 	password := r.FormValue("password")
 
 	eu, err := m.DB.GetUser(Username)
+	fmt.Println("LOGIN ACCESS CHECK", eu.AccessLevel)
 	if err != nil {
 		if err != sql.ErrNoRows {
 			m.App.Error.Println(err)
@@ -80,16 +81,19 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 	m.App.Session.Put(r.Context(), "flash", fmt.Sprintf("Welcome, %s", eu.Username))
 	m.App.Session.Put(r.Context(), "user", eu)
 	url := m.App.Session.Get(r.Context(), "url")
-	fmt.Println(url)
-	if url != "" {
-		http.Redirect(w, r, m.App.Session.PopString(r.Context(), "url"), http.StatusSeeOther)
-		return
-	}
+	fmt.Println("WHY THIS NOT WORKING", eu.AccessLevel == 1)
 	if eu.AccessLevel == 1 {
 		fmt.Println("Hitting login admin redirect")
 		http.Redirect(w, r, "/admin/overview", http.StatusSeeOther)
 		return
 	}
+	fmt.Println(url)
+	if url != "" {
+		fmt.Println("I'm hitting here")
+		http.Redirect(w, r, m.App.Session.PopString(r.Context(), "url"), http.StatusSeeOther)
+		return
+	}
+	fmt.Println("Something is redirecting")
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 

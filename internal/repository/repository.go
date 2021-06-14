@@ -6,6 +6,9 @@ import (
 )
 
 type DatabaseRepo interface {
+	//admin
+	GetAllUsers() ([]model.User, error)
+	GrantAccess(userid string) error
 	// Users
 	GetUser(username string) (model.User, error)
 	InsertUser(user model.User) error
