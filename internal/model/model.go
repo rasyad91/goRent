@@ -105,3 +105,8 @@ type ElasticSearchProductSample struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 	Images      []string  `json:"img1_url"`
 }
+
+type ImgUrl struct {
+	OldImg string
+	NewImg string
+}

@@ -208,14 +208,15 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 			} else {
 				defer file.Close()
 				// uploader := s3manager.NewUploader(m.App.AWSS3Session)
-				s3imgType, s3err := storeImagesS3(w, r, id, productIndex, m.App.AWSS3Session, false)
+				s3fileName, s3err := storeImagesS3(w, r, id, productIndex, m.App.AWSS3Session)
 				if s3err != nil {
 					m.App.Error.Println("S3 error", err)
 					fmt.Println("")
 					form.Errors.Add("fileupload", "Please only use .jpeg/ .png files not exceeding 1MB in size")
 				} else {
 					imgCount++
-					s3ImageInformation = append(s3ImageInformation, imageIndex{index: id, imageType: s3imgType})
+					s3ImageInformation = append(s3ImageInformation, imageIndex{index: id, imageType: s3fileName})
+
 				}
 			}
 			select {
@@ -264,7 +265,7 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	for _, v := range s3ImageInformation {
 
 		s := config.AWSProductImageLink
-		productImageURL = append(productImageURL, s+strconv.Itoa(productIndex)+"_"+strconv.Itoa(v.index)+v.imageType)
+		productImageURL = append(productImageURL, s+(v.imageType))
 
 	}
 
@@ -346,9 +347,15 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, sess *awsS3.Session, edit bool) (string, error) {
+func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, sess *awsS3.Session) (string, error) {
 
 	const MAX_UPLOAD_SIZE = 1024 * 1024 // 1MB
+
+	timeNow_format := time.Now().Format("2006-01-02_15-04-05")
+
+	timeNow := fmt.Sprintf("%v", timeNow_format)
+
+	fmt.Println("file name used in this storeImages3 function", string(timeNow))
 
 	uploader := s3manager.NewUploader(sess)
 
@@ -387,11 +394,9 @@ func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, 
 	file.Seek(0, 0)
 
 	var s3FileName string
-	if !edit {
-		s3FileName = fmt.Sprintf(strconv.Itoa(productIndex) + "_" + strconv.Itoa(i) + filepath.Ext(header.Filename))
-	} else {
-		s3FileName = fmt.Sprintf("edited_" + strconv.Itoa(productIndex) + "_" + strconv.Itoa(i) + filepath.Ext(header.Filename))
-	}
+
+	s3FileName = fmt.Sprintf(string(timeNow) + "_" + strconv.Itoa(i) + filepath.Ext(header.Filename))
+
 	_, err = uploader.Upload(&s3manager.UploadInput{
 		Bucket:               aws.String(config.AWSProductBucket),
 		ACL:                  aws.String("public-read"),
@@ -408,7 +413,7 @@ func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, 
 	}
 	fmt.Println("upload to S3 bucket was successful; please check")
 
-	return filepath.Ext(header.Filename), nil
+	return s3FileName, nil
 
 }
 
@@ -544,13 +549,13 @@ func (m *Repository) EditProductPost(w http.ResponseWriter, r *http.Request) {
 				return err
 			} else {
 				defer file.Close()
-				s3imgType, s3err := storeImagesS3(w, r, id, productIDInt, m.App.AWSS3Session, true)
+				s3fileName, s3err := storeImagesS3(w, r, id, productIDInt, m.App.AWSS3Session)
 				if s3err != nil {
 					m.App.Error.Println("S3 error", err)
 					fmt.Println("")
 					form.Errors.Add("fileupload", "Please only use .jpeg/ .png files not exceeding 1MB in size")
 				} else {
-					s3ImageInformation = append(s3ImageInformation, imageIndex{index: id, imageType: s3imgType})
+					s3ImageInformation = append(s3ImageInformation, imageIndex{index: id, imageType: s3fileName})
 				}
 			}
 			select {
@@ -590,7 +595,6 @@ func (m *Repository) EditProductPost(w http.ResponseWriter, r *http.Request) {
 		// form.Errors.Add("fileupload", "A miniumum of 4 images are required")
 	}
 
-	// sort.Slice(imageIndex)
 	fmt.Println("this is the unsorted index", s3ImageInformation)
 
 	sort.Slice(s3ImageInformation, func(i, j int) bool {
@@ -600,17 +604,9 @@ func (m *Repository) EditProductPost(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("this is the sorted index", s3ImageInformation)
 
-	// s3ImageInformation = append(s3ImageInformation, imageIndex{index: id, imageType: s3imgType})
-
-	//all the existing product images
 	var productImageURL = product.Images
-
-	// for _, v := range s3ImageInformation {
-
-	// 	s := config.AWSProductImageLink
-	// 	productImageURL = append(productImageURL, s+strconv.Itoa(1)+"_"+strconv.Itoa(v.index)+v.imageType)
-
-	// }
+	var updateImg []model.ImgUrl
+	var newImg []string
 
 	var imagesMap = make(map[int]int)
 
@@ -625,13 +621,15 @@ func (m *Repository) EditProductPost(w http.ResponseWriter, r *http.Request) {
 		s := config.AWSProductImageLink
 
 		if _, ok := imagesMap[v.index-1]; !ok {
-			productImageURL = append(productImageURL, s+"edited_"+strconv.Itoa(productIDInt)+"_"+strconv.Itoa(v.index)+v.imageType)
+			productImageURL = append(productImageURL, s+v.imageType)
+			newImg = append(newImg, s+v.imageType)
 		} else {
 			fmt.Println("not OK got called")
-			fmt.Println(productImageURL[v.index-1])
 			fmt.Println("the k value:", k)
-			productImageURL[v.index-1] = s + strconv.Itoa(productIDInt) + "_" + strconv.Itoa(v.index) + v.imageType
-			fmt.Println(productImageURL[v.index-1])
+			oldImage := (productImageURL[v.index-1])
+			productImageURL[v.index-1] = s + v.imageType
+			newImage := productImageURL[v.index-1]
+			updateImg = append(updateImg, model.ImgUrl{oldImage, newImage})
 		}
 
 	}
@@ -645,7 +643,7 @@ func (m *Repository) EditProductPost(w http.ResponseWriter, r *http.Request) {
 		Title:       r.FormValue("productname"),
 		Description: productDescription,
 		Price:       productPrice,
-		Images:      []string{"https://wooteam-productslist.s3.ap-southeast-1.amazonaws.com/product_list/images/50_1.jpeg"},
+		Images:      productImageURL,
 	}
 
 	if len(form.Errors) != 0 {
@@ -662,7 +660,7 @@ func (m *Repository) EditProductPost(w http.ResponseWriter, r *http.Request) {
 		g2, ctx := errgroup.WithContext(r.Context())
 
 		g2.Go(func() error {
-			err := m.DB.UpdateProducts(editedProduct)
+			err := m.DB.UpdateProducts(editedProduct, updateImg, newImg)
 			if err != nil {
 				return err
 			}
@@ -689,7 +687,7 @@ func (m *Repository) EditProductPost(w http.ResponseWriter, r *http.Request) {
 				// Handle error
 				panic(err)
 			}
-			fmt.Printf("Indexed tweet %s to index %s, type %s\n", put1.Id, put1.Index, put1.Type)
+			fmt.Printf("\n\nIndexed tweet %s to index %s, type %s\n", put1.Id, put1.Index, put1.Type)
 
 			select {
 			case <-ctx.Done():
@@ -701,6 +699,7 @@ func (m *Repository) EditProductPost(w http.ResponseWriter, r *http.Request) {
 
 		if err := g2.Wait(); err != nil {
 			m.App.Error.Println("error from g2", err)
+			//redirect if err.
 			// form.Errors.Add("fileupload", "A miniumum of 4 images are required")
 		}
 

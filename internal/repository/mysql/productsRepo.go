@@ -271,129 +271,12 @@ func (m *DBrepo) InsertProductImages(i int, s string) error {
 	return nil
 }
 
-// func (m *DBrepo) GetProductByID2(ctx context.Context, id int) (model.Product, error) {
-// 	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
-// 	defer cancel()
-
-// 	p := model.Product{}
-// 	g, ctx := errgroup.WithContext(ctx)
-
-// 	g.Go(func() error {
-// 		query := `select
-// 						p.id, p.owner_id, p.brand, p.category, p.title, p.rating, p.description, p.price, p.created_at, p.updated_at
-// 					from
-// 						products p where id = ?
-// 	`
-// 		if err := m.DB.QueryRowContext(ctx, query, id).Scan(
-// 			&p.ID,
-// 			&p.OwnerID,
-// 			&p.Brand,
-// 			&p.Category,
-// 			&p.Title,
-// 			&p.Rating,
-// 			&p.Description,
-// 			&p.Price,
-// 			&p.CreatedAt,
-// 			&p.UpdatedAt,
-// 		); err != nil {
-// 			if err == sql.ErrNoRows {
-// 				return err
-// 			}
-// 			return fmt.Errorf("db getproductbyid: %v", err)
-// 		}
-// 		query = `select username from users where id = ?`
-// 		if err := m.DB.QueryRowContext(ctx, query, p.OwnerID).Scan(&p.OwnerName); err != nil {
-// 			return err
-// 		}
-// 		select {
-// 		case <-ctx.Done():
-// 			return ctx.Err()
-// 		default:
-// 			return nil
-// 		}
-// 	})
-
-// 	// get reviews from reviews table
-// 	g.Go(func() error {
-// 		query := `select id, reviewer_id, reviewer_name, product_id, body, rating, created_at, updated_at
-// 		from product_reviews where product_id = ?`
-// 		rows, err := m.DB.QueryContext(ctx, query, id)
-
-// 		if err != nil {
-// 			return err
-// 		}
-// 		defer rows.Close()
-// 		for rows.Next() {
-// 			r := model.ProductReview{}
-// 			if err := rows.Scan(
-// 				&r.ID,
-// 				&r.ReviewerID,
-// 				&r.ReviewerName,
-// 				&r.ProductID,
-// 				&r.Body,
-// 				&r.Rating,
-// 				&r.CreatedAt,
-// 				&r.UpdatedAt,
-// 			); err != nil {
-// 				if err == sql.ErrNoRows {
-// 					return err
-// 				}
-// 				return fmt.Errorf("db getproductbyid: %v", err)
-// 			}
-// 			p.Reviews = append(p.Reviews, r)
-// 		}
-// 		if err := rows.Err(); err != nil {
-// 			return err
-// 		}
-// 		select {
-// 		case <-ctx.Done():
-// 			return ctx.Err()
-// 		default:
-// 			return nil
-// 		}
-// 	})
-
-// 	g.Go(func() error {
-// 		query := `select url from images where product_id = ?`
-// 		rows, err := m.DB.QueryContext(ctx, query, id)
-
-// 		if err != nil {
-// 			return err
-// 		}
-// 		defer rows.Close()
-// 		for rows.Next() {
-// 			var imgUrl string
-// 			if err := rows.Scan(
-// 				&imgUrl,
-// 			); err != nil {
-// 				if err == sql.ErrNoRows {
-// 					return err
-// 				}
-// 				return fmt.Errorf("db getproductbyid: %v", err)
-// 			}
-// 			p.Images = append(p.Images, imgUrl)
-
-// 		}
-// 		if err := rows.Err(); err != nil {
-// 			return err
-// 		}
-// 		select {
-// 		case <-ctx.Done():
-// 			return ctx.Err()
-// 		default:
-// 			return nil
-// 		}
-// 	})
-
-// 	return p, g.Wait()
-// }
-
-func (m *DBrepo) UpdateProducts(p model.Product) error {
+func (m *DBrepo) UpdateProducts(p model.Product, s1 []model.ImgUrl, s2 []string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
 	// query := `UPDATE goRent.products set processed = true, updated_at = ? where id = ?`
-	query := `UPDATE goRent.products set brand=?, title=?, description=?, price=?, created_at=? where id = ?`
+	query := `UPDATE gorent.products set brand=?, title=?, description=?, price=?, created_at=? where id = ?`
 
 	// _, err := m.ExecContext(ctx, "UPDATE goRent.products (brand,title,description,price, created_at) where id =? VALUES (?,?,?,?,?);",
 	_, err := m.ExecContext(ctx, query, p.Brand, p.Title, p.Description, p.Price, time.Now(), p.ID)
@@ -406,8 +289,37 @@ func (m *DBrepo) UpdateProducts(p model.Product) error {
 	// 	}
 	// }
 
+	for _, v := range s1 {
+		fmt.Printf("\n\nthis is the old url %s", v.OldImg)
+		fmt.Printf("\n\nthis is the new url %s", v.NewImg)
+
+		err := m.UpdateProductImages(v.OldImg, v.NewImg)
+		if err != nil {
+			return err
+		}
+	}
+
+	for _, v := range s2 {
+
+		err := m.InsertProductImages(p.ID, v)
+		if err != nil {
+			return err
+		}
+	}
+
 	if err != nil {
-		return fmt.Errorf("db InsertProduct: %v", err)
+		return fmt.Errorf("db upateProducts: %v", err)
+	}
+	return nil
+}
+
+func (m *DBrepo) UpdateProductImages(s1, s2 string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	query := `UPDATE gorent.images set url=?, updated_at=? where url=?`
+	_, err := m.ExecContext(ctx, query, s2, time.Now(), s1)
+	if err != nil {
+		return fmt.Errorf("db InsertProductImages: %v", err)
 	}
 	return nil
 }
