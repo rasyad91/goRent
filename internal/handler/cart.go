@@ -34,7 +34,6 @@ func (m *Repository) GetCheckout(w http.ResponseWriter, r *http.Request) {
 
 func (m *Repository) PostCheckout(w http.ResponseWriter, r *http.Request) {
 
-	// update rent
 	u := m.App.Session.Get(r.Context(), "user").(model.User)
 
 	g, _ := errgroup.WithContext(r.Context())
@@ -80,40 +79,40 @@ func (m *Repository) PostCheckout(w http.ResponseWriter, r *http.Request) {
 			fmt.Println(err)
 			return
 		}
-	}
 
-	var wg sync.WaitGroup
-	for _, rent := range failedRents {
-		// need to remove rent from db and remove rent from user
-		rent := rent
+		var wg sync.WaitGroup
+		for _, rent := range failedRents {
+			// need to remove rent from db and remove rent from user
+			rent := rent
 
-		fmt.Printf("id: %d, processed: %t productname: %s, startDate: %s, endDate: %s\n", rent.ID, rent.Processed, rent.Product.Title, rent.StartDate, rent.EndDate)
-		wg.Add(1)
-		go func() {
-			if err := m.DB.DeleteRent(rent.ID); err != nil {
-				render.ServerError(w, r, err)
-				m.App.Error.Println(err)
-				return
-			}
-			wg.Done()
-		}()
-	}
-	wg.Wait()
+			fmt.Printf("id: %d, processed: %t productname: %s, startDate: %s, endDate: %s\n", rent.ID, rent.Processed, rent.Product.Title, rent.StartDate, rent.EndDate)
+			wg.Add(1)
+			go func() {
+				if err := m.DB.DeleteRent(rent.ID); err != nil {
+					render.ServerError(w, r, err)
+					m.App.Error.Println(err)
+					return
+				}
+				wg.Done()
+			}()
+		}
+		wg.Wait()
 
-	fmt.Println("length of failed rents: ", len(failedRents))
-	for _, rent := range failedRents {
-		fmt.Println()
-		fmt.Println("FAILED RENTS")
-		fmt.Printf("id: %d, processed: %t productname: %s, startDate: %s, endDate: %s\n", rent.ID, rent.Processed, rent.Product.Title, rent.StartDate, rent.EndDate)
+		fmt.Println("length of failed rents: ", len(failedRents))
+		for _, rent := range failedRents {
+			fmt.Println()
+			fmt.Println("FAILED RENTS")
+			fmt.Printf("id: %d, processed: %t productname: %s, startDate: %s, endDate: %s\n", rent.ID, rent.Processed, rent.Product.Title, rent.StartDate, rent.EndDate)
 
-	}
+		}
 
-	fmt.Println("length of passed rents: ", len(passedRents))
-	for _, rent := range passedRents {
-		fmt.Println()
-		fmt.Println("PASSED RENTS")
-		fmt.Printf("id: %d, processed: %t productname: %s, startDate: %s, endDate: %s\n", rent.ID, rent.Processed, rent.Product.Title, rent.StartDate, rent.EndDate)
+		fmt.Println("length of passed rents: ", len(passedRents))
+		for _, rent := range passedRents {
+			fmt.Println()
+			fmt.Println("PASSED RENTS")
+			fmt.Printf("id: %d, processed: %t productname: %s, startDate: %s, endDate: %s\n", rent.ID, rent.Processed, rent.Product.Title, rent.StartDate, rent.EndDate)
 
+		}
 	}
 
 	u, err := m.DB.GetUser(u.Username)
