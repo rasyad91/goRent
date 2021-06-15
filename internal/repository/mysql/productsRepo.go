@@ -128,7 +128,7 @@ func (m *DBrepo) GetProductByID(ctx context.Context, id int) (model.Product, err
 	return p, g.Wait()
 }
 
-func (m *DBrepo) CreateProductReview(pr model.ProductReview) error {
+func (m *DBrepo) CreateProductReview(pr model.ProductReview) (float32, error) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -136,7 +136,7 @@ func (m *DBrepo) CreateProductReview(pr model.ProductReview) error {
 	// create new transaction
 	tx, err := m.DB.BeginTx(ctx, nil)
 	if err != nil {
-		return fmt.Errorf("db addproductreview: %v", err)
+		return 0, fmt.Errorf("db addproductreview: %v", err)
 	}
 
 	// get count of reviews of particular product
@@ -155,7 +155,7 @@ func (m *DBrepo) CreateProductReview(pr model.ProductReview) error {
 			rating = pr.Rating
 		} else {
 			tx.Rollback()
-			return fmt.Errorf("db addproductreview query reviewcount + rating: %v", err)
+			return 0, fmt.Errorf("db addproductreview query reviewcount + rating: %v", err)
 		}
 	}
 
@@ -172,7 +172,7 @@ func (m *DBrepo) CreateProductReview(pr model.ProductReview) error {
 		time.Now(),
 	); err != nil {
 		tx.Rollback()
-		return fmt.Errorf("db addproductreview insert review: %v", err)
+		return 0, fmt.Errorf("db addproductreview insert review: %v", err)
 	}
 
 	// update rating on product
@@ -190,11 +190,11 @@ func (m *DBrepo) CreateProductReview(pr model.ProductReview) error {
 	query = `UPDATE products SET rating = ? WHERE (id = ?);`
 	if _, err := tx.ExecContext(ctx, query, newRating, pr.ProductID); err != nil {
 		tx.Rollback()
-		return fmt.Errorf("db addproductreview update rating: %v", err)
+		return 0, fmt.Errorf("db addproductreview update rating: %v", err)
 	}
 	tx.Commit()
 
-	return nil
+	return newRating, nil
 }
 
 func (m *DBrepo) GetAllProducts() ([]model.Product, error) {
