@@ -131,7 +131,7 @@ func (m *Repository) AdminProducts(w http.ResponseWriter, r *http.Request) {
 	result, _ := m.DB.GetAllProducts()
 
 	data["AllProducts"] = result
-	urlQuery(result, r, "product")
+	urlQuery(result, r)
 	if err := render.Template(w, r, "adminProducts.page.html", &render.TemplateData{
 		Data: data,
 		Form: &form.Form{},
@@ -150,6 +150,7 @@ func (m *Repository) AdminRentals(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 	result, _ := m.DB.GetAllRents()
+	urlQueryRent(result, r)
 	data["AllRents"] = result
 	fmt.Println(result)
 	if err := render.Template(w, r, "adminRentals.page.html", &render.TemplateData{
@@ -161,7 +162,7 @@ func (m *Repository) AdminRentals(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func urlQuery(result []model.Product, r *http.Request, interfaceType string) {
+func urlQuery(result []model.Product, r *http.Request) {
 	sortby, ok := r.URL.Query()["sortby"]
 	sortType, sortok := r.URL.Query()["sort"]
 	fmt.Println("SORTBY:", sortby)
@@ -216,6 +217,76 @@ func urlQuery(result []model.Product, r *http.Request, interfaceType string) {
 			} else {
 				sort.SliceStable(result, func(i, j int) bool {
 					return result[i].Price > result[j].Price
+				})
+			}
+		}
+	}
+}
+func urlQueryRent(result []model.Rent, r *http.Request) {
+	sortby, ok := r.URL.Query()["sortby"]
+	sortType, sortok := r.URL.Query()["sort"]
+	fmt.Println("SORTBY:", sortby)
+	fmt.Println("SORT:", sortType)
+	if ok && sortok {
+		if sortby[0] == "id" {
+			if sortType[0] == "asc" {
+				sort.SliceStable(result, func(i, j int) bool {
+					return result[i].ID < result[j].ID
+				})
+			} else {
+				sort.SliceStable(result, func(i, j int) bool {
+					return result[i].ID > result[j].ID
+				})
+			}
+
+		} else if sortby[0] == "ownerid" {
+			if sortType[0] == "asc" {
+				sort.SliceStable(result, func(i, j int) bool {
+					return result[i].OwnerID < result[j].OwnerID
+				})
+			} else {
+				sort.SliceStable(result, func(i, j int) bool {
+					return result[i].OwnerID > result[j].OwnerID
+				})
+			}
+		} else if sortby[0] == "renterid" {
+			if sortType[0] == "asc" {
+				sort.SliceStable(result, func(i, j int) bool {
+					return result[i].RenterID < result[j].RenterID
+				})
+			} else {
+				sort.SliceStable(result, func(i, j int) bool {
+					return result[i].RenterID > result[j].RenterID
+				})
+			}
+		} else if sortby[0] == "prodid" {
+			if sortType[0] == "asc" {
+				sort.SliceStable(result, func(i, j int) bool {
+					return result[i].ProductID < result[j].ProductID
+				})
+			} else {
+				sort.SliceStable(result, func(i, j int) bool {
+					return result[i].ProductID > result[j].ProductID
+				})
+			}
+		} else if sortby[0] == "duration" {
+			if sortType[0] == "asc" {
+				sort.SliceStable(result, func(i, j int) bool {
+					return result[i].Duration < result[j].Duration
+				})
+			} else {
+				sort.SliceStable(result, func(i, j int) bool {
+					return result[i].Duration > result[j].Duration
+				})
+			}
+		} else if sortby[0] == "cost" {
+			if sortType[0] == "asc" {
+				sort.SliceStable(result, func(i, j int) bool {
+					return result[i].TotalCost < result[j].TotalCost
+				})
+			} else {
+				sort.SliceStable(result, func(i, j int) bool {
+					return result[i].TotalCost > result[j].TotalCost
 				})
 			}
 		}

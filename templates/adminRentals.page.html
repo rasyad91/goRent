@@ -43,13 +43,61 @@
             <table class="table border-bottom border-dark mb-5">
                 <tbody>
                     <tr>
-                        <th>RentalID</th>
-                        <th>OwnerID</th>
-                        <th>RenterID</th>
-                        <th>ProductID</th>
-                        <th>Duration</th>
-                        <th>Total Cost</th>
-                        <th>Start Datew</th>
+                        <th style="width: 50px;">ID<div class="btn-group-vertical">
+                            {{/* <div style=" display: flex;flex-direction: column;"> */}}
+                                <a href="?sortby=id&sort=asc">
+                                    <i class="fas fa-sort-up"></i>
+                                </a>
+                                <a href="?sortby=id&sort=desc">
+                                    <i class="fas fa-sort-down"></i>
+                                </a>
+                            </div></th>
+                        <th tyle="width: 100px;">OwnerID<div class="btn-group-vertical">
+                            {{/* <div style=" display: flex;flex-direction: column;"> */}}
+                                <a href="?sortby=ownerid&sort=asc">
+                                    <i class="fas fa-sort-up"></i>
+                                </a>
+                                <a href="?sortby=ownerid&sort=desc">
+                                    <i class="fas fa-sort-down"></i>
+                                </a>
+                            </div></th>
+                        <th>RenterID<div class="btn-group-vertical">
+                            {{/* <div style=" display: flex;flex-direction: column;"> */}}
+                                <a href="?sortby=renterid&sort=asc">
+                                    <i class="fas fa-sort-up"></i>
+                                </a>
+                                <a href="?sortby=renterid&sort=desc">
+                                    <i class="fas fa-sort-down"></i>
+                                </a>
+                            </div></th>
+                        <th>ProductID<div class="btn-group-vertical">
+                            {{/* <div style=" display: flex;flex-direction: column;"> */}}
+                                <a href="?sortby=prodid&sort=asc">
+                                    <i class="fas fa-sort-up"></i>
+                                </a>
+                                <a href="?sortby=prodid&sort=desc">
+                                    <i class="fas fa-sort-down"></i>
+                                </a>
+                            </div></th>
+                        <th>Duration<div class="btn-group-vertical">
+                            {{/* <div style=" display: flex;flex-direction: column;"> */}}
+                                <a href="?sortby=duration&sort=asc">
+                                    <i class="fas fa-sort-up"></i>
+                                </a>
+                                <a href="?sortby=duration&sort=desc">
+                                    <i class="fas fa-sort-down"></i>
+                                </a>
+                            </div></th>
+                        <th>Total Cost<div class="btn-group-vertical">
+                            {{/* <div style=" display: flex;flex-direction: column;"> */}}
+                                <a href="?sortby=cost&sort=asc">
+                                    <i class="fas fa-sort-up"></i>
+                                </a>
+                                <a href="?sortby=cost&sort=desc">
+                                    <i class="fas fa-sort-down"></i>
+                                </a>
+                            </div></th>
+                        <th>Start Date</th>
                         <th>End Date</th>
                     </tr>
                     {{range $p := $AllRents}}
