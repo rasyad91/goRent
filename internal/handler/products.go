@@ -50,6 +50,7 @@ func (m *Repository) ShowProductByID(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return err
 		}
+		m.App.Info.Println("successfully pull product by id")
 		return nil
 	})
 
@@ -58,6 +59,7 @@ func (m *Repository) ShowProductByID(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return err
 		}
+		m.App.Info.Println("successfully pull rents by product id")
 		dates = helper.ListDatesFromRents(rents)
 		return nil
 	})
@@ -67,7 +69,7 @@ func (m *Repository) ShowProductByID(w http.ResponseWriter, r *http.Request) {
 		m.App.Error.Println(err)
 		return
 	}
-	fmt.Println(dates)
+	// fmt.Println(dates)
 	if helper.IsAuthenticated(r) {
 		user := m.App.Session.Get(r.Context(), "user").(model.User)
 		// append dates that are already booked and processed in system and dates that user has rent but not yet processed for that user
@@ -79,7 +81,7 @@ func (m *Repository) ShowProductByID(w http.ResponseWriter, r *http.Request) {
 		}
 		dates = append(helper.ListDatesFromRents(rents), helper.ListDatesFromRents(userRentofPID)...)
 	}
-	fmt.Println(dates)
+	// fmt.Println(dates)
 
 	data := make(map[string]interface{})
 	data["product"] = p

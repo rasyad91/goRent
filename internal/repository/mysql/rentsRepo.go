@@ -90,14 +90,9 @@ func (m *DBrepo) GetRentsByProductID(ctx context.Context, id int) ([]model.Rent,
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("db getrentbyproductid: %v", err)
 	}
-	fmt.Println("complete rent query")
 
-	select {
-	case <-ctx.Done():
-		return nil, ctx.Err()
-	default:
-		return rents, nil
-	}
+	return rents, nil
+
 }
 
 func (m *DBrepo) DeleteRent(rentID int) error {

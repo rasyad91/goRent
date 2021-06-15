@@ -32,7 +32,7 @@ func (m *Repository) SearchResult(w http.ResponseWriter, r *http.Request) {
 	//var priceFilter bool
 	// var urlquery string
 	x := r.URL.Query()
-	fmt.Println(x)
+	// fmt.Println(x)
 
 	searchkeywords := strings.ToLower(url.QueryEscape(x["q"][0])) //hockey+sticks
 	// ManualDeleteProductsElastic(r, m.App.AWSClient, 17)
@@ -46,7 +46,7 @@ func (m *Repository) SearchResult(w http.ResponseWriter, r *http.Request) {
 	_, okMin := x["minprice"]
 	_, okMax := x["maxprice"]
 	err := fmt.Errorf("")
-	fmt.Println(err)
+	_ = err
 
 	form := form.New(r.PostForm)
 	form.Required("minprice", "maxprice")
@@ -56,17 +56,14 @@ func (m *Repository) SearchResult(w http.ResponseWriter, r *http.Request) {
 
 	if okMin && okMax {
 		//please use multiseach instead.
-		fmt.Println("multi search functon got fired")
+		m.App.Info.Println("multi search functon got fired")
 		product, err = trialMultiSearchQuery(m.App.AWSClient, x["minprice"][0], x["maxprice"][0], searchkeywords)
 		if err != nil {
 			m.App.Error.Println(err)
 		}
 	} else {
-		fmt.Println("call search Query")
-		fmt.Println("test update query passed through")
-		// _ = TestUpdateViaDoc(r, m.App.AWSClient, 2, 1)
+		m.App.Info.Println("single function got fired")
 		product = searchQuery(m.App.AWSClient, searchkeywords)
-		fmt.Println("single function got fired")
 	}
 
 	data["product"] = product
@@ -84,15 +81,14 @@ func searchQuery(client *elastic.Client, searchKeywords ...string) []model.Produ
 
 	var searchResult *elastic.SearchResult
 	var query elastic.Query
-
-	fmt.Println("length of searchKeywords", len(searchKeywords))
-	fmt.Printf("whats in searchKeywords %#v\n", searchKeywords)
+	// fmt.Println("length of searchKeywords", len(searchKeywords))
+	// fmt.Printf("whats in searchKeywords %#v", searchKeywords)
 
 	if searchKeywords[0] != "" {
 		query = elastic.NewQueryStringQuery(searchKeywords[0])
 	} else {
 		query = elastic.NewMatchAllQuery()
-		fmt.Printf("query is matchallquery %#v", query)
+		// fmt.Printf("query is matchallquery %#v", query)
 	}
 
 	searchResult, err := client.Search().
@@ -121,9 +117,9 @@ func searchQuery(client *elastic.Client, searchKeywords ...string) []model.Produ
 		products = append(products, t)
 	}
 
-	for i, v := range products {
-		fmt.Printf("%d: %v\n", i, v.Title)
-	}
+	// for i, v := range products {
+	// 	fmt.Printf("%d: %v\n", i, v.Title)
+	// }
 	return products
 
 }
@@ -182,9 +178,9 @@ func trialMultiSearchQuery(client *elastic.Client, min, max string, searchKeywor
 		products = append(products, t)
 	}
 
-	for i, v := range products {
-		fmt.Printf("%d: %v\n", i, v.Title)
-	}
+	// for i, v := range products {
+	// 	fmt.Printf("%d: %v\n", i, v.Title)
+	// }
 	return products, nil
 }
 

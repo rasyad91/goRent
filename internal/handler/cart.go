@@ -10,8 +10,6 @@ import (
 func (m *Repository) GetCart(w http.ResponseWriter, r *http.Request) {
 
 	data := make(map[string]interface{})
-	u := m.App.Session.Get(r.Context(), "user").(model.User)
-	fmt.Println(u.Rents[0].Product.Images)
 
 	if err := render.Template(w, r, "cart.page.html", &render.TemplateData{
 		Data: data,
@@ -41,7 +39,7 @@ func (m *Repository) CheckoutConfirm(w http.ResponseWriter, r *http.Request) {
 	data["passedRents"] = []model.Rent{}
 
 	msg := model.MailData{
-		To:       "rasyadsubandrio@gmail.com",
+		To:       u.Email,
 		From:     "gorent.help@gmail.com",
 		Subject:  "Rent confirm",
 		Content:  "",

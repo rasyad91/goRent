@@ -30,7 +30,7 @@ func (m *Repository) Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("HITTING LOGINPOST")
+	// fmt.Println("HITTING LOGINPOST")
 	t := time.Now()
 	fmt.Println("Start timing...")
 	form := form.New(r.PostForm)
@@ -44,7 +44,7 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 	password := r.FormValue("password")
 
 	eu, err := m.DB.GetUser(Username)
-	fmt.Println("LOGIN ACCESS CHECK", eu.AccessLevel)
+	// fmt.Println("LOGIN ACCESS CHECK", eu.AccessLevel)
 	if err != nil {
 		if err != sql.ErrNoRows {
 			m.App.Error.Println(err)
@@ -53,7 +53,7 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 		}
 		form.Errors.Add("login", "Username or password incorrect")
 	}
-	fmt.Println("SUCCESSFULLY PULLED USER INFO")
+	m.App.Info.Println("successfully pulled user info")
 
 	if err := bcrypt.CompareHashAndPassword([]byte(eu.Password), []byte(password)); err != nil {
 		form.Errors.Add("login", "Username or password incorrect")
@@ -71,7 +71,7 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Printf("user: %#v\n", eu.Email)
+	// fmt.Printf("user: %#v\n", eu.Email)
 
 	// for _, v := range eu.Rents {
 	// 	fmt.Printf("id :#%d processed:%t product:%s start:%s end:%s\n", v.ID, v.Processed, v.Product.Title, v.StartDate, v.EndDate)
@@ -83,7 +83,7 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 	m.App.Session.Put(r.Context(), "accesslevel", eu.AccessLevel)
 
 	url := m.App.Session.Get(r.Context(), "url")
-	fmt.Println("WHY THIS NOT WORKING", eu.AccessLevel == 1)
+	// fmt.Println("WHY THIS NOT WORKING", eu.AccessLevel == 1)
 	if eu.AccessLevel == 1 {
 		fmt.Println("Hitting login admin redirect")
 		http.Redirect(w, r, "/admin/overview", http.StatusSeeOther)
@@ -95,7 +95,6 @@ func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, m.App.Session.PopString(r.Context(), "url"), http.StatusSeeOther)
 		return
 	}
-	fmt.Println("Something is redirecting")
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
