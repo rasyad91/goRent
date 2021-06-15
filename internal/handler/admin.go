@@ -133,9 +133,21 @@ func (m *Repository) AdminProducts(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 	result, _ := m.DB.GetAllProducts()
-
+	// start := time.Now()
+	// urlQuery(result, r)
+	// elapse := time.Since(start)
+	// fmt.Println("QUICK SORT:", elapse)
+	sortby, ok := r.URL.Query()["sortby"]
+	sortType, sortok := r.URL.Query()["sort"]
+	// fmt.Println("checking params:", ok, sortok)
+	// result, _ = m.DB.GetAllProducts()
+	if ok && sortok {
+		// start1 := time.Now()
+		result = mergeSortProduct(result, sortby[0], sortType[0])
+		// elapse1 := time.Since(start1)
+		// fmt.Println("MERGE SORT:", elapse1)
+	}
 	data["AllProducts"] = result
-	urlQuery(result, r)
 	if err := render.Template(w, r, "adminProducts.page.html", &render.TemplateData{
 		Data: data,
 		Form: &form.Form{},
@@ -295,4 +307,151 @@ func urlQueryRent(result []model.Rent, r *http.Request) {
 			}
 		}
 	}
+}
+
+func mergeSortProduct(slice []model.Product, flag string, sortType string) []model.Product {
+	num := len(slice)
+	if num == 1 {
+		return slice
+	}
+	mid := int(num / 2)
+	left := make([]model.Product, mid)
+	right := make([]model.Product, num-mid)
+
+	for i := 0; i < num; i++ {
+		if i < mid {
+			left[i] = slice[i]
+		} else {
+			right[i-mid] = slice[i]
+		}
+	}
+	return mergeProduct(mergeSortProduct(left, flag, sortType), mergeSortProduct(right, flag, sortType), flag, sortType)
+}
+func mergeProduct(left, right []model.Product, flag string, sortType string) (result []model.Product) {
+	result = make([]model.Product, len(left)+len(right))
+	i := 0
+	for len(left) > 0 && len(right) > 0 {
+		if sortType == "asc" {
+			if flag == "prodID" {
+				if left[0].ID < right[0].ID {
+					result[i] = left[0]
+					left = left[1:]
+				} else {
+					result[i] = right[0]
+					right = right[1:]
+				}
+				i++
+			} else if flag == "brand" {
+				if strings.ToLower(left[0].Brand) < strings.ToLower(right[0].Brand) {
+					result[i] = left[0]
+					left = left[1:]
+				} else {
+					result[i] = right[0]
+					right = right[1:]
+				}
+				i++
+			} else if flag == "title" {
+				if strings.ToLower(left[0].Title) < strings.ToLower(right[0].Title) {
+					result[i] = left[0]
+					left = left[1:]
+				} else {
+					result[i] = right[0]
+					right = right[1:]
+				}
+				i++
+			} else if flag == "rating" {
+				if left[0].Rating < right[0].Rating {
+					result[i] = left[0]
+					left = left[1:]
+				} else {
+					result[i] = right[0]
+					right = right[1:]
+				}
+				i++
+			} else if flag == "price" {
+				if left[0].Price < right[0].Price {
+					result[i] = left[0]
+					left = left[1:]
+				} else {
+					result[i] = right[0]
+					right = right[1:]
+				}
+				i++
+			} else {
+				if left[0].OwnerID < right[0].OwnerID {
+					result[i] = left[0]
+					left = left[1:]
+				} else {
+					result[i] = right[0]
+					right = right[1:]
+				}
+				i++
+			}
+		} else {
+			if flag == "prodID" {
+				if left[0].ID > right[0].ID {
+					result[i] = left[0]
+					left = left[1:]
+				} else {
+					result[i] = right[0]
+					right = right[1:]
+				}
+				i++
+			} else if flag == "brand" {
+				if strings.ToLower(left[0].Brand) > strings.ToLower(right[0].Brand) {
+					result[i] = left[0]
+					left = left[1:]
+				} else {
+					result[i] = right[0]
+					right = right[1:]
+				}
+				i++
+			} else if flag == "title" {
+				if strings.ToLower(left[0].Title) > strings.ToLower(right[0].Title) {
+					result[i] = left[0]
+					left = left[1:]
+				} else {
+					result[i] = right[0]
+					right = right[1:]
+				}
+				i++
+			} else if flag == "rating" {
+				if left[0].Rating > right[0].Rating {
+					result[i] = left[0]
+					left = left[1:]
+				} else {
+					result[i] = right[0]
+					right = right[1:]
+				}
+				i++
+			} else if flag == "price" {
+				if left[0].Price > right[0].Price {
+					result[i] = left[0]
+					left = left[1:]
+				} else {
+					result[i] = right[0]
+					right = right[1:]
+				}
+				i++
+			} else {
+				if left[0].OwnerID > right[0].OwnerID {
+					result[i] = left[0]
+					left = left[1:]
+				} else {
+					result[i] = right[0]
+					right = right[1:]
+				}
+				i++
+			}
+		}
+	}
+	for j := 0; j < len(left); j++ {
+		result[i] = left[j]
+		i++
+	}
+	for j := 0; j < len(right); j++ {
+		result[i] = right[j]
+		i++
+	}
+	return
 }
