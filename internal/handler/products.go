@@ -650,8 +650,11 @@ func (m *Repository) EditProductPost(w http.ResponseWriter, r *http.Request) {
 	var editedProduct = model.Product{
 
 		ID:          productIDInt,
+		OwnerID:     product.OwnerID,
 		Brand:       r.FormValue("brand"),
+		Category:    product.Category,
 		Title:       r.FormValue("productname"),
+		Rating:      product.Rating,
 		Description: productDescription,
 		Price:       productPrice,
 		Images:      productImageURL,
