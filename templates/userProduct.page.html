@@ -61,7 +61,7 @@
                   <div class="row">
                     <div class="col-4">Product</div>
                     <div class="col-2 text-center">Price</div>
-                    <div class="col-4 text-center">Review</div>
+                    <div class="col-4 text-center">Rating</div>
                     <div class="col-1 text-center">Edit</div>
                     <div class="col-1 text-center">Delete</div>
                   </div>
@@ -87,7 +87,7 @@
                                 {{range $index := iterate (substract 5 (floatToInt $p.Rating))}}
                                 <li class="list-inline-item mr-0"><i class="fa fa-star text-gray-300"></i></li>
                                 {{end}}
-                            </ul><span class="text-muted text-uppercase">{{len $p.Reviews}} reviews</span>
+                            </ul><span class="text-muted text-uppercase">{{$p.Rating}}</span>
                         </div>
                       </div>
                       <div class="col-1"><a class="btn" href="/v1/user/editproduct?edit={{$p.ID}}"><i class="fas fa-edit"></i></a></div>

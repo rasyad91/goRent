@@ -107,7 +107,7 @@
                         <th class="py-4 text-muted font-weight-normal">{{$p.OwnerID}}</th>   
 
                         <th class="py-4 text-muted font-weight-normal">{{$p.Brand}}</th>
-                        <td class="py-4 text-center text-muted font-weight-normal">{{$p.Title}}</td>
+                        <td class="py-4 text-center text-muted font-weight-normal"><a href= "/v1/products/{{$p.ID}}" >{{$p.Title}}</a></td>
                         <td class="py-4 text-center text-muted font-weight-normal">{{$p.Rating}}</td>
                         <td class="py-4 text-center text-muted font-weight-normal">{{$p.Price}}</td>
                         <td class="py-4 text-center text-muted font-weight-normal">{{shortDate $p.UpdatedAt}}</td>
