@@ -15,6 +15,7 @@ func routes() http.Handler {
 	mux.Use(SessionLoad)
 	mux.Use(RecoverPanic)
 	mux.Use(NoSurf)
+	mux.Use(LastGetURL)
 
 	mux.HandleFunc("/", handler.Repo.Home).Methods("GET")
 	mux.HandleFunc("/search", handler.Repo.Search).Methods("GET")
@@ -29,10 +30,9 @@ func routes() http.Handler {
 	mux.HandleFunc("/v1/products/{productID}", handler.Repo.ShowProductByID).Methods("GET")
 
 	u := mux.PathPrefix("/v1/user").Subrouter()
-	u.Use(Auth)
+	u.Use(Authenticate)
 
 	u.HandleFunc("/logout", handler.Repo.Logout).Methods("GET")
-
 	u.HandleFunc("/account", handler.Repo.UserAccount).Methods("GET")
 	u.HandleFunc("/account/profile", handler.Repo.EditUserAccount).Methods("GET")
 	u.HandleFunc("/account/profile", handler.Repo.EditUserAccountPost).Methods("POST")
@@ -45,7 +45,7 @@ func routes() http.Handler {
 
 	u.HandleFunc("/cart", handler.Repo.GetCart).Methods("GET")
 	u.HandleFunc("/cart/checkout", handler.Repo.GetCheckout).Methods("GET")
-	u.HandleFunc("/cart/checkout/confirm", handler.Repo.PostCheckout).Methods("POST")
+	u.HandleFunc("/cart/checkout/confirm", handler.Repo.ConfirmRents).Methods("POST")
 	u.HandleFunc("/cart/checkout/confirm", handler.Repo.CheckoutConfirm).Methods("GET")
 
 	u.HandleFunc("/addproduct", handler.Repo.AddProduct).Methods("GET")
@@ -54,9 +54,20 @@ func routes() http.Handler {
 	u.HandleFunc("/editproduct", handler.Repo.EditProduct).Methods("GET")
 	u.HandleFunc("/editproduct", handler.Repo.EditProductPost).Methods("POST")
 
-	u.HandleFunc("/v1/products/addRent", handler.Repo.PostRent).Methods("POST")
-	u.HandleFunc("/v1/products/removeRent", handler.Repo.DeleteRent).Methods("POST")
-	u.HandleFunc("/v1/products/{productID}/review", handler.Repo.PostReview).Methods("POST")
+	a := mux.PathPrefix("/admin").Subrouter()
+	// a.Use(Authenticate)
+	a.Use(Authorized)
+
+	a.HandleFunc("/overview", handler.Repo.AdminAccount).Methods("GET")
+	a.HandleFunc("/overview", handler.Repo.AdminAccountPost).Methods("POST")
+	a.HandleFunc("/products", handler.Repo.AdminProducts).Methods("GET")
+	a.HandleFunc("/rents", handler.Repo.AdminRentals).Methods("GET")
+
+	p := mux.PathPrefix("/v1/products").Subrouter()
+	p.Use(Authenticate)
+	p.HandleFunc("/addRent", handler.Repo.PostRent).Methods("POST")
+	p.HandleFunc("/removeRent", handler.Repo.DeleteRent).Methods("POST")
+	p.HandleFunc("/{productID}/review", handler.Repo.PostReview).Methods("POST")
 
 	fileServer := http.FileServer(http.Dir("./static/"))
 	mux.PathPrefix("/static/").Handler(http.StripPrefix("/static", fileServer))

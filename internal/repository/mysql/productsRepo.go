@@ -5,10 +5,13 @@ import (
 	"database/sql"
 	"fmt"
 	"goRent/internal/model"
+	"sync"
 	"time"
 
 	"golang.org/x/sync/errgroup"
 )
+
+var productLock sync.RWMutex
 
 func (m *DBrepo) GetProductByID(ctx context.Context, id int) (model.Product, error) {
 	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
@@ -103,9 +106,7 @@ func (m *DBrepo) GetProductByID(ctx context.Context, id int) (model.Product, err
 		defer rows.Close()
 		for rows.Next() {
 			var imgUrl string
-			if err := rows.Scan(
-				&imgUrl,
-			); err != nil {
+			if err := rows.Scan(&imgUrl); err != nil {
 				if err == sql.ErrNoRows {
 					return err
 				}
@@ -149,8 +150,13 @@ func (m *DBrepo) CreateProductReview(pr model.ProductReview) error {
 				where pr.product_id = ?
 				group by p.rating`
 	if err := tx.QueryRowContext(ctx, query, pr.ProductID).Scan(&reviewCount, &rating); err != nil {
-		tx.Rollback()
-		return fmt.Errorf("db addproductreview query reviewcount + rating: %v", err)
+		if err == sql.ErrNoRows {
+			reviewCount = 0
+			rating = pr.Rating
+		} else {
+			tx.Rollback()
+			return fmt.Errorf("db addproductreview query reviewcount + rating: %v", err)
+		}
 	}
 
 	// insert new product review
@@ -170,8 +176,16 @@ func (m *DBrepo) CreateProductReview(pr model.ProductReview) error {
 	}
 
 	// update rating on product
+	//check
+	var newRating float32
+	if reviewCount == 0 {
+		fmt.Println("hit in review count = 0")
+		newRating = rating
+	} else {
+		newRating = rating + (pr.Rating-rating)/float32(reviewCount)
+	}
 
-	newRating := rating + (pr.Rating-rating)/float32(reviewCount)
+	fmt.Println(newRating)
 
 	query = `UPDATE products SET rating = ? WHERE (id = ?);`
 	if _, err := tx.ExecContext(ctx, query, newRating, pr.ProductID); err != nil {
@@ -224,6 +238,9 @@ func (m *DBrepo) GetAllProducts() ([]model.Product, error) {
 }
 
 func (m *DBrepo) GetProductNextIndex() (int, error) {
+
+	productLock.Lock()
+	defer productLock.Unlock()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()

@@ -36,6 +36,12 @@
                     <svg class="svg-icon svg-icon-heavy mr-2">
                       <use xlink:href="#heart-1"> </use>
                     </svg>Bookings</span></a>
+                                    {{if eq $res.AccessLevel 1}}
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/admin/overview"><span>
+                    <svg class="svg-icon svg-icon-heavy mr-2">
+                      <use xlink:href="#heart-1"> </use>
+                    </svg>Admin Portal</span></a>
+                {{end}}
                 <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/logout"><span>
                     <svg class="svg-icon svg-icon-heavy mr-2">
                     </svg>Log out</span>
@@ -62,7 +68,7 @@
                   <div class="cart-item">
                     <div class="row d-flex align-items-center text-center">
                       <div class="col-6">
-                        <div class="d-flex align-items-center"><a href="detail.html"><img class="cart-item-img" src="https://d19m59y37dris4.cloudfront.net/varkala/1-2-1/img/product/product-square-ian-dooley-347968-unsplash.jpg" alt="..."></a>
+                        <div class="d-flex align-items-center"><a href="detail.html"><img class="cart-item-img" src={{index $r.Product.Images 0}} alt="..."></a>
                           <div class="cart-title text-left"><a class="text-dark" href="detail.html"><strong>{{$r.Product.Title}}</strong></a>
                           </div>
                         </div>

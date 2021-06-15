@@ -36,6 +36,12 @@
                     <svg class="svg-icon svg-icon-heavy mr-2">
                       <use xlink:href="#heart-1"> </use>
                     </svg>Bookings</span></a>
+                {{if eq $res.AccessLevel 1}}
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/admin/overview"><span>
+                    <svg class="svg-icon svg-icon-heavy mr-2">
+                      <use xlink:href="#heart-1"> </use>
+                    </svg>Admin Portal</span></a>
+                {{end}}
                 <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/logout"><span>
                     <svg class="svg-icon svg-icon-heavy mr-2">
                     </svg>Log out</span>
@@ -58,7 +64,7 @@
                 <figure class="card card-product">
                   <div class="card">
                     <a href="/v1/products/{{$p.ID}}"><img
-                        src="https://miro.medium.com/max/2400/1*mk1-6aYaf_Bes1E3Imhc0A.jpeg" class="card-img-top"
+                        src={{index $p.Images 0}} class="card-img-top"
                         style='height: 100%; width: 100%; object-fit: contain'></a>
                     <figcaption class="info-wrap">
                       <!--- passed 1 ---->
@@ -87,7 +93,7 @@
           </div>
           <hr>
           <h5><a href="#">My Rented Products</a></h5>
-          {{$rents := $res.Rents}}
+          {{$rents := processedRents $res.Rents}}
           <div
             class="swiper-container swiper-container-initialized swiper-container-horizontal swiper-container-pointer-events">
             <div class="swiper-wrapper" id="swiper-wrapper-dde3f11d71d76b66" aria-live="polite"
@@ -98,7 +104,7 @@
                 <figure class="card card-product">
                   <div class="card">
                     <a href="/v1/products/{{$r.ProductID}}"><img
-                        src="https://miro.medium.com/max/2400/1*mk1-6aYaf_Bes1E3Imhc0A.jpeg" class="card-img-top"
+                        src={{index $r.Product.Images 0}} class="card-img-top"
                         style='height: 100%; width: 100%; object-fit: contain'></a>
                     <figcaption class="info-wrap">
                       <!--- passed 1 ---->
@@ -139,7 +145,7 @@
                 <figure class="card card-product">
                   <div class="card">
                     <a href="/v1/products/{{$b.ProductID}}"><img
-                        src="https://miro.medium.com/max/2400/1*mk1-6aYaf_Bes1E3Imhc0A.jpeg" class="card-img-top"
+                        src={{index $b.Product.Images 0}} class="card-img-top"
                         style='height: 100%; width: 100%; object-fit: contain'></a>
                     <figcaption class="info-wrap">
                       <!--- passed 1 ---->

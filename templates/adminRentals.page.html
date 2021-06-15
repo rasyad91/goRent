@@ -1,0 +1,74 @@
+{{template "base" .}}
+
+{{define "content"}}
+
+<section class="pb-4 py-3">
+  <div class="container">
+    {{$res := index .Data "user"}}
+    {{$AllRents := index .Data "AllRents"}}
+    {{$form := index .Form}}
+    {{$csrf := index .CSRFToken}}
+    <div class="row">
+      <!-- Customer Sidebar-->
+          <div class="col-lg-3 col-xl-3 mb-3">
+            <div class="customer-sidebar card border-0"> 
+              <div class="customer-profile"><a class="d-inline-block" href="#">
+                <img class="img-fluid rounded-circle customer-image" src={{$res.Image_URL}} style = "border-radius:50% 50% 50% 50%;" alt=""></a>
+                <h5>{{$res.Username}}</h5>
+              </div>
+              <nav class="list-group customer-nav">
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/admin/overview">
+                  <span>
+                    <svg class="svg-icon svg-icon-heavy mr-2">
+                    </svg>Overview</span>
+                </a>
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/admin/products"><span>   
+                    <svg class="svg-icon svg-icon-heavy mr-2">
+                      <use xlink:href="#heart-1"> </use>
+                    </svg>Products</span></a>
+                <a class="active list-group-item d-flex justify-content-between align-items-center" href="/admin/rents"><span>
+                    <svg class="svg-icon svg-icon-heavy mr-2">
+                      <use xlink:href="#heart-1"> </use>
+                    </svg>Rentals</span></a>
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/logout"><span>
+                    <svg class="svg-icon svg-icon-heavy mr-2">
+                    </svg>Log out</span>
+                </a>
+              </nav>
+            </div>
+          </div>
+      <!-- /Customer Sidebar-->
+      <div class="col-lg-9 col-xl-9 mb-5 mb-lg-0">
+            <h5 class="mb-5">GoRent Rentals</h5>
+            <table class="table border-bottom border-dark mb-5">
+                <tbody>
+                    <tr>
+                        <th>RentalID</th>
+                        <th>OwnerID</th>
+                        <th>RenterID</th>
+                        <th>ProductID</th>
+                        <th>Duration</th>
+                        <th>Total Cost</th>
+                        <th>Start Datew</th>
+                        <th>End Date</th>
+                    </tr>
+                    {{range $p := $AllRents}}
+                    <tr>
+                        <th class="py-4 text-muted font-weight-normal">{{$p.ID}}</th>   
+                        <th class="py-4 text-muted font-weight-normal">{{$p.OwnerID}}</th>   
+                        <th class="py-4 text-muted font-weight-normal">{{$p.RenterID}}</th>
+                        <td class="py-4 text-center text-muted font-weight-normal">{{$p.ProductID}}</td>
+                        <td class="py-4 text-center text-muted font-weight-normal">{{$p.Duration}}</td>
+                        <td class="py-4 text-center text-muted font-weight-normal">{{$p.TotalCost}}</td>
+                        <td class="py-4 text-center text-muted font-weight-normal">{{shortDate $p.StartDate}}</td>
+                        <td class="py-4 text-center text-muted font-weight-normal">{{shortDate $p.EndDate}}</td>
+
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+      </div>
+    </div>
+  </div>
+</section>
+{{end}}

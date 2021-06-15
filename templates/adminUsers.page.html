@@ -1,0 +1,144 @@
+{{template "base" .}}
+
+{{define "content"}}
+
+<section class="pb-4 py-3">
+  <div class="container">
+    {{$res := index .Data "user"}}
+    {{$AllUser := index .Data "AllUsers"}}
+    {{$form := index .Form}}
+    {{$csrf := index .CSRFToken}}
+    <div class="row">
+      <!-- Customer Sidebar-->
+          <div class="col-lg-3 col-xl-3 mb-3">
+            <div class="customer-sidebar card border-0"> 
+              <div class="customer-profile"><a class="d-inline-block" href="#">
+                <img class="img-fluid rounded-circle customer-image" src={{$res.Image_URL}} style = "border-radius:50% 50% 50% 50%;" alt=""></a>
+                <h5>{{$res.Username}}</h5>
+              </div>
+              <nav class="list-group customer-nav">
+                <a class="active list-group-item d-flex justify-content-between align-items-center" href="/admin/overview">
+                  <span>
+                    <svg class="svg-icon svg-icon-heavy mr-2">
+                    </svg>Overview</span>
+                </a>
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/admin/products"><span>   
+                    <svg class="svg-icon svg-icon-heavy mr-2">
+                      <use xlink:href="#heart-1"> </use>
+                    </svg>Products</span></a>
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/admin/rents"><span>
+                    <svg class="svg-icon svg-icon-heavy mr-2">
+                      <use xlink:href="#heart-1"> </use>
+                    </svg>Rentals</span></a>
+                <a class="list-group-item d-flex justify-content-between align-items-center" href="/v1/user/logout"><span>
+                    <svg class="svg-icon svg-icon-heavy mr-2">
+                    </svg>Log out</span>
+                </a>
+              </nav>
+            </div>
+          </div>
+      <!-- /Customer Sidebar-->
+      <div class="col-lg-9 col-xl-9 mb-5 mb-lg-0">
+            <h5 class="mb-5">GoRent Users</h5>
+            <table class="table border-bottom border-dark mb-5">
+                <tbody>
+                    <tr  style= "vertical-align: center;">
+                        <th>UserID                            <div class="btn-group-vertical">
+                            {{/* <div style=" display: flex;flex-direction: column;"> */}}
+                                <a href="?sortby=id&sort=asc">
+                                    <i class="fas fa-sort-up"></i>
+                                </a>
+                                <a href="?sortby=id&sort=desc">
+                                    <i class="fas fa-sort-down"></i>
+                                </a>
+                            </div></th>
+                        <th class="text-center "> <div styel = "  display: flex;
+  justify-content: center;">Image</div></th>
+                        <th>     
+                            Username
+                            <div class="btn-group-vertical">
+                            {{/* <div style=" display: flex;flex-direction: column;"> */}}
+                                <a href="?sortby=username&sort=asc">
+                                    <i class="fas fa-sort-up"></i>
+                                </a>
+                                <a href="?sortby=username&sort=desc">
+                                    <i class="fas fa-sort-down"></i>
+                                </a>
+                            </div>
+                        </th>
+                        <th>Access Level                             <div class="btn-group-vertical">
+                            {{/* <div style=" display: flex;flex-direction: column;"> */}}
+                                <a href="?sortby=access&sort=asc">
+                                    <i class="fas fa-sort-up"></i>
+                                </a>
+                                <a href="?sortby=access&sort=desc">
+                                    <i class="fas fa-sort-down"></i>
+                                </a>
+                            </div></th>
+                        <th>Grant Access</th>
+                        <th>Remove Access</th>
+                        <th>Delete All</th>
+                    </tr>
+                    {{range $user := $AllUser}}
+                    <tr>
+                        <th class="py-4 text-muted font-weight-normal">{{$user.ID}}</th>   
+                        <th class="py-4 text-muted font-weight-normal"><img class="cart-item-img" src={{$user.Image_URL}} alt="..."></a></th>
+                        <th class="py-4 text-muted font-weight-normal">{{$user.Username}}</th>
+                        <td class="py-4 text-center text-muted font-weight-normal">{{$user.AccessLevel}}</td>
+                        <td class="py-4 text-center text-muted font-weight-normal">
+                            <div class="col-1">
+                                <form method="POST" novalidate>
+                                    <input type="hidden" name="csrf_token" value="{{$csrf}}">
+                                    <input type="hidden" name="action" value="accessGrant">
+                                    <input type="hidden" name="userid" value={{$user.ID}}>
+                                    <button type = "submit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                        <td class="py-4 text-center text-muted font-weight-normal">
+                            <div class="col-1">
+                                <form method="POST" novalidate>
+                                    <input type="hidden" name="csrf_token" value="{{$csrf}}">
+                                    <input type="hidden" name="action" value="removeAccess">
+                                    <input type="hidden" name="userid" value={{$user.ID}}>
+                                    <button type = "submit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                        <td class="py-4 text-center text-muted font-weight-normal">
+                            <div class="col-1">
+                                <form method="POST" novalidate>
+                                    <input type="hidden" name="csrf_token" value="{{$csrf}}">
+                                    <input type="hidden" name="action" value="massiveDelete">
+                                    <input type="hidden" name="userid" value={{$user.ID}}>
+                                    <button type = "submit" onclick= "clicked(event)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                    {{/* <input type="submit" onclick="clicked(event)" /> */}}
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+      </div>
+    </div>
+  </div>
+</section>
+{{end}}
+
+{{define "script"}}
+<script>
+function clicked(e)
+{
+    if(!confirm('Are you sure?')) {
+        e.preventDefault();
+    }
+}
+</script>
+{{end}}

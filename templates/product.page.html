@@ -18,13 +18,13 @@
       <div class="col-lg-6 col-xl-7 pt-4 order-2 order-lg-1 photoswipe-gallery">
 
         {{with $res.Images}}
-        {{range $res.Images}}
+        {{range $i := $res.Images}}
         <a class="d-block mb-4" href="img/product/detail-3-gray.jpg" data-caption="{{$res.Title}} 1 - Caption text"
           data-toggle="photoswipe" data-width="1200" data-height="1200">
           <div data-toggle="zoom" data-image="img/product/detail-3-gray.jpg"
             style="position: relative; overflow: hidden;">
             <img class="img-fluid"
-              src="https://d19m59y37dris4.cloudfront.net/varkala/1-2-1/img/product/detail-3-gray.jpg"
+              src="{{.}}"
               alt="{{$res.Title}} 1">
             <img role="presentation" alt="" src="img/product/detail-3-gray.jpg" class="zoomImg"
               style="position: absolute; top: 0px; left: -29.020091240035022px; opacity: 0; width: 1313px; height: 1313px; border: none; max-width: none; max-height: none;">
@@ -80,7 +80,8 @@
                 <a class="text-muted" href="/searchresult?q={{$res.Category}}">{{$res.Category}}</a></li>
               <li>
                 <strong>Owner:</strong>
-                <a class="text-muted" href="/searchresult?q={{$res.Category}}">{{$res.OwnerName}}</a></li>
+                {{$res.OwnerName}}
+              </li>
             </ul>
 
             <form id="addRent" action="/v1/products/addRent" method="POST">
@@ -165,6 +166,7 @@
       {{if ne $user.ID $res.OwnerID}}
       <div class="fade tab-pane" id="leave-review" role="tabpanel">
         <form class="form" id="reviewForm" method="post" action="/v1/products/{{$res.ID}}/review">
+          
           <input type="hidden" name="csrf_token" value="{{$csrf}}">
           <input type="hidden" name="product_id" value="{{$res.ID}}">
 
@@ -221,17 +223,9 @@
   const rangepicker = new DateRangePicker(elem, {
     format: "dd-mm-yyyy",
     minDate: dateToday,
-    datesDisabled: [{
-        {
-          range $b
-        }
-      }
+    datesDisabled: [{{range $b}}
       "{{.}}",
-      {
-        {
-          end
-        }
-      }
+      {{end}}
     ]
   });
 </script>

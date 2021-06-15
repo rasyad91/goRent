@@ -29,6 +29,11 @@ func IsAuthenticated(r *http.Request) bool {
 	return exists
 }
 
+func IsAdmin(r *http.Request) bool {
+	accessLevel := app.Session.GetInt(r.Context(), "accesslevel")
+	return accessLevel == 1
+}
+
 func ListDatesFromRents(rents []model.Rent) []string {
 	dates := []string{}
 	for _, r := range rents {

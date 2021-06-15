@@ -6,6 +6,12 @@ import (
 )
 
 type DatabaseRepo interface {
+	//admin
+	GetAllUsers() ([]model.User, error)
+	GrantAccess(userid string) error
+	RemoveAccess(userid string) error
+	GetAllRents() ([]model.Rent, error)
+	DeleteUser(userid string) error
 	// Users
 	GetUser(username string) (model.User, error)
 	InsertUser(user model.User) error

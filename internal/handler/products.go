@@ -348,6 +348,8 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 
 		m.App.Session.Put(r.Context(), "flash", "You've successfully created your product!")
 		m.App.Info.Println("Register: redirecting to user's account page")
+		eu, _ := m.DB.GetUser(u.Username)
+		m.App.Session.Put(r.Context(), "user", eu)
 		http.Redirect(w, r, "/v1/user/products", http.StatusSeeOther)
 
 	}
@@ -399,9 +401,7 @@ func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, 
 	// Reset the file
 	file.Seek(0, 0)
 
-	var s3FileName string
-
-	s3FileName = fmt.Sprintf(string(timeNow) + "_" + strconv.Itoa(i) + filepath.Ext(header.Filename))
+	s3FileName := fmt.Sprintf(string(timeNow) + "_" + strconv.Itoa(i) + filepath.Ext(header.Filename))
 
 	_, err = uploader.Upload(&s3manager.UploadInput{
 		Bucket:               aws.String(config.AWSProductBucket),
@@ -498,7 +498,7 @@ func (m *Repository) EditProduct(w http.ResponseWriter, r *http.Request) {
 		m.App.Error.Println("error occured while converting product index in query string to int", err)
 	}
 
-	product, err := m.DB.GetProductByID(r.Context(), productIdEdit)
+	product, _ := m.DB.GetProductByID(r.Context(), productIdEdit)
 
 	data["product"] = product
 
@@ -640,7 +640,7 @@ func (m *Repository) EditProductPost(w http.ResponseWriter, r *http.Request) {
 			oldImage := (productImageURL[v.index-1])
 			productImageURL[v.index-1] = s + v.imageType
 			newImage := productImageURL[v.index-1]
-			updateImg = append(updateImg, model.ImgUrl{oldImage, newImage})
+			updateImg = append(updateImg, model.ImgUrl{OldImg: oldImage, NewImg: newImage})
 		}
 
 	}
