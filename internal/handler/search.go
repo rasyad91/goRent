@@ -35,8 +35,9 @@ func (m *Repository) SearchResult(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(x)
 
 	searchkeywords := strings.ToLower(url.QueryEscape(x["q"][0])) //hockey+sticks
-
+	// ManualDeleteProductsElastic(r, m.App.AWSClient, 17)
 	// ManualProductFix(r, m.App.AWSClient, model.Product{})
+
 	//call rentoh
 	go rentohQuery(searchkeywords)
 

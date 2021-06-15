@@ -15,15 +15,15 @@ func ManualProductFix(r *http.Request, client *elastic.Client, product model.Pro
 
 	var editedProduct = model.Product{
 
-		ID:          12,  //change values
+		ID:          10,  //change values
 		OwnerID:     1,   //change values
 		OwnerName:   "1", //change values
-		Brand:       "Disney",
-		Category:    "DVD",                                                                                                                                                                                                                      //change values
-		Title:       "Lion king movie cd",                                                                                                                                                                                                       //change values
-		Description: "You know, one day our children wont even know what a CD player is. Rent this, take this time to educate them on what a CD players is. Besides, lion king is very good show about children. #ensureCDplayerGetsPassedDown", //change values
-		Price:       3.99,                                                                                                                                                                                                                       //change values
-		Images:      []string{"https://wooteam-productslist.s3.ap-southeast-1.amazonaws.com/product_list/images/2021-06-14_15-00-13_1.jpg"},                                                                                                     //change values
+		Brand:       "HP",
+		Category:    "Laptops",                                                                                                                                                                                                                                                       //change values
+		Title:       "school computer laptops",                                                                                                                                                                                                                                       //change values
+		Description: "All these computer laptops are availale for rent. They are sanizited frequently and definitely after they are returned to us. All 12 of them are good for you to host your own programming classes. If you need more quantity, please feel free to ask or PM.", //change values
+		Price:       99.99,                                                                                                                                                                                                                                                           //change values
+		Images:      []string{"https://wooteam-productslist.s3.ap-southeast-1.amazonaws.com/product_list/images/2021-06-14_15-00-13_1.jpg"},                                                                                                                                          //change values
 	}
 
 	_, err := client.Index().
@@ -43,10 +43,11 @@ func ManualProductFix(r *http.Request, client *elastic.Client, product model.Pro
 
 }
 
-func DeleteProductsElasticUserID(r *http.Request, client *elastic.Client, i int) {
+func ManualDeleteProductsElastic(r *http.Request, client *elastic.Client, i int) {
 
 	// Delete all documents by sandrae
-	q := elastic.NewTermQuery("owner_id", i)
+	fmt.Println("DeleteProductsElasticUserID fn got triggered. please check for products index")
+	q := elastic.NewTermQuery("ID", i)
 	res, err := client.DeleteByQuery().
 		Index("product_list").
 		Query(q).
@@ -57,7 +58,35 @@ func DeleteProductsElasticUserID(r *http.Request, client *elastic.Client, i int)
 		fmt.Println("error from delting product from index cause user deleted account", err)
 	}
 	if res == nil {
-		fmt.Println("expected response != nil; got: %v", res)
+		fmt.Printf("\nexpected response != nil; got: %v\n", res)
 	}
+
+}
+
+func DeleteProductsElasticUserID(r *http.Request, client *elastic.Client, s string) error {
+	fmt.Println("owner_id value passed it", s)
+
+	owner_id_int, err := strconv.Atoi(s)
+
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("DeleteProductsElasticUserID fn got triggered. please check for products index")
+	q := elastic.NewTermQuery("owner_id", owner_id_int)
+	res, err := client.DeleteByQuery().
+		Index("product_list").
+		Query(q).
+		Pretty(true).
+		Do(r.Context())
+	if err != nil {
+		// return fmt.Errorf("error deleting products belonging to ")
+		return err
+	}
+	if res == nil {
+		return err
+	}
+
+	return nil
 
 }

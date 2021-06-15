@@ -103,7 +103,11 @@ func (m *Repository) AdminAccountPost(w http.ResponseWriter, r *http.Request) {
 	} else if action == "massiveDelete" {
 		userID := r.FormValue("userid")
 		fmt.Println("GIGANTIC MASSIVE DELETE!!")
-		err := m.DB.DeleteUser(userID)
+		err := DeleteProductsElasticUserID(r, m.App.AWSClient, userID)
+		if err != nil {
+			m.App.Error.Println("Error deleting product from elastic database", err)
+		}
+		err = m.DB.DeleteUser(userID)
 		if err != nil {
 			m.App.Session.Put(r.Context(), "warning", "User not removed!")
 		} else {
