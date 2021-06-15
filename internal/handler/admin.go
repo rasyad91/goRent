@@ -88,6 +88,8 @@ func (m *Repository) AdminAccountPost(w http.ResponseWriter, r *http.Request) {
 		err := m.DB.GrantAccess(userID)
 		if err != nil {
 			m.App.Session.Put(r.Context(), "warning", "Access not granted")
+			m.App.Error.Println(err)
+
 		} else {
 			m.App.Session.Put(r.Context(), "flash", "Access Granted!")
 		}
@@ -97,6 +99,8 @@ func (m *Repository) AdminAccountPost(w http.ResponseWriter, r *http.Request) {
 		err := m.DB.RemoveAccess(userID)
 		if err != nil {
 			m.App.Session.Put(r.Context(), "warning", "Access not reverted!")
+			m.App.Error.Println(err)
+
 		} else {
 			m.App.Session.Put(r.Context(), "flash", "Access removed successfully!")
 		}
@@ -106,6 +110,7 @@ func (m *Repository) AdminAccountPost(w http.ResponseWriter, r *http.Request) {
 		err := m.DB.DeleteUser(userID)
 		if err != nil {
 			m.App.Session.Put(r.Context(), "warning", "User not removed!")
+			m.App.Error.Println(err)
 		} else {
 			m.App.Session.Put(r.Context(), "flash", "User removed successfully!")
 		}
@@ -124,7 +129,9 @@ func (m *Repository) AdminProducts(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 	result, _ := m.DB.GetAllProducts()
+
 	data["AllProducts"] = result
+	urlQuery(result, r, "product")
 	if err := render.Template(w, r, "adminProducts.page.html", &render.TemplateData{
 		Data: data,
 		Form: &form.Form{},
@@ -152,4 +159,65 @@ func (m *Repository) AdminRentals(w http.ResponseWriter, r *http.Request) {
 		m.App.Error.Println(err)
 	}
 
+}
+
+func urlQuery(result []model.Product, r *http.Request, interfaceType string) {
+	sortby, ok := r.URL.Query()["sortby"]
+	sortType, sortok := r.URL.Query()["sort"]
+	fmt.Println("SORTBY:", sortby)
+	fmt.Println("SORT:", sortType)
+	if ok && sortok {
+		if sortby[0] == "prodID" {
+			if sortType[0] == "asc" {
+				sort.SliceStable(result, func(i, j int) bool {
+					return result[i].ID < result[j].ID
+				})
+			} else {
+				sort.SliceStable(result, func(i, j int) bool {
+					return result[i].ID > result[j].ID
+				})
+			}
+
+		} else if sortby[0] == "ownerID" {
+			if sortType[0] == "asc" {
+				sort.SliceStable(result, func(i, j int) bool {
+					return result[i].OwnerID < result[j].OwnerID
+				})
+			} else {
+				sort.SliceStable(result, func(i, j int) bool {
+					return result[i].OwnerID > result[j].OwnerID
+				})
+			}
+		} else if sortby[0] == "brand" {
+			if sortType[0] == "asc" {
+				sort.SliceStable(result, func(i, j int) bool {
+					return strings.ToLower(result[i].Brand) < strings.ToLower(result[j].Brand)
+				})
+			} else {
+				sort.SliceStable(result, func(i, j int) bool {
+					return strings.ToLower(result[i].Brand) > strings.ToLower(result[j].Brand)
+				})
+			}
+		} else if sortby[0] == "title" {
+			if sortType[0] == "asc" {
+				sort.SliceStable(result, func(i, j int) bool {
+					return strings.ToLower(result[i].Title) < strings.ToLower(result[j].Title)
+				})
+			} else {
+				sort.SliceStable(result, func(i, j int) bool {
+					return strings.ToLower(result[i].Title) > strings.ToLower(result[j].Title)
+				})
+			}
+		} else if sortby[0] == "price" {
+			if sortType[0] == "asc" {
+				sort.SliceStable(result, func(i, j int) bool {
+					return result[i].Price < result[j].Price
+				})
+			} else {
+				sort.SliceStable(result, func(i, j int) bool {
+					return result[i].Price > result[j].Price
+				})
+			}
+		}
+	}
 }

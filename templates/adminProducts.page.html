@@ -41,16 +41,66 @@
       <div class="col-lg-9 col-xl-9 mb-5 mb-lg-0">
             <h5 class="mb-5">GoRent Products</h5>
             <table class="table border-bottom border-dark mb-5">
-                <tbody>
-                    <tr>
-                        <th>ProductID</th>
-                        <th>OwnerID</th>
-                        <th>Brand</th>
-                        <th>Title</th>
-                        <th>Rating</th>
-                        <th>Price</th>
-                        <th>Last Updated</th>
+                <thead>
+                                        <tr>
+                        <th style="width: 100px;">ProdID                             <div class="btn-group-vertical">
+                            {{/* <div style=" display: flex;flex-direction: column;"> */}}
+                                <a href="?sortby=prodID&sort=asc">
+                                    <i class="fas fa-sort-up"></i>
+                                </a>
+                                <a href="?sortby=prodID&sort=desc">
+                                    <i class="fas fa-sort-down"></i>
+                                </a>
+                            </div></th>
+                        <th style="width: 110px;">OwnerID                             <div class="btn-group-vertical">
+                            {{/* <div style=" display: flex;flex-direction: column;"> */}}
+                                <a href="?sortby=ownerID&sort=asc">
+                                    <i class="fas fa-sort-up"></i>
+                                </a>
+                                <a href="?sortby=ownerID&sort=desc">
+                                    <i class="fas fa-sort-down"></i>
+                                </a>
+                            </div></th>
+                        <th>Brand                             <div class="btn-group-vertical">
+                            {{/* <div style=" display: flex;flex-direction: column;"> */}}
+                                <a href="?sortby=brand&sort=asc">
+                                    <i class="fas fa-sort-up"></i>
+                                </a>
+                                <a href="?sortby=brand&sort=desc">
+                                    <i class="fas fa-sort-down"></i>
+                                </a>
+                            </div></th>
+                        <th>Title                             <div class="btn-group-vertical">
+                            {{/* <div style=" display: flex;flex-direction: column;"> */}}
+                                <a href="?sortby=title&sort=asc">
+                                    <i class="fas fa-sort-up"></i>
+                                </a>
+                                <a href="?sortby=title&sort=desc">
+                                    <i class="fas fa-sort-down"></i>
+                                </a>
+                            </div></th>
+                        <th style="width: 110px;">Rate                          <div class="btn-group-vertical">
+                            {{/* <div style=" display: flex;flex-direction: column;"> */}}
+                                <a href="?sortby=rating&sort=asc">
+                                    <i class="fas fa-sort-up"></i>
+                                </a>
+                                <a href="?sortby=rating&sort=desc">
+                                    <i class="fas fa-sort-down"></i>
+                                </a>
+                            </div></th>
+                        <th style="width: 100px;">Price                             <div class="btn-group-vertical">
+                            {{/* <div style=" display: flex;flex-direction: column;"> */}}
+                                <a href="?sortby=price&sort=asc">
+                                    <i class="fas fa-sort-up"></i>
+                                </a>
+                                <a href="?sortby=price&sort=desc">
+                                    <i class="fas fa-sort-down"></i>
+                                </a>
+                            </div></th>
+                        <th>Last Updated </th>
                     </tr>
+                </thead>
+                <tbody>
                     {{range $p := $AllProducts}}
                     <tr>
                         <th class="py-4 text-muted font-weight-normal">{{$p.ID}}</th>   
