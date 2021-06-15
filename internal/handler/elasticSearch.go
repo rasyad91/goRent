@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"fmt"
 	"goRent/internal/model"
 	"net/http"
@@ -54,7 +55,6 @@ func ManualDeleteProductsElastic(r *http.Request, client *elastic.Client, i int)
 		Pretty(true).
 		Do(r.Context())
 	if err != nil {
-		// return fmt.Errorf("error deleting products belonging to ")
 		fmt.Println("error from delting product from index cause user deleted account", err)
 	}
 	if res == nil {
@@ -71,8 +71,6 @@ func DeleteProductsElasticUserID(r *http.Request, client *elastic.Client, s stri
 	if err != nil {
 		return err
 	}
-
-	fmt.Println("DeleteProductsElasticUserID fn got triggered. please check for products index")
 	q := elastic.NewTermQuery("owner_id", owner_id_int)
 	res, err := client.DeleteByQuery().
 		Index("product_list").
@@ -80,7 +78,6 @@ func DeleteProductsElasticUserID(r *http.Request, client *elastic.Client, s stri
 		Pretty(true).
 		Do(r.Context())
 	if err != nil {
-		// return fmt.Errorf("error deleting products belonging to ")
 		return err
 	}
 	if res == nil {
@@ -89,4 +86,60 @@ func DeleteProductsElasticUserID(r *http.Request, client *elastic.Client, s stri
 
 	return nil
 
+}
+
+func ManualUpdateViaDoc(r *http.Request, client *elastic.Client) {
+	// client := setupTestClient(t) // , SetTraceLog(log.New(os.Stdout, "", 0)))
+
+	fmt.Println("update function got called")
+	doc, err := client.Get().
+		Index("product_list").Id("10").
+		Do(context.Background())
+
+	res, err := client.Update().
+		Index("product_list").Id(doc.Id).
+		Doc(map[string]interface{}{"brand_name": "alvin"}).
+		IfSeqNo(*doc.SeqNo).
+		IfPrimaryTerm(*doc.PrimaryTerm).
+		FetchSource(true).
+		Do(r.Context())
+
+	if err != nil {
+		fmt.Println(err)
+	}
+	if res == nil {
+		fmt.Println(err)
+	}
+	if res.GetResult == nil {
+		fmt.Println(err)
+	}
+	// return nil
+}
+
+func ReviewUpdateViaDoc(r *http.Request, client *elastic.Client, i int, f float32) error {
+
+	elastic_id := strconv.Itoa(i)
+	fmt.Println("review update function got called")
+	doc, err := client.Get().
+		Index("product_list").Id(elastic_id).
+		Do(r.Context())
+
+	res, err := client.Update().
+		Index("product_list").Id(doc.Id).
+		Doc(map[string]interface{}{"rating": f}).
+		IfSeqNo(*doc.SeqNo).
+		IfPrimaryTerm(*doc.PrimaryTerm).
+		FetchSource(true).
+		Do(r.Context())
+
+	if err != nil {
+		return err
+	}
+	if res == nil {
+		return err
+	}
+	if res.GetResult == nil {
+		return err
+	}
+	return nil
 }

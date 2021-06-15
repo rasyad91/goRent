@@ -35,6 +35,9 @@ func (m *Repository) SearchResult(w http.ResponseWriter, r *http.Request) {
 	// fmt.Println(x)
 
 	searchkeywords := strings.ToLower(url.QueryEscape(x["q"][0])) //hockey+sticks
+
+	// ReviewUpdateViaDoc(r, m.App.AWSClient, 10, 3.4)
+	// ManualUpdateViaDoc(r, m.App.AWSClient)
 	// ManualDeleteProductsElastic(r, m.App.AWSClient, 17)
 	// ManualProductFix(r, m.App.AWSClient, model.Product{})
 
@@ -216,46 +219,4 @@ func trialMultiSearchQuery(client *elastic.Client, min, max string, searchKeywor
 
 // 	fmt.Println("these are the products image query.")
 // 	return product, nil
-// }
-
-func TestUpdateViaDoc(r *http.Request, client *elastic.Client, productIndex int, ownerID int) error {
-	// client := setupTestClient(t) // , SetTraceLog(log.New(os.Stdout, "", 0)))
-
-	fmt.Println("update function got called")
-	elasticProductID := strconv.Itoa(productIndex)
-	// elasticOwnerID := strconv.Itoa(ownerID)
-
-	update, err := client.Update().
-		Index("product_list").Type("product").Id(elasticProductID).
-		Doc(map[string]interface{}{"price": "45.00"}).
-		DetectNoop(true).
-		DocAsUpsert(true).
-		Timeout("1s").
-		Refresh("true").
-		FetchSource(true).
-		Do(r.Context())
-
-	fmt.Println("updated id: ", update.Id)
-
-	if err != nil {
-		fmt.Println("error from testupdate via doc", err)
-		return fmt.Errorf("error occured while updating elastic search", err)
-	}
-
-	return nil
-
-}
-
-// func deleteDocumentFunction(r *http.Request, client *elastic.Client, product model.Product) {
-
-// 	_, err := client.Delete().Index("product_list").Type("product").
-// 		Id("2").Refresh("true").Do(r.Context())
-
-// 	if err != nil {
-// 		// Handle error
-// 		panic(err)
-// 	}
-
-// 	fmt.Printf("\nSuccesfully deleted the indexed document\n")
-
 // }
