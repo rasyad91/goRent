@@ -33,5 +33,5 @@ type DatabaseRepo interface {
 	ProcessRent(rent model.Rent) error
 
 	// Reviews
-	CreateProductReview(pr model.ProductReview) error
+	CreateProductReview(pr model.ProductReview) (float32, error)
 }

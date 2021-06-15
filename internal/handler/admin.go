@@ -69,7 +69,7 @@ func (m *Repository) AdminAccountPost(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("HITTING ADMIN POST")
 	u := m.App.Session.Get(r.Context(), "user").(model.User)
 	if u.AccessLevel != 1 {
-		m.App.Session.Put(r.Context(), "warning", fmt.Sprintf("Sorry! You do not have access to this!"))
+		m.App.Session.Put(r.Context(), "warning", "Sorry! You do not have access to this!")
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 	if err := r.ParseForm(); err != nil {
@@ -125,7 +125,7 @@ func (m *Repository) AdminProducts(w http.ResponseWriter, r *http.Request) {
 	u := m.App.Session.Get(r.Context(), "user").(model.User)
 	data["user"] = u
 	if u.AccessLevel != 1 {
-		m.App.Session.Put(r.Context(), "warning", fmt.Sprintf("Sorry! You do not have access to this!"))
+		m.App.Session.Put(r.Context(), "warning", "Sorry! You do not have access to this!")
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 	result, _ := m.DB.GetAllProducts()
@@ -146,7 +146,7 @@ func (m *Repository) AdminRentals(w http.ResponseWriter, r *http.Request) {
 	u := m.App.Session.Get(r.Context(), "user").(model.User)
 	data["user"] = u
 	if u.AccessLevel != 1 {
-		m.App.Session.Put(r.Context(), "warning", fmt.Sprintf("Sorry! You do not have access to this!"))
+		m.App.Session.Put(r.Context(), "warning", "Sorry! You do not have access to this!")
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 	result, _ := m.DB.GetAllRents()

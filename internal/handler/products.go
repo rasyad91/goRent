@@ -133,23 +133,21 @@ func (m *Repository) PostReview(w http.ResponseWriter, r *http.Request) {
 	// Add to mutex
 	var sm sync.Mutex
 	sm.Lock()
-	{
-		defer sm.Unlock()
-		if err := m.DB.CreateProductReview(pr); err != nil {
-			m.App.Error.Println(err)
-		}
+	defer sm.Unlock()
+
+	newRating, err := m.DB.CreateProductReview(pr)
+	if err != nil {
+		m.App.Error.Println(err)
+		return
 	}
+
+	// UPDATE RATING TO ELASTISEARCH
+	fmt.Println(newRating)
 
 	m.App.Session.Put(r.Context(), "flash", "You have posted a review!")
 	http.Redirect(w, r, fmt.Sprintf("/v1/products/%d", pr.ProductID), http.StatusSeeOther)
 }
 
-// func filterRents(processed bool) func (rents []model.Rent) []model.Rent {
-// 	return func (rents []model.Rent) []model.Rent {
-
-// 		retun
-// 	}
-// }
 func (m *Repository) UserProducts(w http.ResponseWriter, r *http.Request) {
 
 	data := make(map[string]interface{})
