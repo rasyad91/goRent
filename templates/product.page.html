@@ -91,9 +91,7 @@
               <input type="hidden" name="price" value="{{$res.Price}}">
               <input type="hidden" name="product_title" value="{{$res.Title}}">
               <input type="hidden" name="blocked" value="{{index .Data "blocked"}}">
-
-
-
+              <input type="hidden" name="image" value="{{index $res.Images 0}}">
               <div class="form-row mt-5 mb-5">
                 <div class="row" id="date">
                   <div class="col">

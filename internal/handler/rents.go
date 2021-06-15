@@ -113,6 +113,7 @@ func (m *Repository) PostRent(w http.ResponseWriter, r *http.Request) {
 		close(c)
 	}(rent)
 
+	rent.Product.Images = append(rent.Product.Images, r.PostFormValue("image"))
 	rent.ID = <-c
 	u.Rents = append(u.Rents, rent)
 	for _, v := range u.Rents {

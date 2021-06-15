@@ -52,13 +52,20 @@
                     <div class="cart-body">
                         <!-- Product-->
                         {{range (unprocessedRents $u.Rents)}}
+                        {{$p := .Product}}
                         <div class="cart-item">
                             <div class="row d-flex align-items-center text-left text-md-center">
                                 <div class="col-12 col-md-5"><a class="cart-remove close mt-3 d-md-none" href="#"><i
                                             class="fa fa-times"> </i></a>
-                                    <div class="d-flex align-items-center"></a>#{{.ID}}<a
-                                            href="/v1/products/{{.Product.ID}}"><img class="cart-item-img" src=""
-                                                alt="..."></a>
+                                    <div class="d-flex align-items-center"></a>#{{.ID}}     <a
+                                            href="/v1/products/{{.Product.ID}}">
+                                            {{with .Product.Images}}
+                                            <img class="cart-item-img" src="{{index $p.Images 0}}"
+                                            alt="..."></a>
+                                            {{else}}
+                                            <img class="cart-item-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/768px-No_image_available.svg.png"
+                                            alt="..."></a>
+                                            {{end}}
                                         <div class="cart-title text-left"><a class="text-dark link-animated"
                                                 href="/v1/products/{{.ProductID}}"><strong>{{.Product.Title}}</strong></a>
                                             <br><span class="text-muted text-sm">Price: ${{.Product.Price}}</span>
