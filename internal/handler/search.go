@@ -36,6 +36,14 @@ func (m *Repository) SearchResult(w http.ResponseWriter, r *http.Request) {
 
 	searchkeywords := strings.ToLower(url.QueryEscape(x["q"][0])) //hockey+sticks
 
+	// ReviewUpdateViaDoc(r, m.App.AWSClient, 10, 3.4)
+	// ManualUpdateViaDoc(r, m.App.AWSClient)
+	// ManualDeleteProductsElastic(r, m.App.AWSClient, 17)
+	// ManualProductFix(r, m.App.AWSClient, model.Product{})
+
+	//call rentoh
+	go rentohQuery(searchkeywords)
+
 	//check if minprice/ map exists
 
 	_, okMin := x["minprice"]

@@ -144,6 +144,11 @@ func (m *Repository) PostReview(w http.ResponseWriter, r *http.Request) {
 	// UPDATE RATING TO ELASTISEARCH
 	fmt.Println(newRating)
 
+	err = ReviewUpdateViaDoc(r, m.App.AWSClient, productID, newRating)
+	if err != nil {
+		m.App.Error.Println(err)
+	}
+
 	m.App.Session.Put(r.Context(), "flash", "You have posted a review!")
 	http.Redirect(w, r, fmt.Sprintf("/v1/products/%d", pr.ProductID), http.StatusSeeOther)
 }
@@ -650,8 +655,11 @@ func (m *Repository) EditProductPost(w http.ResponseWriter, r *http.Request) {
 	var editedProduct = model.Product{
 
 		ID:          productIDInt,
+		OwnerID:     product.OwnerID,
 		Brand:       r.FormValue("brand"),
+		Category:    product.Category,
 		Title:       r.FormValue("productname"),
+		Rating:      product.Rating,
 		Description: productDescription,
 		Price:       productPrice,
 		Images:      productImageURL,

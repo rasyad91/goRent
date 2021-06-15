@@ -110,3 +110,8 @@ type ImgUrl struct {
 	OldImg string
 	NewImg string
 }
+
+type RentohKeyword struct {
+	Index   int
+	Keyword string
+}
