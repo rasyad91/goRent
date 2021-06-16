@@ -183,18 +183,10 @@ func (m *DBrepo) CreateProductReview(pr model.ProductReview) (float32, error) {
 	//check
 	var newRating float32
 	if reviewCount == 0 {
-		fmt.Println("hit in review count = 0")
 		newRating = rating
 	} else {
-		fmt.Println("Rating: ", rating)
-		fmt.Println("NEW Rating: ", pr.Rating)
-		fmt.Println("Review count: ", reviewCount)
-
 		newRating = rating + (pr.Rating-rating)/float32(reviewCount+1)
-		fmt.Println("in else newrating: ", newRating)
 	}
-
-	fmt.Println("newrating: ", newRating)
 
 	query = `UPDATE products SET rating = ? WHERE (id = ?);`
 	if _, err := tx.ExecContext(ctx, query, newRating, pr.ProductID); err != nil {
@@ -300,19 +292,9 @@ func (m *DBrepo) UpdateProducts(p model.Product, s1 []model.ImgUrl, s2 []string)
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	// query := `UPDATE goRent.products set processed = true, updated_at = ? where id = ?`
 	query := `UPDATE gorent.products set brand=?, title=?, description=?, price=?, created_at=? where id = ?`
 
-	// _, err := m.ExecContext(ctx, "UPDATE goRent.products (brand,title,description,price, created_at) where id =? VALUES (?,?,?,?,?);",
 	_, err := m.ExecContext(ctx, query, p.Brand, p.Title, p.Description, p.Price, time.Now(), p.ID)
-
-	// for _, v := range p.Images {
-
-	// 	err := m.InsertProductImages(p.ID, v)
-	// 	if err != nil {
-	// 		return err
-	// 	}
-	// }
 
 	for _, v := range s1 {
 		fmt.Printf("\n\nthis is the old url %s", v.OldImg)
@@ -325,7 +307,6 @@ func (m *DBrepo) UpdateProducts(p model.Product, s1 []model.ImgUrl, s2 []string)
 	}
 
 	for _, v := range s2 {
-
 		err := m.InsertProductImages(p.ID, v)
 		if err != nil {
 			return err
