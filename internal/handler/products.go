@@ -141,12 +141,10 @@ func (m *Repository) PostReview(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// UPDATE RATING TO ELASTISEARCH
-	fmt.Println(newRating)
-
 	err = ReviewUpdateViaDoc(r, m.App.AWSClient, productID, newRating)
 	if err != nil {
 		m.App.Error.Println(err)
+		return
 	}
 
 	m.App.Session.Put(r.Context(), "flash", "You have posted a review!")

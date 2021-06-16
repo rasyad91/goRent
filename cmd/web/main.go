@@ -22,8 +22,8 @@ import (
 )
 
 const (
-	idleTimeout     = 5 * time.Minute  // idleTimeout for server
-	shutdownTimeout = 10 * time.Second // shutdown timeout before connections are cancelled
+	idleTimeout     = 5 * time.Minute // idleTimeout for server
+	shutdownTimeout = 5 * time.Second // shutdown timeout before connections are cancelled
 )
 
 var (
@@ -134,8 +134,26 @@ func main() {
 		}
 	}()
 
+	done := make(chan interface{})
+	go func() {
+		defer fmt.Println("func closed ")
+		for {
+			select {
+			case <-done:
+				return
+			default:
+				{
+					time.Sleep(10 * time.Second)
+					// add code here
+				}
+			}
+		}
+	}()
+
 	// blocks code, waits for stop to initiate
 	<-stop
+	close(stop)
+	close(done)
 
 	app.Info.Println("Shutting down...")
 	ctx, cancel := context.WithTimeout(context.Background(), shutdownTimeout)
