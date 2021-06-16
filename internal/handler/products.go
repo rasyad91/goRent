@@ -169,6 +169,7 @@ func (m *Repository) AddProduct(w http.ResponseWriter, r *http.Request) {
 	// user := m.App.Session.Get(r.Context(), "user").(model.User)
 	// data["products"] = user.Products
 	// data["user"] = user
+
 	if err := render.Template(w, r, "addproduct.page.html", &render.TemplateData{
 		Data: data,
 		Form: &form.Form{},

@@ -44,6 +44,9 @@ func routes() http.Handler {
 	u.HandleFunc("/rents", handler.Repo.UserRents).Methods("GET")
 	u.HandleFunc("/bookings", handler.Repo.UserBookings).Methods("GET")
 
+	u.HandleFunc("/createcategories", handler.Repo.CreateCategoryDataBase).Methods("GET")
+	u.HandleFunc("/searchtrend", handler.Repo.SearchTrend).Methods("GET")
+
 	u.HandleFunc("/cart", handler.Repo.GetCart).Methods("GET")
 	u.HandleFunc("/cart/checkout", handler.Repo.GetCheckout).Methods("GET")
 	u.HandleFunc("/cart/checkout/confirm", handler.Repo.ConfirmRents).Methods("POST")
