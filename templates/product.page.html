@@ -19,7 +19,7 @@
 
         {{with $res.Images}}
         {{range $i := $res.Images}}
-        <div data-toggle="zoom" data-image="img/product/detail-3-gray.jpg"
+        <div data-toggle="zoom" 
           style="position: relative; overflow: hidden;">
           <img class="img-fluid" src="{{.}}" alt="{{$res.Title}} 1">
           <img role="presentation" alt="" class="zoomImg"
@@ -28,7 +28,7 @@
         {{end}}
         {{else}}
         <a class="d-block mb-4" data-caption="no-image" data-toggle="photoswipe" data-width="1200" data-height="1200">
-          <div data-toggle="zoom" data-image="img/product/detail-3-gray.jpg"
+          <div data-toggle="zoom" 
             style="position: relative; overflow: hidden;">
             <img class="img-fluid"
               src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/768px-No_image_available.svg.png"
@@ -216,17 +216,10 @@
   const rangepicker = new DateRangePicker(elem, {
     format: "dd-mm-yyyy",
     minDate: dateToday,
-    datesDisabled: [{
-        {
-          range $b
-        }
-      }
+    datesDisabled: [
+      {{range $b}}
       "{{.}}",
-      {
-        {
-          end
-        }
-      }
+      {{end}}
     ]
   });
 </script>
