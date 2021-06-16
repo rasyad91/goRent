@@ -15,10 +15,6 @@ type DBrepo struct {
 	*sql.DB
 }
 
-// const (
-// 	layoutISO = "2006-01-02"
-// )
-
 // NewRepo creates the repository
 func NewRepo(Conn *sql.DB) repository.DatabaseRepo {
 	return &DBrepo{

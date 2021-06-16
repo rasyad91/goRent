@@ -157,7 +157,11 @@ func (m *DBrepo) CreateProductReview(pr model.ProductReview) (float32, error) {
 			tx.Rollback()
 			return 0, fmt.Errorf("db addproductreview query reviewcount + rating: %v", err)
 		}
+		fmt.Println("db error:", err)
 	}
+
+	fmt.Println("rating:", rating)
+	fmt.Println("PRrating:", pr.Rating)
 
 	// insert new product review
 	query = `insert into product_reviews(reviewer_id, reviewer_name, product_id, body, rating, created_at, updated_at)
@@ -182,10 +186,15 @@ func (m *DBrepo) CreateProductReview(pr model.ProductReview) (float32, error) {
 		fmt.Println("hit in review count = 0")
 		newRating = rating
 	} else {
-		newRating = rating + (pr.Rating-rating)/float32(reviewCount)
+		fmt.Println("Rating: ", rating)
+		fmt.Println("NEW Rating: ", pr.Rating)
+		fmt.Println("Review count: ", reviewCount)
+
+		newRating = rating + (pr.Rating-rating)/float32(reviewCount+1)
+		fmt.Println("in else newrating: ", newRating)
 	}
 
-	fmt.Println(newRating)
+	fmt.Println("newrating: ", newRating)
 
 	query = `UPDATE products SET rating = ? WHERE (id = ?);`
 	if _, err := tx.ExecContext(ctx, query, newRating, pr.ProductID); err != nil {
