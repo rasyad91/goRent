@@ -8,15 +8,12 @@ import (
 )
 
 func routes() http.Handler {
-
 	mux := mux.NewRouter()
-
 	// default middleware
 	mux.Use(SessionLoad)
 	mux.Use(RecoverPanic)
 	mux.Use(NoSurf)
 	mux.Use(LastGetURL)
-
 	// needs authentication
 	u := mux.PathPrefix("/v1/user").Subrouter()
 	u.Use(Authenticate)

@@ -2,15 +2,13 @@ package handler
 
 import (
 	"goRent/internal/config"
-	"goRent/internal/driver/mysqlDriver"
 	"goRent/internal/render"
 	"goRent/internal/repository"
-	"goRent/internal/repository/mysql"
 	"net/http"
 )
 
 type Repository struct {
-	DB  repository.DatabaseRepo
+	DB  repository.Database
 	App *config.AppConfig
 }
 
@@ -18,9 +16,9 @@ type Repository struct {
 var Repo *Repository
 
 // NewMySQLHandler creates db repo
-func NewMySQLHandler(db *mysqlDriver.DB, app *config.AppConfig) *Repository {
+func NewRepo(db repository.Database, app *config.AppConfig) *Repository {
 	return &Repository{
-		DB:  mysql.NewRepo(db.SQL),
+		DB:  db,
 		App: app,
 	}
 }

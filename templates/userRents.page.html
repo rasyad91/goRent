@@ -56,7 +56,7 @@
                 <div class="cart-header">
                   <div class="row">
                     <div class="col-4">Rentals</div>
-                    <div class="col-2 text-center">Price</div>
+                    <div class="col-2 text-center">Total Cost</div>
                     <div class="col-2 text-center">Start Date</div>
                     <div class="col-2 text-center">End Date</div>
                     <div class="col-2 text-center">Delete</div>
@@ -69,12 +69,12 @@
                   <div class="cart-item">
                     <div class="row d-flex align-items-center text-center">
                       <div class="col-4">
-                        <div class="d-flex align-items-center"><a href="detail.html"><img class="cart-item-img" src={{index $r.Product.Images 0}} alt="..."></a>
-                          <div class="cart-title text-left"><a class="text-dark" href="detail.html"><strong>{{$r.Product.Title}}</strong></a>
+                        <div class="d-flex align-items-center"><a href="/v1/products/{{$r.Product.ID}}"><img class="cart-item-img" src={{index $r.Product.Images 0}} alt="..."></a>
+                          <div class="cart-title text-left"><a class="text-dark" href="/v1/products/{{$r.Product.ID}}"><strong>{{$r.Product.Title}}</strong></a>
                           </div>
                         </div>
                       </div>
-                      <div class="col-2">{{$r.Product.Price}}</div>
+                      <div class="col-2">{{$r.TotalCost}}</div>
                       <div class="col-2">{{$r.StartDate.Format "2006-01-02"}}</div>
                       <div class="col-2">{{$r.EndDate.Format "2006-01-02"}}</div>
                       <div class="col-2">

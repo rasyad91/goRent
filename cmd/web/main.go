@@ -2,19 +2,22 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"encoding/gob"
 	"fmt"
 	"goRent/internal/config"
-	"goRent/internal/driver/mysqlDriver"
+	"goRent/internal/driver"
 	"goRent/internal/handler"
 	"goRent/internal/helper"
 	"goRent/internal/model"
 	"goRent/internal/render"
+	"goRent/internal/repository/mysql"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"time"
 
 	"github.com/alexedwards/scs/mysqlstore"
@@ -47,26 +50,21 @@ func main() {
 		}
 	}()
 
-	f, err := os.OpenFile("server.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
-	if err != nil {
-		println("fail to open log file: ", err)
-	}
-	defer f.Close()
-
 	app = &config.AppConfig{}
 	app.Domain = *domain
 
-	// Customized loggers
-	app.Info = log.New(io.MultiWriter(f, os.Stdout), "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
-	app.Error = log.New(io.MultiWriter(f, os.Stdout), "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
+	f, err := setLogs()
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer f.Close()
 
-	dsn := fmt.Sprintf(
-		"%s:%s@tcp(%s:%s)/%s?parseTime=%t",
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=%t",
 		*dbUser, *dbPassword, *dbHost, *dbPort, *dbName, *dbParseTime,
 	)
 
 	app.Info.Printf("Connecting to DB: %s...\n", dsn)
-	db, err := mysqlDriver.Connect(dsn)
+	db, err := driver.Connect(dsn, *dbDialect)
 	if err != nil {
 		app.Error.Fatal(err)
 	}
@@ -74,39 +72,15 @@ func main() {
 	defer db.SQL.Close()
 
 	// session
-	app.Info.Printf("Initializing session manager....")
-	session = scs.New()
-	session.Store = mysqlstore.New(db.SQL)
-	session.Lifetime = 24 * time.Hour
-	session.Cookie.Persist = true
-	session.Cookie.Name = fmt.Sprintf("gbsession_id_%s", *identifier)
-	session.Cookie.SameSite = http.SameSiteLaxMode
-	app.Session = session
-	// session.Cookie.Secure = *inProduction
-	app.Info.Printf("Session manager initialized")
-
-	app.Info.Printf("Connecting to AWS elasticsearch client....")
-	//initialise AWS elastisearch client
-	client, err := newAWSClient()
-	if err != nil {
-		app.Error.Fatal(err)
-	}
-	app.AWSClient = client
-	app.Info.Printf("AWS elasticsearch client connected")
-
-	app.Info.Printf("Connecting to AWS S3 client session....")
-
-	awsS3Session, err := NewAWSSession()
-	if err != nil {
-		app.Error.Fatal(err)
-	}
-
-	app.AWSS3Session = awsS3Session
-	app.Info.Printf("AWS S3 Session Established")
+	setSession(db.SQL)
+	// aws
+	setAWS()
 
 	app.Info.Printf("Initializing handlers ...")
-	r := handler.NewMySQLHandler(db, app)
-	handler.New(r)
+	dbRepo := mysql.NewRepo(db.SQL)
+	handlerRepo := handler.NewRepo(dbRepo, app)
+
+	handler.New(handlerRepo)
 	helper.New(app)
 	render.New(app)
 	app.Info.Printf("Handlers initialized...")
@@ -134,26 +108,9 @@ func main() {
 		}
 	}()
 
-	done := make(chan interface{})
-	go func() {
-		defer fmt.Println("func closed ")
-		for {
-			select {
-			case <-done:
-				return
-			default:
-				{
-					time.Sleep(10 * time.Second)
-					// add code here
-				}
-			}
-		}
-	}()
-
 	// blocks code, waits for stop to initiate
 	<-stop
 	close(stop)
-	close(done)
 
 	app.Info.Println("Shutting down...")
 	ctx, cancel := context.WithTimeout(context.Background(), shutdownTimeout)
@@ -162,4 +119,53 @@ func main() {
 		app.Error.Fatalln(err)
 	}
 	app.Info.Println("Server shut down")
+}
+
+func setLogs() (io.WriteCloser, error) {
+	abs, err := filepath.Abs("./log/server.log")
+	if err != nil {
+		return nil, fmt.Errorf("fail to get absolute path log file: %v", err)
+	}
+	f, err := os.OpenFile(abs, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if err != nil {
+		return nil, fmt.Errorf("fail to open log file: %v", err)
+	}
+	// Customized loggers
+	app.Info = log.New(io.MultiWriter(f, os.Stdout), "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
+	app.Error = log.New(io.MultiWriter(f, os.Stdout), "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
+
+	return f, nil
+}
+
+func setSession(db *sql.DB) {
+	app.Info.Printf("Initializing session manager....")
+	session = scs.New()
+	session.Store = mysqlstore.New(db)
+	session.Lifetime = 24 * time.Hour
+	session.Cookie.Persist = true
+	session.Cookie.Name = fmt.Sprintf("gbsession_id_%s", *identifier)
+	session.Cookie.SameSite = http.SameSiteLaxMode
+	app.Session = session
+	app.Info.Printf("Session manager initialized")
+}
+
+func setAWS() {
+	app.Info.Printf("Connecting to AWS elasticsearch client....")
+	//initialise AWS elastisearch client
+	client, err := newAWSClient()
+	if err != nil {
+		app.Error.Fatal(err)
+	}
+	app.AWSClient = client
+	app.Info.Printf("AWS elasticsearch client connected")
+
+	app.Info.Printf("Connecting to AWS S3 client session....")
+
+	awsS3Session, err := NewAWSSession()
+	if err != nil {
+		app.Error.Fatal(err)
+	}
+
+	app.AWSS3Session = awsS3Session
+	app.Info.Printf("AWS S3 Session Established")
 }

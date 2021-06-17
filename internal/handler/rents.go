@@ -24,14 +24,6 @@ func (m *Repository) PostRent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// if !helper.IsAuthenticated(r) {
-
-	// 	m.App.Session.Put(r.Context(), "url", r.URL.String())
-	// 	m.App.Session.Put(r.Context(), "warning", "Please login first before making a booking")
-	// 	http.Redirect(w, r, "/login", http.StatusFound)
-	// 	return
-	// }
-
 	productID, err := strconv.Atoi(r.PostFormValue("product_id"))
 	if err != nil {
 		m.App.Error.Println(err)
@@ -113,12 +105,9 @@ func (m *Repository) PostRent(w http.ResponseWriter, r *http.Request) {
 		close(c)
 	}(rent)
 
-	rent.Product.Images = append(rent.Product.Images, r.PostFormValue("image"))
 	rent.ID = <-c
+	rent.Product.Images = append(rent.Product.Images, r.PostFormValue("image"))
 	u.Rents = append(u.Rents, rent)
-	for _, v := range u.Rents {
-		fmt.Println(v)
-	}
 
 	m.App.Session.Put(r.Context(), "user", u)
 	fmt.Println("Time taken: ", time.Since(t))
@@ -148,7 +137,7 @@ func (m *Repository) DeleteRent(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Delete Rent: Start timing ...")
 
 	var wg sync.WaitGroup
-	wg.Add(1)
+	wg.Add(2)
 
 	go func() {
 		if err := m.DB.DeleteRent(rentID); err != nil {
@@ -159,19 +148,26 @@ func (m *Repository) DeleteRent(w http.ResponseWriter, r *http.Request) {
 		wg.Done()
 	}()
 
-	u := m.App.Session.Get(r.Context(), "user").(model.User)
-	for i, v := range u.Rents {
-		if v.ID == rentID {
-			u.Rents = append(u.Rents[:i], u.Rents[i+1:]...)
+	u := model.User{}
+	go func() {
+		u = m.App.Session.Get(r.Context(), "user").(model.User)
+		for i, v := range u.Rents {
+			if v.ID == rentID {
+				u.Rents = append(u.Rents[:i], u.Rents[i+1:]...)
+			}
 		}
-	}
+		wg.Done()
+	}()
+
 	wg.Wait()
 
 	m.App.Session.Put(r.Context(), "user", u)
 	fmt.Println("Time taken: ", time.Since(t))
 
 	m.App.Session.Put(r.Context(), "flash", fmt.Sprintf("Rent #%d removed from cart!", rentID))
-	http.Redirect(w, r, "/v1/user/cart", http.StatusSeeOther)
+	url := m.App.Session.PopString(r.Context(), "url")
+
+	http.Redirect(w, r, url, http.StatusSeeOther)
 }
 
 func (m *Repository) ConfirmRents(w http.ResponseWriter, r *http.Request) {

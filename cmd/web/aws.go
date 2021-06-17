@@ -3,13 +3,28 @@ package main
 import (
 	"net/http"
 
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
+	awsS3 "github.com/aws/aws-sdk-go/aws/session"
+
 	// "github.com/olivere/elastic/aws"
 	// "github.com/olivere/elastic"
 	"github.com/olivere/elastic/v7"
 
-	aws "github.com/olivere/elastic/aws/v4"
+	aws4 "github.com/olivere/elastic/aws/v4"
 )
+
+func NewAWSSession() (*awsS3.Session, error) {
+	sess, err := awsS3.NewSession(&aws.Config{
+		Region: aws.String(*region),
+		Credentials: credentials.NewStaticCredentials(
+			*accessKey, // id
+			*secretKey, // secret
+			""),        // token can be left blank for now
+	})
+
+	return sess, err
+}
 
 func newAWSClient() (*elastic.Client, error) {
 
@@ -26,7 +41,7 @@ func newAWSClient() (*elastic.Client, error) {
 }
 
 func awsSigning(awsAccesKey, awsSecretKey, awsRegoin string) *http.Client {
-	signingClient := aws.NewV4SigningClient(credentials.NewStaticCredentials(
+	signingClient := aws4.NewV4SigningClient(credentials.NewStaticCredentials(
 		awsAccesKey,
 		awsSecretKey,
 		"",
