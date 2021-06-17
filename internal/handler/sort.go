@@ -38,7 +38,6 @@ func partition(array []int, left, right int) int {
 		}
 	}
 	swap(array, partitionIndex, pivotElement)
-	fmt.Println("this is the partition index", partitionIndex)
 	return partitionIndex
 }
 
@@ -123,7 +122,6 @@ func partitionCategory(array []model.SearchTrends, left, right int) int {
 		}
 	}
 	swapCategory(array, partitionIndex, pivotElement)
-	fmt.Println("this is the partition index", partitionIndex)
 	return partitionIndex
 }
 

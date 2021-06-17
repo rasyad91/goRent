@@ -150,17 +150,9 @@ func (m *Repository) SearchTrend(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	// sorted_categoriesSlice := mergeSort(categoriesSlice)
-
 	SortArrayCategory(categoriesSlice)
-
-	fmt.Println("\n\n below is the category list that is sorted", categoriesSlice)
-
-	// SortArray(array)
-
 	data["Categories"] = categoriesSlice
-	fmt.Println("these are all the categories", categoriesSlice)
-	// fmt.Println("these is the sorted array RESULT", array)
+	// fmt.Println("these are all the categories", categoriesSlice)
 
 	if err := render.Template(w, r, "searchtrend.page.html", &render.TemplateData{
 		Data: data,
