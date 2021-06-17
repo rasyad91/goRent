@@ -180,15 +180,16 @@ func (m *dbRepo) IsRentAvailable(ctx context.Context, productId int, startDate, 
 		return false, err
 	}
 
-	query := `SELECT count(*)
-			FROM rents 
-			WHERE 	processed = true AND
-					product_id = ? AND
-					(
-						(start_date BETWEEN @sd AND @ed) OR
-						(end_date BETWEEN @sd AND @ed) OR
-						(start_date <= @sd AND  end_date >= @ed)
-					);
+	query := `
+		SELECT count(*)
+		FROM rents 
+		WHERE 	processed = true AND
+				product_id = ? AND
+				(
+					(start_date BETWEEN @sd AND @ed) OR
+					(end_date BETWEEN @sd AND @ed) OR
+					(start_date <= @sd AND  end_date >= @ed)
+				);
 			`
 
 	var count int

@@ -79,6 +79,7 @@ func main() {
 	app.Info.Printf("Initializing handlers ...")
 	dbRepo := mysql.NewRepo(db.SQL)
 	handlerRepo := handler.NewRepo(dbRepo, app)
+
 	handler.New(handlerRepo)
 	helper.New(app)
 	render.New(app)
