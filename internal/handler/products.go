@@ -473,7 +473,7 @@ func storeProfileImage(w http.ResponseWriter, r *http.Request, owner_ID int, ses
 	filetype := http.DetectContentType(buff)
 	if filetype != "image/jpeg" && filetype != "image/png" {
 		// http.Error(w, "The provided file format is not allowed. Please upload a JPEG or PNG image", http.StatusBadRequest)
-		return "https://wooteam-productslist.s3.ap-southeast-1.amazonaws.com/profile_images/-1.jpeg", errors.New("The provided file format is not allowed. Please upload a JPEG or PNG image")
+		return "https://wooteam-productslist.s3.ap-southeast-1.amazonaws.com/profile_images/-1.jpeg", errors.New("the provided file format is not allowed. Please upload a JPEG or PNG image")
 	}
 
 	// Reset the file
@@ -734,7 +734,18 @@ func (m *Repository) EditProductPost(w http.ResponseWriter, r *http.Request) {
 			//redirect if err.
 			// form.Errors.Add("fileupload", "A miniumum of 4 images are required")
 		}
+		u := m.App.Session.Get(r.Context(), "user").(model.User)
 
+		for i, v := range u.Products {
+			fmt.Println("in user products: ", v.ID)
+			fmt.Println("in edit products: ", editedProduct.ID)
+
+			if v.ID == editedProduct.ID {
+				u.Products[i] = editedProduct
+			}
+		}
+
+		m.App.Session.Put(r.Context(), "user", u)
 		m.App.Session.Put(r.Context(), "flash", "You've successfully edited your product!")
 		m.App.Info.Println("Register: redirecting to user's account page")
 		productRedirectLink := fmt.Sprintf("/v1/products/%s", productID)

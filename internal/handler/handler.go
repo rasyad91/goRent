@@ -8,7 +8,7 @@ import (
 )
 
 type Repository struct {
-	DB  repository.DatabaseRepo
+	DB  repository.Database
 	App *config.AppConfig
 }
 
@@ -16,7 +16,7 @@ type Repository struct {
 var Repo *Repository
 
 // NewMySQLHandler creates db repo
-func NewRepo(db repository.DatabaseRepo, app *config.AppConfig) *Repository {
+func NewRepo(db repository.Database, app *config.AppConfig) *Repository {
 	return &Repository{
 		DB:  db,
 		App: app,

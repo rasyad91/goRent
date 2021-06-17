@@ -5,22 +5,11 @@ import (
 	"database/sql"
 	"fmt"
 	"goRent/internal/model"
-	"goRent/internal/repository"
 	"time"
 
 	"golang.org/x/sync/errgroup"
 )
 
-type dbRepo struct {
-	*sql.DB
-}
-
-// NewRepo creates the repository
-func NewRepo(conn *sql.DB) repository.DatabaseRepo {
-	return &dbRepo{
-		DB: conn,
-	}
-}
 func (m *dbRepo) EmailExist(e string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()

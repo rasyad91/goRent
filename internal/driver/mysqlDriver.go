@@ -21,10 +21,10 @@ const (
 )
 
 // Connect creates database pool for MySQL
-func Connect(dsn string) (*DB, error) {
+func Connect(dsn string, dialect string) (*DB, error) {
 	dbConn := &DB{}
 
-	db, err := sql.Open("mysql", dsn)
+	db, err := sql.Open(dialect, dsn)
 	if err != nil {
 		err = fmt.Errorf("ConnectSQL: %w", err)
 		return dbConn, err

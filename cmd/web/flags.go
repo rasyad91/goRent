@@ -17,6 +17,7 @@ var (
 	identifier *string
 	domain     *string
 
+	dbDialect   *string
 	dbUser      *string
 	dbPassword  *string
 	dbName      *string
@@ -41,6 +42,8 @@ func init() {
 	dbName = flag.String("dbname", "", "database name")
 	dbHost = flag.String("dbhost", "", "database host")
 	dbPort = flag.String("dbport", "", "database port")
+	dbDialect = flag.String("dbdialect", "mysql", "type of database, eg. postgres, mysql, maria")
+
 	dbParseTime = flag.Bool("dbparsetime", true, "database parse time option")
 	// aws flags
 	accessKey = flag.String("access-key", env.String("", "AWS_ACCESS_KEY", "AWS_ACCESS_KEY_ID"), "Access Key ID")
