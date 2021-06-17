@@ -27,7 +27,6 @@ func New(a *config.AppConfig) {
 type TemplateData struct {
 	Data            map[string]interface{}
 	Form            *form.Form
-	Products        []model.Product
 	CSRFToken       string
 	IsAuthenticated bool
 	User            model.User
@@ -41,11 +40,15 @@ func Template(w http.ResponseWriter, r *http.Request, tmpl string, td *TemplateD
 
 	t := DefaultData(w, r, *td)
 
-	ts, err := template.New(tmpl).Funcs(function).ParseFiles(fmt.Sprintf("./templates/%s", tmpl), "./templates/base.layout.html", "./templates/header.layout.html", "./templates/footer.layout.html")
+	ts, err := template.New(tmpl).Funcs(function).ParseFiles(
+		fmt.Sprintf("./templates/%s", tmpl),
+		"./templates/base.layout.html",
+		"./templates/header.layout.html",
+		"./templates/footer.layout.html",
+	)
 	if err != nil {
 		return fmt.Errorf("ParseTemplate: Unable to find template pages: %w", err)
 	}
-
 	if err := ts.Execute(w, t); err != nil {
 		return fmt.Errorf("ParseTemplate: Unable to execute template: %w", err)
 	}

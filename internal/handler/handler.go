@@ -14,6 +14,7 @@ type Repository struct {
 	App *config.AppConfig
 }
 
+// Repo is used by the handler
 var Repo *Repository
 
 // NewMySQLHandler creates db repo

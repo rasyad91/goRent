@@ -141,12 +141,10 @@ func (m *Repository) PostReview(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// UPDATE RATING TO ELASTISEARCH
-	fmt.Println(newRating)
-
 	err = ReviewUpdateViaDoc(r, m.App.AWSClient, productID, newRating)
 	if err != nil {
 		m.App.Error.Println(err)
+		return
 	}
 
 	m.App.Session.Put(r.Context(), "flash", "You have posted a review!")
@@ -171,13 +169,6 @@ func (m *Repository) AddProduct(w http.ResponseWriter, r *http.Request) {
 	// user := m.App.Session.Get(r.Context(), "user").(model.User)
 	// data["products"] = user.Products
 	// data["user"] = user
-
-	var array []int = []int{5, 3, 2, 1, 7, 4}
-
-	SortArray(array)
-
-	fmt.Println("these is the sorted array RESULT", array)
-
 	if err := render.Template(w, r, "addproduct.page.html", &render.TemplateData{
 		Data: data,
 		Form: &form.Form{},

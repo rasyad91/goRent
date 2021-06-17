@@ -17,6 +17,10 @@ func routes() http.Handler {
 	mux.Use(NoSurf)
 	mux.Use(LastGetURL)
 
+	// needs authentication
+	u := mux.PathPrefix("/v1/user").Subrouter()
+	u.Use(Authenticate)
+
 	mux.HandleFunc("/", handler.Repo.Home).Methods("GET")
 	mux.HandleFunc("/search", handler.Repo.Search).Methods("GET")
 	mux.HandleFunc("/searchresult", handler.Repo.SearchResult).Methods("GET")
@@ -28,9 +32,6 @@ func routes() http.Handler {
 	mux.HandleFunc("/register", handler.Repo.RegisterPost).Methods("POST")
 
 	mux.HandleFunc("/v1/products/{productID}", handler.Repo.ShowProductByID).Methods("GET")
-
-	u := mux.PathPrefix("/v1/user").Subrouter()
-	u.Use(Authenticate)
 
 	u.HandleFunc("/logout", handler.Repo.Logout).Methods("GET")
 	u.HandleFunc("/account", handler.Repo.UserAccount).Methods("GET")
