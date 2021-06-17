@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"database/sql"
 	"errors"
 	"fmt"
 	"goRent/internal/config"
@@ -48,7 +49,9 @@ func (m *Repository) ShowProductByID(w http.ResponseWriter, r *http.Request) {
 	g.Go(func() error {
 		p, err = m.DB.GetProductByID(ctx, productID)
 		if err != nil {
-			return err
+			if err != sql.ErrNoRows {
+				return err
+			}
 		}
 		select {
 		case <-ctx.Done():
@@ -62,7 +65,9 @@ func (m *Repository) ShowProductByID(w http.ResponseWriter, r *http.Request) {
 	g.Go(func() error {
 		rents, err = m.DB.GetRentsByProductID(ctx, productID)
 		if err != nil {
-			return err
+			if err != sql.ErrNoRows {
+				return err
+			}
 		}
 		select {
 		case <-ctx.Done():
