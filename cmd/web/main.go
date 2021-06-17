@@ -5,11 +5,12 @@ import (
 	"encoding/gob"
 	"fmt"
 	"goRent/internal/config"
-	"goRent/internal/driver/mysqlDriver"
+	"goRent/internal/driver"
 	"goRent/internal/handler"
 	"goRent/internal/helper"
 	"goRent/internal/model"
 	"goRent/internal/render"
+	"goRent/internal/repository/mysql"
 	"io"
 	"log"
 	"net/http"
@@ -66,7 +67,7 @@ func main() {
 	)
 
 	app.Info.Printf("Connecting to DB: %s...\n", dsn)
-	db, err := mysqlDriver.Connect(dsn)
+	db, err := driver.Connect(dsn)
 	if err != nil {
 		app.Error.Fatal(err)
 	}
@@ -82,7 +83,6 @@ func main() {
 	session.Cookie.Name = fmt.Sprintf("gbsession_id_%s", *identifier)
 	session.Cookie.SameSite = http.SameSiteLaxMode
 	app.Session = session
-	// session.Cookie.Secure = *inProduction
 	app.Info.Printf("Session manager initialized")
 
 	app.Info.Printf("Connecting to AWS elasticsearch client....")
@@ -105,8 +105,14 @@ func main() {
 	app.Info.Printf("AWS S3 Session Established")
 
 	app.Info.Printf("Initializing handlers ...")
-	r := handler.NewMySQLHandler(db, app)
-	handler.New(r)
+
+	// initialize dbRepo
+	dbRepo := mysql.NewRepo(db.SQL)
+
+	// initialize handler Repo
+	handlerRepo := handler.NewRepo(dbRepo, app)
+	handler.New(handlerRepo)
+
 	helper.New(app)
 	render.New(app)
 	app.Info.Printf("Handlers initialized...")

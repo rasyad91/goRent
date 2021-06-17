@@ -1,5 +1,5 @@
 // Internal driver package to connect to postgresDB
-package mysqlDriver
+package driver
 
 import (
 	"database/sql"
@@ -23,6 +23,7 @@ const (
 // Connect creates database pool for MySQL
 func Connect(dsn string) (*DB, error) {
 	dbConn := &DB{}
+
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		err = fmt.Errorf("ConnectSQL: %w", err)

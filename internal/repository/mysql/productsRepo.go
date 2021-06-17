@@ -13,7 +13,7 @@ import (
 
 var productLock sync.RWMutex
 
-func (m *DBrepo) GetProductByID(ctx context.Context, id int) (model.Product, error) {
+func (m *dbRepo) GetProductByID(ctx context.Context, id int) (model.Product, error) {
 	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
 	defer cancel()
 
@@ -128,7 +128,7 @@ func (m *DBrepo) GetProductByID(ctx context.Context, id int) (model.Product, err
 	return p, g.Wait()
 }
 
-func (m *DBrepo) CreateProductReview(pr model.ProductReview) (float32, error) {
+func (m *dbRepo) CreateProductReview(pr model.ProductReview) (float32, error) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -138,6 +138,12 @@ func (m *DBrepo) CreateProductReview(pr model.ProductReview) (float32, error) {
 	if err != nil {
 		return 0, fmt.Errorf("db addproductreview: %v", err)
 	}
+
+	defer func() {
+		if err := recover(); err != nil {
+			tx.Rollback()
+		}
+	}()
 
 	// get count of reviews of particular product
 	var reviewCount int
@@ -198,7 +204,7 @@ func (m *DBrepo) CreateProductReview(pr model.ProductReview) (float32, error) {
 	return newRating, nil
 }
 
-func (m *DBrepo) GetAllProducts() ([]model.Product, error) {
+func (m *dbRepo) GetAllProducts() ([]model.Product, error) {
 
 	var products []model.Product
 
@@ -238,7 +244,7 @@ func (m *DBrepo) GetAllProducts() ([]model.Product, error) {
 	return products, nil
 }
 
-func (m *DBrepo) GetProductNextIndex() (int, error) {
+func (m *dbRepo) GetProductNextIndex() (int, error) {
 
 	productLock.Lock()
 	defer productLock.Unlock()
@@ -257,7 +263,7 @@ func (m *DBrepo) GetProductNextIndex() (int, error) {
 	return id + 1, nil
 }
 
-func (m *DBrepo) InsertProduct(p model.Product) error {
+func (m *dbRepo) InsertProduct(p model.Product) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 	_, err := m.ExecContext(ctx, "INSERT INTO products (id,owner_id,brand,category,title,rating,description,price,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?);",
@@ -277,7 +283,7 @@ func (m *DBrepo) InsertProduct(p model.Product) error {
 	return nil
 }
 
-func (m *DBrepo) InsertProductImages(i int, s string) error {
+func (m *dbRepo) InsertProductImages(i int, s string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 	_, err := m.ExecContext(ctx, "INSERT INTO gorent.images (product_id, url, created_at, updated_at) VALUES (?,?,?,?);",
@@ -288,7 +294,7 @@ func (m *DBrepo) InsertProductImages(i int, s string) error {
 	return nil
 }
 
-func (m *DBrepo) UpdateProducts(p model.Product, s1 []model.ImgUrl, s2 []string) error {
+func (m *dbRepo) UpdateProducts(p model.Product, s1 []model.ImgUrl, s2 []string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
@@ -319,7 +325,7 @@ func (m *DBrepo) UpdateProducts(p model.Product, s1 []model.ImgUrl, s2 []string)
 	return nil
 }
 
-func (m *DBrepo) UpdateProductImages(s1, s2 string) error {
+func (m *dbRepo) UpdateProductImages(s1, s2 string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 	query := `UPDATE gorent.images set url=?, updated_at=? where url=?`

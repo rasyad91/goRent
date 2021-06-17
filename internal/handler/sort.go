@@ -3,7 +3,6 @@ package handler
 import (
 	"fmt"
 	"goRent/internal/model"
-	"math"
 )
 
 func SortArray(a []int) {
@@ -48,55 +47,55 @@ func swap(array []int, i1, i2 int) {
 
 }
 
-func mergeSort(a []model.SearchTrends) []model.SearchTrends {
+// func mergeSort(a []model.SearchTrends) []model.SearchTrends {
 
-	if len(a) < 2 {
-		return a
-	}
+// 	if len(a) < 2 {
+// 		return a
+// 	}
 
-	left := 0
-	right := len(a) - 1
-	left_right := float64((left + right) / 2)
-	middle := math.Floor(left_right)
+// 	left := 0
+// 	right := len(a) - 1
+// 	left_right := float64((left + right) / 2)
+// 	middle := math.Floor(left_right)
 
-	leftArray := a[:int(middle)]
-	rightArray := a[int(middle):]
+// 	leftArray := a[:int(middle)]
+// 	rightArray := a[int(middle):]
 
-	return merge(mergeSort(leftArray), mergeSort(rightArray))
-}
+// 	return merge(mergeSort(leftArray), mergeSort(rightArray))
+// }
 
-func merge(leftArray, rightArray []model.SearchTrends) []model.SearchTrends {
+// func merge(leftArray, rightArray []model.SearchTrends) []model.SearchTrends {
 
-	leftIndex := 0
-	rightIndex := 0
+// 	leftIndex := 0
+// 	rightIndex := 0
 
-	var result []model.SearchTrends
+// 	var result []model.SearchTrends
 
-	for leftIndex < len(leftArray) && rightIndex < len(rightArray) {
+// 	for leftIndex < len(leftArray) && rightIndex < len(rightArray) {
 
-		if leftArray[leftIndex].Count < rightArray[rightIndex].Count {
+// 		if leftArray[leftIndex].Count < rightArray[rightIndex].Count {
 
-			result = append(result, leftArray[leftIndex])
-			leftIndex++
-		} else {
+// 			result = append(result, leftArray[leftIndex])
+// 			leftIndex++
+// 		} else {
 
-			result = append(result, rightArray[rightIndex])
-			rightIndex++
-		}
+// 			result = append(result, rightArray[rightIndex])
+// 			rightIndex++
+// 		}
 
-	}
+// 	}
 
-	for ; leftIndex < len(leftArray); leftIndex++ {
-		result = append(result, leftArray[leftIndex])
-	}
+// 	for ; leftIndex < len(leftArray); leftIndex++ {
+// 		result = append(result, leftArray[leftIndex])
+// 	}
 
-	for ; leftIndex < len(rightArray); leftIndex++ {
-		result = append(result, rightArray[rightIndex])
-	}
+// 	for ; leftIndex < len(rightArray); leftIndex++ {
+// 		result = append(result, rightArray[rightIndex])
+// 	}
 
-	return result
+// 	return result
 
-}
+// }
 
 func quickSortCategory(array []model.SearchTrends, left, right int) {
 

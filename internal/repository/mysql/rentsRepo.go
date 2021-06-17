@@ -15,7 +15,7 @@ const (
 	ErrRentNotAvailable = "rent not available"
 )
 
-func (m *DBrepo) CreateRent(r model.Rent) (int, error) {
+func (m *dbRepo) CreateRent(r model.Rent) (int, error) {
 	rentLock.Lock()
 	defer rentLock.Unlock()
 
@@ -49,7 +49,7 @@ func (m *DBrepo) CreateRent(r model.Rent) (int, error) {
 	return int(id), nil
 }
 
-func (m *DBrepo) GetRentsByProductID(ctx context.Context, id int) ([]model.Rent, error) {
+func (m *dbRepo) GetRentsByProductID(ctx context.Context, id int) ([]model.Rent, error) {
 
 	rentLock.Lock()
 	defer rentLock.Unlock()
@@ -95,7 +95,7 @@ func (m *DBrepo) GetRentsByProductID(ctx context.Context, id int) ([]model.Rent,
 
 }
 
-func (m *DBrepo) DeleteRent(rentID int) error {
+func (m *dbRepo) DeleteRent(rentID int) error {
 
 	rentLock.Lock()
 	defer rentLock.Unlock()
@@ -113,7 +113,7 @@ func (m *DBrepo) DeleteRent(rentID int) error {
 	return nil
 }
 
-func (m *DBrepo) ProcessRent(rent model.Rent) error {
+func (m *dbRepo) ProcessRent(rent model.Rent) error {
 
 	rentLock.Lock()
 	defer rentLock.Unlock()
@@ -125,6 +125,12 @@ func (m *DBrepo) ProcessRent(rent model.Rent) error {
 	if err != nil {
 		return err
 	}
+
+	defer func() {
+		if err := recover(); err != nil {
+			tx.Rollback()
+		}
+	}()
 
 	available, err := m.IsRentAvailable(ctx, rent.ProductID, rent.StartDate, rent.EndDate)
 	if err != nil {
@@ -149,7 +155,7 @@ func (m *DBrepo) ProcessRent(rent model.Rent) error {
 }
 
 // IsRentAvailable returns true if there is no clashing date, and product is available for rent
-func (m *DBrepo) IsRentAvailable(ctx context.Context, productId int, startDate, endDate time.Time) (bool, error) {
+func (m *dbRepo) IsRentAvailable(ctx context.Context, productId int, startDate, endDate time.Time) (bool, error) {
 	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
 	defer cancel()
 
@@ -158,6 +164,12 @@ func (m *DBrepo) IsRentAvailable(ctx context.Context, productId int, startDate, 
 		fmt.Println(err)
 		return false, err
 	}
+
+	defer func() {
+		if err := recover(); err != nil {
+			tx.Rollback()
+		}
+	}()
 
 	if _, err := tx.ExecContext(ctx, `SET @sd := ?;`, startDate); err != nil {
 		fmt.Println(err)
