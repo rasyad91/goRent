@@ -50,8 +50,13 @@ func (m *Repository) ShowProductByID(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return err
 		}
-		m.App.Info.Println("successfully pull product by id")
-		return nil
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+			m.App.Info.Println("successfully pull product by id")
+			return nil
+		}
 	})
 
 	g.Go(func() error {
@@ -59,9 +64,14 @@ func (m *Repository) ShowProductByID(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return err
 		}
-		m.App.Info.Println("successfully pull rents by product id")
-		dates = helper.ListDatesFromRents(rents)
-		return nil
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+			m.App.Info.Println("successfully pull rents by product id")
+			dates = helper.ListDatesFromRents(rents)
+			return nil
+		}
 	})
 
 	if err := g.Wait(); err != nil {
