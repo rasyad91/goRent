@@ -10,9 +10,6 @@ import (
 )
 
 // DB struct for generic usage
-type DB struct {
-	SQL *sql.DB
-}
 
 const (
 	maxOpenDbConn = 10
@@ -21,26 +18,24 @@ const (
 )
 
 // Connect creates database pool for MySQL
-func Connect(dsn string, dialect string) (*DB, error) {
-	dbConn := &DB{}
+func Connect(dsn string, dialect string) (*sql.DB, error) {
 
 	db, err := sql.Open(dialect, dsn)
 	if err != nil {
 		err = fmt.Errorf("ConnectSQL: %w", err)
-		return dbConn, err
+		return nil, err
 	}
 
 	db.SetMaxOpenConns(maxOpenDbConn)
 	db.SetMaxIdleConns(maxIdleConn)
 	db.SetConnMaxLifetime(maxDbLifeTime)
 
-	dbConn.SQL = db
-	if err = testDB(dbConn.SQL); err != nil {
+	if err = testDB(db); err != nil {
 		err = fmt.Errorf("ConnectSQL: %w", err)
-		return dbConn, err
+		return nil, err
 	}
 
-	return dbConn, nil
+	return db, nil
 }
 
 // testDB tries to ping the database

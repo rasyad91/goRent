@@ -25,7 +25,13 @@ import (
 )
 
 const (
-	idleTimeout     = 5 * time.Minute // idleTimeout for server
+	idleTimeout       = 1 * time.Minute // idleTimeout for server
+	readTimeout       = 3 * time.Second // readTimeout for server
+	writeTimeout      = 3 * time.Second // writeTimeout for server
+	readHeaderTimeout = 3 * time.Second // readHeaderTimeout for server
+
+	sessionLifetimeTimeout = 24 * time.Hour // readHeaderTimeout for server
+
 	shutdownTimeout = 5 * time.Second // shutdown timeout before connections are cancelled
 )
 
@@ -41,7 +47,6 @@ func init() {
 	gob.Register([]model.Rent{})
 }
 
-// TODO clean up main() --- Rasyad
 func main() {
 
 	defer func() {
@@ -69,15 +74,17 @@ func main() {
 		app.Error.Fatal(err)
 	}
 	app.Info.Printf("Successfully connected to DB: %s\n", dsn)
-	defer db.SQL.Close()
+	defer db.Close()
 
 	// session
-	setSession(db.SQL)
+	setSession(db)
 	// aws
-	setAWS()
+	if err := setAWS(); err != nil {
+		app.Error.Fatal(err)
+	}
 
 	app.Info.Printf("Initializing handlers ...")
-	dbRepo := mysql.NewRepo(db.SQL)
+	dbRepo := mysql.NewRepo(db)
 	handlerRepo := handler.NewRepo(dbRepo, app)
 
 	handler.New(handlerRepo)
@@ -91,9 +98,12 @@ func main() {
 	defer close(app.MailChan)
 
 	server := &http.Server{
-		Addr:        fmt.Sprintf(":%s", *port),
-		Handler:     routes(),
-		IdleTimeout: idleTimeout,
+		Addr:              fmt.Sprintf(":%s", *port),
+		Handler:           routes(),
+		ReadTimeout:       readTimeout,
+		ReadHeaderTimeout: readHeaderTimeout,
+		WriteTimeout:      writeTimeout,
+		IdleTimeout:       idleTimeout,
 	}
 
 	stop := make(chan os.Signal, 1)
@@ -141,7 +151,7 @@ func setSession(db *sql.DB) {
 	app.Info.Printf("Initializing session manager....")
 	session = scs.New()
 	session.Store = mysqlstore.New(db)
-	session.Lifetime = 24 * time.Hour
+	session.Lifetime = sessionLifetimeTimeout
 	session.Cookie.Persist = true
 	session.Cookie.Name = fmt.Sprintf("gbsession_id_%s", *identifier)
 	session.Cookie.SameSite = http.SameSiteLaxMode
@@ -149,23 +159,22 @@ func setSession(db *sql.DB) {
 	app.Info.Printf("Session manager initialized")
 }
 
-func setAWS() {
+func setAWS() error {
 	app.Info.Printf("Connecting to AWS elasticsearch client....")
 	//initialise AWS elastisearch client
 	client, err := newAWSClient()
 	if err != nil {
-		app.Error.Fatal(err)
+		return err
 	}
 	app.AWSClient = client
 	app.Info.Printf("AWS elasticsearch client connected")
 
 	app.Info.Printf("Connecting to AWS S3 client session....")
-
 	awsS3Session, err := NewAWSSession()
 	if err != nil {
-		app.Error.Fatal(err)
+		return err
 	}
-
 	app.AWSS3Session = awsS3Session
 	app.Info.Printf("AWS S3 Session Established")
+	return nil
 }
