@@ -5,6 +5,7 @@ import (
 	"goRent/internal/repository"
 )
 
+// dbRepo struct that satisfy the repository.Database interface
 type dbRepo struct {
 	*sql.DB
 }

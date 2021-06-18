@@ -57,6 +57,8 @@ func (f *Form) CheckEmail(field string) {
 		f.Errors.Add(field, fmt.Sprintf("Please enter valid email"))
 	}
 }
+
+// Required checks whether the fields are populated
 func (f *Form) Required(fields ...string) {
 	for _, field := range fields {
 		value := f.Get(field)
@@ -66,6 +68,7 @@ func (f *Form) Required(fields ...string) {
 	}
 }
 
+// Valid will return false if there is any errors in Form
 func (f *Form) Valid() bool {
 	return len(f.Errors) == 0
 }

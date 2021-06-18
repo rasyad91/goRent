@@ -7,6 +7,7 @@ import (
 	"net/http"
 )
 
+// GetCart populates the cart page
 func (m *Repository) GetCart(w http.ResponseWriter, r *http.Request) {
 
 	data := make(map[string]interface{})
@@ -18,6 +19,7 @@ func (m *Repository) GetCart(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// GetCheckoout populates the checkout page
 func (m *Repository) GetCheckout(w http.ResponseWriter, r *http.Request) {
 
 	data := make(map[string]interface{})
@@ -29,6 +31,7 @@ func (m *Repository) GetCheckout(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// CheckoutConfirm checks the availability of the rents that the user wants to confirm
 func (m *Repository) CheckoutConfirm(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("Get checkoutconfirm")

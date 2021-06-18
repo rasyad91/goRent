@@ -9,6 +9,7 @@ import (
 	"github.com/olivere/elastic/v7"
 )
 
+// AppConfig is a global struct
 type AppConfig struct {
 	Session       *scs.SessionManager
 	Domain        string
