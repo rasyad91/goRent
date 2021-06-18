@@ -1,3 +1,4 @@
+//Handler for Login
 package handler
 
 import (
@@ -29,6 +30,7 @@ func (m *Repository) Login(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//Checks if username and password are correct, if so , GETUSER and store in session
 func (m *Repository) LoginPost(w http.ResponseWriter, r *http.Request) {
 	// fmt.Println("HITTING LOGINPOST")
 	t := time.Now()

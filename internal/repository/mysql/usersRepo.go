@@ -1,3 +1,4 @@
+//Users - all the functions for the users
 package mysql
 
 import (
@@ -5,27 +6,13 @@ import (
 	"database/sql"
 	"fmt"
 	"goRent/internal/model"
-	"goRent/internal/repository"
 	"time"
 
 	"golang.org/x/sync/errgroup"
 )
 
-type DBrepo struct {
-	*sql.DB
-}
-
-// const (
-// 	layoutISO = "2006-01-02"
-// )
-
-// NewRepo creates the repository
-func NewRepo(Conn *sql.DB) repository.DatabaseRepo {
-	return &DBrepo{
-		DB: Conn,
-	}
-}
-func (m *DBrepo) EmailExist(e string) error {
+//check to see if email exist in the system
+func (m *dbRepo) EmailExist(e string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 	var email string
@@ -40,7 +27,9 @@ func (m *DBrepo) EmailExist(e string) error {
 	}
 	return nil
 }
-func (m *DBrepo) GetUser(username string) (model.User, error) {
+
+//fill in User struct
+func (m *dbRepo) GetUser(username string) (model.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
@@ -118,7 +107,8 @@ func (m *DBrepo) GetUser(username string) (model.User, error) {
 	return u, x.Wait()
 }
 
-func (m *DBrepo) runQuery(ctx context.Context, user *model.User, query string, structType string) error {
+//for GetUser to pass in query and fill in the User struct
+func (m *dbRepo) runQuery(ctx context.Context, user *model.User, query string, structType string) error {
 	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
 
 	defer cancel()
@@ -231,7 +221,8 @@ func (m *DBrepo) runQuery(ctx context.Context, user *model.User, query string, s
 	}
 }
 
-func (m *DBrepo) InsertUser(u model.User) error {
+//Insert User into the DB
+func (m *dbRepo) InsertUser(u model.User) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 	_, err := m.ExecContext(ctx, "INSERT INTO gorent.users (username,email,password,image_url,postal_code,street_name,block,unit_number,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?);",
@@ -244,7 +235,8 @@ func (m *DBrepo) InsertUser(u model.User) error {
 	return nil
 }
 
-func (m *DBrepo) EditUser(u model.User, editType string) error {
+//Edit Profile base on which form returns
+func (m *dbRepo) EditUser(u model.User, editType string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 	err := error(nil)

@@ -115,3 +115,8 @@ type RentohKeyword struct {
 	Index   int
 	Keyword string
 }
+
+type SearchTrends struct {
+	CategoryName string
+	Count        int
+}

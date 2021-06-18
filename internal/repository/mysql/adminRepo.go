@@ -1,3 +1,4 @@
+// Admin Functions - all the functions used in the Admin feature
 package mysql
 
 import (
@@ -8,7 +9,8 @@ import (
 	"time"
 )
 
-func (m *DBrepo) GetAllUsers() ([]model.User, error) {
+//returns all the users in the DB
+func (m *dbRepo) GetAllUsers() ([]model.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 	result := []model.User{}
@@ -31,7 +33,9 @@ func (m *DBrepo) GetAllUsers() ([]model.User, error) {
 	}
 	return result, nil
 }
-func (m *DBrepo) GrantAccess(u string) error {
+
+//change user access level
+func (m *dbRepo) GrantAccess(u string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 	_, err := m.ExecContext(ctx, "UPDATE users SET access_level = 1 where id = ?", u)
@@ -41,7 +45,8 @@ func (m *DBrepo) GrantAccess(u string) error {
 	return nil
 }
 
-func (m *DBrepo) RemoveAccess(u string) error {
+//remove user access
+func (m *dbRepo) RemoveAccess(u string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 	_, err := m.ExecContext(ctx, "UPDATE users SET access_level = 5 where id = ?", u)
@@ -51,7 +56,8 @@ func (m *DBrepo) RemoveAccess(u string) error {
 	return nil
 }
 
-func (m *DBrepo) GetAllRents() ([]model.Rent, error) {
+// pull all the rents in the DB
+func (m *dbRepo) GetAllRents() ([]model.Rent, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 	result := []model.Rent{}
@@ -80,7 +86,8 @@ func (m *DBrepo) GetAllRents() ([]model.Rent, error) {
 	return result, nil
 }
 
-func (m *DBrepo) DeleteUser(u string) error {
+// delete users
+func (m *dbRepo) DeleteUser(u string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 	_, err := m.ExecContext(ctx, "DELETE FROM users where id = ?", u)

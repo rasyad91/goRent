@@ -15,7 +15,7 @@ func SessionLoad(next http.Handler) http.Handler {
 	return session.LoadAndSave(next)
 }
 
-// Auth checks for authentication
+// Auth checks for whether user has logged in
 func Authenticate(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if !helper.IsAuthenticated(r) {

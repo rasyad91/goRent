@@ -1,0 +1,39 @@
+{{template "base" .}}
+{{define "content"}}
+<div class="container">
+<div class="row mt-5">
+   <div class="mb-3">
+         <hr class="mb-3" style="color:gray">
+         <h2 class="mb-3">Search Trend Data</h2>
+         <div class="container">
+            {{$res:= index .Data "Categories"}}
+            {{range $category := $res}}
+            {{$category.CategoryName}}
+            {{$category.Count}}
+            <br>
+            {{end}}
+            {{end}}
+         </div>
+      </div>
+   </div>
+</div>
+{{define "script"}}
+<script>
+   var loadFile1 = function(event) {
+   	var image = document.getElementById('output');
+   	image.src = URL.createObjectURL(event.target.files[0]);
+   };
+   var loadFile2 = function(event) {
+   	var image = document.getElementById('output2');
+   	image.src = URL.createObjectURL(event.target.files[0]);
+   };
+   var loadFile3 = function(event) {
+   	var image = document.getElementById('output3');
+   	image.src = URL.createObjectURL(event.target.files[0]);
+   };
+   var loadFile4 = function(event) {
+   	var image = document.getElementById('output4');
+   	image.src = URL.createObjectURL(event.target.files[0]);
+   };
+</script>
+{{end}}

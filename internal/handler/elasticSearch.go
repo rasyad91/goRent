@@ -120,7 +120,7 @@ func ReviewUpdateViaDoc(r *http.Request, client *elastic.Client, i int, f float3
 
 	elastic_id := strconv.Itoa(i)
 	fmt.Println("review update function got called")
-	doc, err := client.Get().
+	doc, _ := client.Get().
 		Index("product_list").Id(elastic_id).
 		Do(r.Context())
 

@@ -8,14 +8,15 @@ import (
 )
 
 func routes() http.Handler {
-
 	mux := mux.NewRouter()
-
 	// default middleware
 	mux.Use(SessionLoad)
 	mux.Use(RecoverPanic)
 	mux.Use(NoSurf)
 	mux.Use(LastGetURL)
+	// needs authentication
+	u := mux.PathPrefix("/v1/user").Subrouter()
+	u.Use(Authenticate)
 
 	mux.HandleFunc("/", handler.Repo.Home).Methods("GET")
 	mux.HandleFunc("/search", handler.Repo.Search).Methods("GET")
@@ -29,9 +30,6 @@ func routes() http.Handler {
 
 	mux.HandleFunc("/v1/products/{productID}", handler.Repo.ShowProductByID).Methods("GET")
 
-	u := mux.PathPrefix("/v1/user").Subrouter()
-	u.Use(Authenticate)
-
 	u.HandleFunc("/logout", handler.Repo.Logout).Methods("GET")
 	u.HandleFunc("/account", handler.Repo.UserAccount).Methods("GET")
 	u.HandleFunc("/account/profile", handler.Repo.EditUserAccount).Methods("GET")
@@ -42,6 +40,9 @@ func routes() http.Handler {
 	u.HandleFunc("/products", handler.Repo.UserProducts).Methods("GET")
 	u.HandleFunc("/rents", handler.Repo.UserRents).Methods("GET")
 	u.HandleFunc("/bookings", handler.Repo.UserBookings).Methods("GET")
+
+	u.HandleFunc("/createcategories", handler.Repo.CreateCategoryDataBase).Methods("GET")
+	u.HandleFunc("/searchtrend", handler.Repo.SearchTrend).Methods("GET")
 
 	u.HandleFunc("/cart", handler.Repo.GetCart).Methods("GET")
 	u.HandleFunc("/cart/checkout", handler.Repo.GetCheckout).Methods("GET")

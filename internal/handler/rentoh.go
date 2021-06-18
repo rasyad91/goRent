@@ -2,15 +2,27 @@ package handler
 
 import (
 	"fmt"
+	"goRent/internal/form"
 	"goRent/internal/model"
+	"goRent/internal/render"
+	"net/http"
 	"strings"
 	"sync"
 )
 
+// rent + toh  -> budget version of a brain
+
+type Cat struct {
+	data map[string]int
+	l    sync.Mutex
+}
+
+var singleCat Cat = Cat{}
+var doubleCat Cat = Cat{}
+
 func rentohQuery(s string) {
 
 	var foundCategory string
-
 	var wg sync.WaitGroup
 
 	catCh := make(chan model.RentohKeyword)
@@ -23,7 +35,7 @@ func rentohQuery(s string) {
 
 		for i := 0; i < len(rentohArray); i++ {
 			wg.Add(1)
-			go checkSingleCategory(i, rentohArray[i], catSCh, &wg)
+			go singleCat.checkSingleCategory(i, rentohArray[i], catSCh, &wg)
 		}
 
 		go func() {
@@ -38,16 +50,15 @@ func rentohQuery(s string) {
 			}
 		}
 
-		if len(foundCategory) == 0 {
-			//store unknown keyword somewhese else
-		}
+		// if len(foundCategory) == 0 {
+		// 	//store unknown keyword somewhese else
+		// }
 		return
-
 	}
 
 	for i := 0; i < len(rentohArray)-1; i++ {
 		wg.Add(1)
-		go checkDoubleCategory(i, rentohArray[i], rentohArray[i+1], catCh, &wg)
+		go doubleCat.checkDoubleCategory(i, rentohArray[i], rentohArray[i+1], catCh, &wg)
 	}
 	go func() {
 		wg.Wait()
@@ -58,14 +69,14 @@ func rentohQuery(s string) {
 		if categoryName.Index != -1 {
 			foundCategory = categoryName.Keyword
 			//process keywords for left and right of index
-			fmt.Println("this is the name of the category found", foundCategory)
+			fmt.Println("this is the name of the category [DOUBLE] FOUND", foundCategory)
 			return
 		}
 	}
 
 	for i := 0; i < len(rentohArray); i++ {
 		wg.Add(1)
-		go checkSingleCategory(i, rentohArray[i], catSCh, &wg)
+		go singleCat.checkSingleCategory(i, rentohArray[i], catSCh, &wg)
 	}
 
 	go func() {
@@ -75,127 +86,176 @@ func rentohQuery(s string) {
 	for categoryName := range catSCh {
 		if categoryName.Index != -1 {
 			foundCategory = categoryName.Keyword
-			fmt.Println("this is the name of the category found", foundCategory)
+			fmt.Println("this is the name of the category [SINGLE] FOUND", foundCategory)
 			break
 		}
 	}
 }
 
-func checkSingleCategory(i int, s string, catCh chan model.RentohKeyword, wg *sync.WaitGroup) {
+func (m *Cat) checkSingleCategory(i int, s string, catCh chan model.RentohKeyword, wg *sync.WaitGroup) {
 
 	defer wg.Done()
-
-	var singleCatMap = make(map[string]int)
-
-	singleCatMap["studio"] = 0
-	singleCatMap["condo"] = 0
-	singleCatMap["hdb"] = 0
-	singleCatMap["office"] = 0
-	singleCatMap["shops"] = 0
-	singleCatMap["hockey"] = 0
-	singleCatMap["book"] = 0
-	singleCatMap["books"] = 0
-	singleCatMap["rugby"] = 0
-	singleCatMap["wedding"] = 0
-	singleCatMap["dvd"] = 0
-	singleCatMap["computer"] = 0
-	singleCatMap["computers"] = 0
-	singleCatMap["laptop"] = 0
-	singleCatMap["laptops"] = 0
-	singleCatMap["vacuum"] = 0
-	singleCatMap["car"] = 0
-	singleCatMap["piano"] = 0
-	singleCatMap["kayak"] = 0
-	singleCatMap["surfboard"] = 0
-	singleCatMap["bridesmaids"] = 0
-	singleCatMap["kitchen"] = 0
-	singleCatMap["bike"] = 0
-	singleCatMap["bicycles"] = 0
-	singleCatMap["kiosk"] = 0
-	singleCatMap["tents"] = 0
-	singleCatMap["clothes"] = 0
-	singleCatMap["guitar"] = 0
-	singleCatMap["movies"] = 0
-	singleCatMap["boat"] = 0
-	singleCatMap["textbook"] = 0
-	singleCatMap["textbooks"] = 0
-	singleCatMap["plants"] = 0
-	singleCatMap["party"] = 0
-	singleCatMap["jeans"] = 0
-	singleCatMap["drones"] = 0
-	singleCatMap["prams"] = 0
+	// var singleCatMap = make(map[string]int)
+	m.l.Lock()
+	defer m.l.Unlock()
 
 	fmt.Println("these are the cat strings from SINGLE", s)
 
-	if k, ok := singleCatMap[s]; ok {
-		fmt.Println("I FOUND", s)
-		singleCatMap[s] = k + 1
-		catCh <- model.RentohKeyword{i, s}
+	if k, ok := m.data[s]; ok {
+		m.data[s] = k + 1
+		catCh <- model.RentohKeyword{Index: i, Keyword: s}
 
 	} else {
-		catCh <- model.RentohKeyword{-1, ""}
+		catCh <- model.RentohKeyword{Index: -1, Keyword: ""}
 	}
 
 }
 
-func checkDoubleCategory(i int, s1, s2 string, catCh chan model.RentohKeyword, wg *sync.WaitGroup) {
+func (m *Cat) checkDoubleCategory(i int, s1, s2 string, catCh chan model.RentohKeyword, wg *sync.WaitGroup) {
 
 	defer wg.Done()
-
-	var doubleCatMap = make(map[string]int)
-	doubleCatMap["washing machines"] = 0
-	doubleCatMap["wedding dress"] = 0
-	doubleCatMap["movie projector"] = 0
-	doubleCatMap["sewing machine"] = 0
-	doubleCatMap["empty room"] = 0
-	doubleCatMap["wedding gown"] = 0
-	doubleCatMap["party tent"] = 0
-	doubleCatMap["moving gear"] = 0
-	doubleCatMap["camera lens"] = 0
-	doubleCatMap["camera equipment"] = 0
-	doubleCatMap["lawn mower"] = 0
-	doubleCatMap["parking space"] = 0
-	doubleCatMap["baking equipment"] = 0
-	doubleCatMap["video games"] = 0
-	doubleCatMap["baking machine"] = 0
-	doubleCatMap["storage space"] = 0
-	doubleCatMap["office space"] = 0
-	doubleCatMap["campsite rental"] = 0
-	doubleCatMap["fishing rental"] = 0
-	doubleCatMap["conferences space"] = 0
-	doubleCatMap["tech rental"] = 0
-	doubleCatMap["arcade games"] = 0
-	doubleCatMap["power tools"] = 0
-	doubleCatMap["av equipment"] = 0
-	doubleCatMap["board games"] = 0
-	doubleCatMap["camping space"] = 0
-	doubleCatMap["camping equipment"] = 0
-	doubleCatMap["hockey sticks"] = 0
-	doubleCatMap["hockey equipment"] = 0
-	doubleCatMap["golf carts"] = 0
-	doubleCatMap["bounce houses"] = 0
-	doubleCatMap["party dresses"] = 0
-	doubleCatMap["format wear"] = 0
-	doubleCatMap["night gowns"] = 0
-	doubleCatMap["baby gear"] = 0
-	doubleCatMap["photography gear"] = 0
-	doubleCatMap["musical instruments"] = 0
-	doubleCatMap["sporting goods"] = 0
-	doubleCatMap["fishing gear"] = 0
-	doubleCatMap["sewing machine"] = 0
-	doubleCatMap["christmastrees"] = 0
+	m.l.Lock()
+	defer m.l.Unlock()
 
 	catString := s1 + " " + s2
+	catString2 := s2 + " " + s1
 
 	fmt.Println("these are the cat strings from DOUBLE", catString)
+	fmt.Println("these are the cat strings from DOUBLE", catString2)
 
-	if k, ok := doubleCatMap[catString]; ok {
+	if k, ok := m.data[catString]; ok {
 
-		doubleCatMap[catString] = k + 1
-		catCh <- model.RentohKeyword{i, catString}
+		m.data[catString] = k + 1
+		catCh <- model.RentohKeyword{Index: i, Keyword: catString}
 
+	} else if k, ok := m.data[catString2]; ok {
+		m.data[catString2] = k + 1
+		catCh <- model.RentohKeyword{Index: i, Keyword: catString2}
 	} else {
-		catCh <- model.RentohKeyword{-1, ""}
+		catCh <- model.RentohKeyword{Index: -1, Keyword: ""}
+
 	}
+
+}
+
+func (m *Repository) SearchTrend(w http.ResponseWriter, r *http.Request) {
+
+	data := make(map[string]interface{})
+
+	categoriesSlice := []model.SearchTrends{}
+
+	for k, v := range singleCat.data {
+		categoriesSlice = append(categoriesSlice, model.SearchTrends{CategoryName: k, Count: v})
+
+	}
+
+	for k, v := range doubleCat.data {
+		categoriesSlice = append(categoriesSlice, model.SearchTrends{CategoryName: k, Count: v})
+
+	}
+
+	SortArrayCategory(categoriesSlice)
+	data["Categories"] = categoriesSlice
+	// fmt.Println("these are all the categories", categoriesSlice)
+
+	if err := render.Template(w, r, "searchtrend.page.html", &render.TemplateData{
+		Data: data,
+		Form: &form.Form{},
+	}); err != nil {
+		m.App.Error.Println(err)
+	}
+
+}
+
+func (m *Repository) CreateCategoryDataBase(w http.ResponseWriter, r *http.Request) {
+
+	singleCat.data = make(map[string]int)
+	doubleCat.data = make(map[string]int)
+
+	singleCat.data["studio"] = 0
+	singleCat.data["condo"] = 0
+	singleCat.data["hdb"] = 0
+	singleCat.data["office"] = 0
+	singleCat.data["shops"] = 0
+	singleCat.data["hockey"] = 0
+	singleCat.data["book"] = 0
+	singleCat.data["books"] = 0
+	singleCat.data["rugby"] = 0
+	singleCat.data["wedding"] = 0
+	singleCat.data["dvd"] = 0
+	singleCat.data["computer"] = 0
+	singleCat.data["computers"] = 0
+	singleCat.data["laptop"] = 0
+	singleCat.data["laptops"] = 0
+	singleCat.data["vacuum"] = 0
+	singleCat.data["car"] = 0
+	singleCat.data["piano"] = 0
+	singleCat.data["kayak"] = 0
+	singleCat.data["surfboard"] = 0
+	singleCat.data["bridesmaids"] = 0
+	singleCat.data["kitchen"] = 0
+	singleCat.data["bike"] = 0
+	singleCat.data["bicycles"] = 0
+	singleCat.data["kiosk"] = 0
+	singleCat.data["camera"] = 0
+	singleCat.data["tripod"] = 0
+	singleCat.data["tents"] = 0
+	singleCat.data["clothes"] = 0
+	singleCat.data["guitar"] = 0
+	singleCat.data["movies"] = 0
+	singleCat.data["boat"] = 0
+	singleCat.data["textbook"] = 0
+	singleCat.data["textbooks"] = 0
+	singleCat.data["plants"] = 0
+	singleCat.data["party"] = 0
+	singleCat.data["jeans"] = 0
+	singleCat.data["drones"] = 0
+	singleCat.data["prams"] = 0
+	doubleCat.data["washing machines"] = 0
+	doubleCat.data["washing machine"] = 0
+	doubleCat.data["wedding dress"] = 0
+	doubleCat.data["movie projector"] = 0
+	doubleCat.data["sewing machine"] = 0
+	doubleCat.data["empty room"] = 0
+	doubleCat.data["wedding gown"] = 0
+	doubleCat.data["party tent"] = 0
+	doubleCat.data["moving gear"] = 0
+	doubleCat.data["camera lens"] = 0
+	doubleCat.data["camera equipment"] = 0
+	doubleCat.data["lawn mower"] = 0
+	doubleCat.data["parking space"] = 0
+	doubleCat.data["camera tripod"] = 0
+	doubleCat.data["baking equipment"] = 0
+	doubleCat.data["video games"] = 0
+	doubleCat.data["waffle machine"] = 0
+	doubleCat.data["baking machine"] = 0
+	doubleCat.data["storage space"] = 0
+	doubleCat.data["office space"] = 0
+	doubleCat.data["campsite rental"] = 0
+	doubleCat.data["fishing rental"] = 0
+	doubleCat.data["conferences space"] = 0
+	doubleCat.data["tech rental"] = 0
+	doubleCat.data["arcade games"] = 0
+	doubleCat.data["power tools"] = 0
+	doubleCat.data["av equipment"] = 0
+	doubleCat.data["board games"] = 0
+	doubleCat.data["camping space"] = 0
+	doubleCat.data["camping equipment"] = 0
+	doubleCat.data["hockey sticks"] = 0
+	doubleCat.data["hockey equipment"] = 0
+	doubleCat.data["golf carts"] = 0
+	doubleCat.data["bounce houses"] = 0
+	doubleCat.data["party dresses"] = 0
+	doubleCat.data["format wear"] = 0
+	doubleCat.data["night gowns"] = 0
+	doubleCat.data["baby gear"] = 0
+	doubleCat.data["photography gear"] = 0
+	doubleCat.data["musical instruments"] = 0
+	doubleCat.data["sporting goods"] = 0
+	doubleCat.data["fishing gear"] = 0
+	doubleCat.data["sewing machine"] = 0
+	doubleCat.data["christmas trees"] = 0
+
+	http.Redirect(w, r, "/v1/user/searchtrend", http.StatusSeeOther)
 
 }

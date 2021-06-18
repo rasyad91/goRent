@@ -118,12 +118,14 @@ func (m *Repository) RegisterPost(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(form.Errors)
 	fmt.Println("last Time taken: ", time.Since(t))
 	if len(form.Errors) != 0 {
+
 		if err := render.Template(w, r, "register.page.html", &render.TemplateData{
 			Form: form,
 			Data: data,
 		}); err != nil {
 			m.App.Error.Println(err)
 		}
+
 		return
 	}
 	fmt.Println("CREATING NEW USER:", newUser)

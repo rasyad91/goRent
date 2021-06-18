@@ -13,7 +13,7 @@ import (
 
 var productLock sync.RWMutex
 
-func (m *DBrepo) GetProductByID(ctx context.Context, id int) (model.Product, error) {
+func (m *dbRepo) GetProductByID(ctx context.Context, id int) (model.Product, error) {
 	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
 	defer cancel()
 
@@ -128,7 +128,7 @@ func (m *DBrepo) GetProductByID(ctx context.Context, id int) (model.Product, err
 	return p, g.Wait()
 }
 
-func (m *DBrepo) CreateProductReview(pr model.ProductReview) (float32, error) {
+func (m *dbRepo) CreateProductReview(pr model.ProductReview) (float32, error) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -138,6 +138,12 @@ func (m *DBrepo) CreateProductReview(pr model.ProductReview) (float32, error) {
 	if err != nil {
 		return 0, fmt.Errorf("db addproductreview: %v", err)
 	}
+
+	defer func() {
+		if err := recover(); err != nil {
+			tx.Rollback()
+		}
+	}()
 
 	// get count of reviews of particular product
 	var reviewCount int
@@ -157,7 +163,11 @@ func (m *DBrepo) CreateProductReview(pr model.ProductReview) (float32, error) {
 			tx.Rollback()
 			return 0, fmt.Errorf("db addproductreview query reviewcount + rating: %v", err)
 		}
+		fmt.Println("db error:", err)
 	}
+
+	fmt.Println("rating:", rating)
+	fmt.Println("PRrating:", pr.Rating)
 
 	// insert new product review
 	query = `insert into product_reviews(reviewer_id, reviewer_name, product_id, body, rating, created_at, updated_at)
@@ -179,13 +189,10 @@ func (m *DBrepo) CreateProductReview(pr model.ProductReview) (float32, error) {
 	//check
 	var newRating float32
 	if reviewCount == 0 {
-		fmt.Println("hit in review count = 0")
 		newRating = rating
 	} else {
-		newRating = rating + (pr.Rating-rating)/float32(reviewCount)
+		newRating = rating + (pr.Rating-rating)/float32(reviewCount+1)
 	}
-
-	fmt.Println(newRating)
 
 	query = `UPDATE products SET rating = ? WHERE (id = ?);`
 	if _, err := tx.ExecContext(ctx, query, newRating, pr.ProductID); err != nil {
@@ -197,7 +204,7 @@ func (m *DBrepo) CreateProductReview(pr model.ProductReview) (float32, error) {
 	return newRating, nil
 }
 
-func (m *DBrepo) GetAllProducts() ([]model.Product, error) {
+func (m *dbRepo) GetAllProducts() ([]model.Product, error) {
 
 	var products []model.Product
 
@@ -237,7 +244,7 @@ func (m *DBrepo) GetAllProducts() ([]model.Product, error) {
 	return products, nil
 }
 
-func (m *DBrepo) GetProductNextIndex() (int, error) {
+func (m *dbRepo) GetProductNextIndex() (int, error) {
 
 	productLock.Lock()
 	defer productLock.Unlock()
@@ -256,7 +263,7 @@ func (m *DBrepo) GetProductNextIndex() (int, error) {
 	return id + 1, nil
 }
 
-func (m *DBrepo) InsertProduct(p model.Product) error {
+func (m *dbRepo) InsertProduct(p model.Product) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 	_, err := m.ExecContext(ctx, "INSERT INTO products (id,owner_id,brand,category,title,rating,description,price,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?);",
@@ -276,7 +283,7 @@ func (m *DBrepo) InsertProduct(p model.Product) error {
 	return nil
 }
 
-func (m *DBrepo) InsertProductImages(i int, s string) error {
+func (m *dbRepo) InsertProductImages(i int, s string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 	_, err := m.ExecContext(ctx, "INSERT INTO gorent.images (product_id, url, created_at, updated_at) VALUES (?,?,?,?);",
@@ -287,23 +294,13 @@ func (m *DBrepo) InsertProductImages(i int, s string) error {
 	return nil
 }
 
-func (m *DBrepo) UpdateProducts(p model.Product, s1 []model.ImgUrl, s2 []string) error {
+func (m *dbRepo) UpdateProducts(p model.Product, s1 []model.ImgUrl, s2 []string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	// query := `UPDATE goRent.products set processed = true, updated_at = ? where id = ?`
 	query := `UPDATE gorent.products set brand=?, title=?, description=?, price=?, created_at=? where id = ?`
 
-	// _, err := m.ExecContext(ctx, "UPDATE goRent.products (brand,title,description,price, created_at) where id =? VALUES (?,?,?,?,?);",
 	_, err := m.ExecContext(ctx, query, p.Brand, p.Title, p.Description, p.Price, time.Now(), p.ID)
-
-	// for _, v := range p.Images {
-
-	// 	err := m.InsertProductImages(p.ID, v)
-	// 	if err != nil {
-	// 		return err
-	// 	}
-	// }
 
 	for _, v := range s1 {
 		fmt.Printf("\n\nthis is the old url %s", v.OldImg)
@@ -316,7 +313,6 @@ func (m *DBrepo) UpdateProducts(p model.Product, s1 []model.ImgUrl, s2 []string)
 	}
 
 	for _, v := range s2 {
-
 		err := m.InsertProductImages(p.ID, v)
 		if err != nil {
 			return err
@@ -329,7 +325,7 @@ func (m *DBrepo) UpdateProducts(p model.Product, s1 []model.ImgUrl, s2 []string)
 	return nil
 }
 
-func (m *DBrepo) UpdateProductImages(s1, s2 string) error {
+func (m *dbRepo) UpdateProductImages(s1, s2 string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 	query := `UPDATE gorent.images set url=?, updated_at=? where url=?`
