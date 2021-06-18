@@ -1,3 +1,4 @@
+//Handler for admin function
 package handler
 
 import (
@@ -10,6 +11,7 @@ import (
 	"strings"
 )
 
+//handles adminUsers page - shows all the Users in the DB
 func (m *Repository) AdminAccount(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
 	u := m.App.Session.Get(r.Context(), "user").(model.User)
@@ -65,6 +67,7 @@ func (m *Repository) AdminAccount(w http.ResponseWriter, r *http.Request) {
 
 }
 
+//handles giving access to other users
 func (m *Repository) AdminAccountPost(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("HITTING ADMIN POST")
 	u := m.App.Session.Get(r.Context(), "user").(model.User)
@@ -124,6 +127,8 @@ func (m *Repository) AdminAccountPost(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/admin/overview", http.StatusSeeOther)
 
 }
+
+//handles showing products in the system - uses mergesort here
 func (m *Repository) AdminProducts(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
 	u := m.App.Session.Get(r.Context(), "user").(model.User)
@@ -157,6 +162,7 @@ func (m *Repository) AdminProducts(w http.ResponseWriter, r *http.Request) {
 
 }
 
+//handles showing all the rentals in the system
 func (m *Repository) AdminRentals(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
 	u := m.App.Session.Get(r.Context(), "user").(model.User)
@@ -178,6 +184,7 @@ func (m *Repository) AdminRentals(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// old query sort for Product
 func urlQuery(result []model.Product, r *http.Request) {
 	sortby, ok := r.URL.Query()["sortby"]
 	sortType, sortok := r.URL.Query()["sort"]
@@ -238,6 +245,8 @@ func urlQuery(result []model.Product, r *http.Request) {
 		}
 	}
 }
+
+// sort for Rent page
 func urlQueryRent(result []model.Rent, r *http.Request) {
 	sortby, ok := r.URL.Query()["sortby"]
 	sortType, sortok := r.URL.Query()["sort"]
@@ -309,6 +318,7 @@ func urlQueryRent(result []model.Rent, r *http.Request) {
 	}
 }
 
+// merge sort implementation for Product
 func mergeSortProduct(slice []model.Product, flag string, sortType string) []model.Product {
 	num := len(slice)
 	if num == 1 {
