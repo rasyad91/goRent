@@ -1,3 +1,4 @@
+//functions for handlers for Users
 package handler
 
 import (
@@ -10,6 +11,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+//handles GET request for User overview page
 func (m *Repository) UserAccount(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
 	u := m.App.Session.Get(r.Context(), "user").(model.User)
@@ -31,6 +33,7 @@ func (m *Repository) UserAccount(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//handles populating edit user form with existing information
 func (m *Repository) EditUserAccount(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
 	u := m.App.Session.Get(r.Context(), "user").(model.User)
@@ -43,6 +46,7 @@ func (m *Repository) EditUserAccount(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//handles POST request for editing user information
 func (m *Repository) EditUserAccountPost(w http.ResponseWriter, r *http.Request) {
 	u := m.App.Session.Get(r.Context(), "user").(model.User)
 	data := make(map[string]interface{})
@@ -148,6 +152,8 @@ func (m *Repository) EditUserAccountPost(w http.ResponseWriter, r *http.Request)
 	http.Redirect(w, r, "/v1/user/account/profile", http.StatusSeeOther)
 
 }
+
+// handles payment page
 func (m *Repository) Payment(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
 	u := m.App.Session.Get(r.Context(), "user").(model.User)
@@ -159,6 +165,7 @@ func (m *Repository) Payment(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//handles showing all of User's rents
 func (m *Repository) UserRents(w http.ResponseWriter, r *http.Request) {
 
 	data := make(map[string]interface{})
@@ -171,6 +178,7 @@ func (m *Repository) UserRents(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//handles showing all of User's bookings
 func (m *Repository) UserBookings(w http.ResponseWriter, r *http.Request) {
 
 	data := make(map[string]interface{})

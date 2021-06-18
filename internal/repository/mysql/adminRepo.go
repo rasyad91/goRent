@@ -1,3 +1,4 @@
+// Admin Functions - all the functions used in the Admin feature
 package mysql
 
 import (
@@ -8,6 +9,7 @@ import (
 	"time"
 )
 
+//returns all the users in the DB
 func (m *dbRepo) GetAllUsers() ([]model.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -31,6 +33,8 @@ func (m *dbRepo) GetAllUsers() ([]model.User, error) {
 	}
 	return result, nil
 }
+
+//change user access level
 func (m *dbRepo) GrantAccess(u string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -41,6 +45,7 @@ func (m *dbRepo) GrantAccess(u string) error {
 	return nil
 }
 
+//remove user access
 func (m *dbRepo) RemoveAccess(u string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -51,6 +56,7 @@ func (m *dbRepo) RemoveAccess(u string) error {
 	return nil
 }
 
+// pull all the rents in the DB
 func (m *dbRepo) GetAllRents() ([]model.Rent, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -80,6 +86,7 @@ func (m *dbRepo) GetAllRents() ([]model.Rent, error) {
 	return result, nil
 }
 
+// delete users
 func (m *dbRepo) DeleteUser(u string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
