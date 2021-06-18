@@ -91,21 +91,6 @@ type ProductReview struct {
 	UpdatedAt    time.Time
 }
 
-// may not be required
-type ElasticSearchProductSample struct {
-	ID          int       `json:"ID"`
-	OwnerID     int       `json:"owner_id"`
-	Brand       string    `json:"brand_name"`
-	Category    string    `json:"category"`
-	Title       string    `json:"title"`
-	Rating      float32   `json:"rating"`
-	Description string    `json:"description"`
-	Price       float32   `json:"price"`
-	CreatedAt   time.Time `json:"create_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
-	Images      []string  `json:"img1_url"`
-}
-
 type ImgUrl struct {
 	OldImg string
 	NewImg string
