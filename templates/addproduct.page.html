@@ -1,5 +1,4 @@
 {{template "base" .}}
-
 {{define "content"}}
 <div class="container">
    <div class="row mt-5">
@@ -16,120 +15,116 @@
                         <div class="row">
                            <div class="col-sm text-center mb-3">
                               <label for="file1">
-                                 <img id="output" src="https://i.ibb.co/Mp4mmmG/add-image.png" width="85px">
+                              <img id="output" src="https://i.ibb.co/Mp4mmmG/add-image.png" width="85px">
                               </label>
                               <input type="file" id="file1" style="display:none" name="file1" accept="image/*" onchange="loadFile1(event)"/>
                            </div>
                            <div class="col-sm text-center mb-3">
                               <label for="file2">
-                                 <img id="output2" src="https://i.ibb.co/Mp4mmmG/add-image.png" width="85px">
+                              <img id="output2" src="https://i.ibb.co/Mp4mmmG/add-image.png" width="85px">
                               </label>
                               <input type="file" id="file2" style="display:none" name="file2" accept="image/*" onchange="loadFile2(event)"/>
                            </div>
                            <div class="col-sm text-center mb-3">
                               <label for="file3">
-                                 <img id="output3" src="https://i.ibb.co/Mp4mmmG/add-image.png" width="85px">
+                              <img id="output3" src="https://i.ibb.co/Mp4mmmG/add-image.png" width="85px">
                               </label>
                               <input type="file" id="file3" style="display:none" name="file3" accept="image/*" onchange="loadFile3(event)"/>
                            </div>
                            <div class="col-sm text-center mb-3">
                               <label for="file4">
-                                 <img id="output4" src="https://i.ibb.co/Mp4mmmG/add-image.png" width="85px">
+                              <img id="output4" src="https://i.ibb.co/Mp4mmmG/add-image.png" width="85px">
                               </label>
                               <input type="file" id="file4" style="display:none" name="file4" accept="image/*" onchange="loadFile4(event)"/>
                            </div>
                         </div>
                      </div>
-                      {{with $form.Errors.Get "fileupload"}}
-                  <span for="fileupload" class="text-danger float-right">{{.}}</span>
-                  {{end}}
+                     {{with $form.Errors.Get "fileupload"}}
+                     <span for="fileupload" class="text-danger float-right">{{.}}</span>
+                     {{end}}
                      <div class="col-4"></div>
                   </div>
-                 
             </div>
          </div>
          <div class="form-group row mb-3">
-            <div class="form-group col ml-3">
-               <label class="form-label" for="productname">Product Name</label>
-               {{with $form.Errors.Get "productname"}}
-               <span for="productname" class="text-danger float-right">{{.}}</span>
-               {{end}}
-               <input type="text" class="form-control" name="productname" placeholder="Badminton Rackets">
-               <div class="form-text">Remember that a good product name attracts the most renters!</div>
-            </div>
-            <div class="form-group col ">
-               <label class="form-label" for="price">$ Price/Day</label>
-               {{with $form.Errors.Get "price"}}
-               <span for="price" class="text-danger float-right">{{.}}</span>
-               {{end}}
-               <input type="number" step="0.01" class="form-control" name="price" placeholder="$">
-               <div class="form-text">Price refers to the amount it costs to rent your item <strong>per</strong> day
-               </div>
-            </div>
+         <div class="form-group col ml-3">
+         <label class="form-label" for="product name">Product Name</label>
+         {{with $form.Errors.Get "product name"}}
+         <span for="product name" class="text-danger float-right">{{.}}</span>
+         {{end}}
+         <input type="text" class="form-control" name="product name" placeholder="Badminton Rackets">
+         <div class="form-text">Remember that a good product name attracts the most renters!</div>
+         </div>
+         <div class="form-group col ">
+         <label class="form-label" for="price">$ Price/Day</label>
+         {{with $form.Errors.Get "price"}}
+         <span for="price" class="text-danger float-right">{{.}}</span>
+         {{end}}
+         <input type="number" step="0.01" class="form-control" name="price" placeholder="$">
+         <div class="form-text">Price refers to the amount it costs to rent your item <strong>per</strong> day
+         </div>
+         </div>
          </div>
          <div class="form-group row mb-3 ml-1">
-            <div class="form-group col">
-               <label class="form-label" for="brand">Brand</label>
-               {{with $form.Errors.Get "brand"}}
-               <span for="brand" class="text-danger float-right">{{.}}</span>
-               {{end}}
-               <input type="brand" class="form-control" name="brand" placeholder="Yonex">
-               <div class="form-text">Enter Yonex, if it's a yonex badminton racket. Canon, for a canon camera etc</div>
-            </div>
-            <div class="form-group col">
-               <label for="exampleFormControlSelect2">Select your product's category</label>
-               <select multiple class="form-control" name="category">
-                  <option>Books > Programming</option>
-                  <option>Sports > Hockey</option>
-                  <option>Sports > Badminton</option>
-                  <option>Sports > Roller Blades</option>
-                  <option>Home & Office >> Monitors</option>
-                  <option>Wedding > Wedding Dress</option>
-                  <option>Wedding > Wedding Decoration</option>
-                  <option>Outdoor > Camping Equipment</option>
-                  <option>Outdoor > Glamping Equipment</option>
-               </select>
-               <div class="form-text">Please select a category that is closest to your product.</div>
-            </div>
+         <div class="form-group col">
+         <label class="form-label" for="brand">Brand</label>
+         {{with $form.Errors.Get "brand"}}
+         <span for="brand" class="text-danger float-right">{{.}}</span>
+         {{end}}
+         <input type="brand" class="form-control" name="brand" placeholder="Yonex">
+         <div class="form-text">Enter Yonex, if it's a yonex badminton racket. Canon, for a canon camera etc</div>
+         </div>
+         <div class="form-group col">
+         <label for="exampleFormControlSelect2">Select your product's category</label>
+         <select multiple class="form-control" name="category">
+         <option>Books > Programming</option>
+         <option>Sports > Hockey</option>
+         <option>Sports > Badminton</option>
+         <option>Sports > Roller Blades</option>
+         <option>Home & Office >> Monitors</option>
+         <option>Wedding > Wedding Dress</option>
+         <option>Wedding > Wedding Decoration</option>
+         <option>Outdoor > Camping Equipment</option>
+         <option>Outdoor > Glamping Equipment</option>
+         </select>
+         <div class="form-text">Please select a category that is closest to your product.</div>
+         </div>
          </div>
          <div class="form-group mb-3 ml-3">
-            <label class="form-label" for="productdescription">Product Description</label>
-             {{with $form.Errors.Get "productdescription"}}
-            <span for="productdescription" class="text-danger float-right">{{.}}</span>
-            {{end}}
-            <textarea class="form-control" name="productdescription" rows="4"></textarea>
-            <div class="form-text">A good description will help you rent out your items faster. You may want to include
-               as many details as possible. For example, if you are renting badminton rackets, you may also want include
-               how many shuttlecocks are included in the rent etc. Maximum 400 words.</div>
+         <label class="form-label" for="product description">Product Description</label>
+         {{with $form.Errors.Get "product description"}}
+         <span for="product description" class="text-danger float-right">{{.}}</span>
+         {{end}}
+         <textarea class="form-control" name="product description" rows="4"></textarea>
+         <div class="form-text">A good description will help you rent out your items faster. You may want to include
+         as many details as possible. For example, if you are renting badminton rackets, you may also want include
+         how many shuttlecocks are included in the rent etc. Maximum 400 words.</div>
          </div>
          <div class="form-group">
-            <button type="submit" class="btn btn-outline-dark btn-lg ml-3">Create Product</button>
+         <button type="submit" class="btn btn-outline-dark btn-lg ml-3">Create Product</button>
          </div>
          </form>
       </div>
    </div>
 </div>
 {{end}}
-
 {{define "script"}}
 <script>
-
-
-var loadFile1 = function(event) {
-	var image = document.getElementById('output');
-	image.src = URL.createObjectURL(event.target.files[0]);
-};
-var loadFile2 = function(event) {
-	var image = document.getElementById('output2');
-	image.src = URL.createObjectURL(event.target.files[0]);
-};
-var loadFile3 = function(event) {
-	var image = document.getElementById('output3');
-	image.src = URL.createObjectURL(event.target.files[0]);
-};
-var loadFile4 = function(event) {
-	var image = document.getElementById('output4');
-	image.src = URL.createObjectURL(event.target.files[0]);
-};
+   var loadFile1 = function(event) {
+   	var image = document.getElementById('output');
+   	image.src = URL.createObjectURL(event.target.files[0]);
+   };
+   var loadFile2 = function(event) {
+   	var image = document.getElementById('output2');
+   	image.src = URL.createObjectURL(event.target.files[0]);
+   };
+   var loadFile3 = function(event) {
+   	var image = document.getElementById('output3');
+   	image.src = URL.createObjectURL(event.target.files[0]);
+   };
+   var loadFile4 = function(event) {
+   	var image = document.getElementById('output4');
+   	image.src = URL.createObjectURL(event.target.files[0]);
+   };
 </script>
 {{end}}

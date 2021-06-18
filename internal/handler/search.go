@@ -12,11 +12,10 @@ import (
 	"strconv"
 	"strings"
 
-	// "github.com/olivere/elastic/aws"
-	// "github.com/olivere/elastic"
 	"github.com/olivere/elastic/v7"
 )
 
+//  Search is the handler that displays the product search page
 func (m *Repository) Search(w http.ResponseWriter, r *http.Request) {
 	if err := render.Template(w, r, "home.page.html", &render.TemplateData{
 		Data: nil,
@@ -25,26 +24,17 @@ func (m *Repository) Search(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// SearchResult handler takes in a user's seach query and fires requests to elasticsearch as well as Rentoh
 func (m *Repository) SearchResult(w http.ResponseWriter, r *http.Request) {
 
 	var data = make(map[string]interface{})
 	var product []model.Product
-	//var priceFilter bool
-	// var urlquery string
 	x := r.URL.Query()
-	// fmt.Println(x)
 
 	searchkeywords := strings.ToLower(url.QueryEscape(x["q"][0])) //hockey+sticks
 
-	// ReviewUpdateViaDoc(r, m.App.AWSClient, 10, 3.4)
-	// ManualUpdateViaDoc(r, m.App.AWSClient)
-	// ManualDeleteProductsElastic(r, m.App.AWSClient, 17)
-	// ManualProductFix(r, m.App.AWSClient, model.Product{})
-
 	//call rentoh
 	go rentohQuery(searchkeywords)
-
-	//check if minprice/ map exists
 
 	_, okMin := x["minprice"]
 	_, okMax := x["maxprice"]
@@ -53,9 +43,6 @@ func (m *Repository) SearchResult(w http.ResponseWriter, r *http.Request) {
 
 	form := form.New(r.PostForm)
 	form.Required("minprice", "maxprice")
-
-	// owner_id := 1
-	// imagequery(m.App.AWSClient, owner_id)
 
 	if okMin && okMax {
 		//please use multiseach instead.
@@ -80,22 +67,19 @@ func (m *Repository) SearchResult(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// searchQuery takes in a santizied query string from the user as an argument and returns results in []model.Product.
 func searchQuery(client *elastic.Client, searchKeywords ...string) []model.Product {
 
 	var searchResult *elastic.SearchResult
 	var query elastic.Query
-	// fmt.Println("length of searchKeywords", len(searchKeywords))
-	// fmt.Printf("whats in searchKeywords %#v", searchKeywords)
 
 	if searchKeywords[0] != "" {
 		query = elastic.NewQueryStringQuery(searchKeywords[0])
 	} else {
 		query = elastic.NewMatchAllQuery()
-		// fmt.Printf("query is matchallquery %#v", query)
 	}
 
 	searchResult, err := client.Search().
-		// Index("sample_product_list"). // search in index "tweets"
 		Index("product_list"). // search in index "tweets"
 		Query(query).          // specify the query
 		Pretty(true).          // pretty print request and response JSON
@@ -120,13 +104,11 @@ func searchQuery(client *elastic.Client, searchKeywords ...string) []model.Produ
 		products = append(products, t)
 	}
 
-	// for i, v := range products {
-	// 	fmt.Printf("%d: %v\n", i, v.Title)
-	// }
 	return products
 
 }
 
+// trialMultiSearchQuery takes in a santizied query string with other arguments (from filter) from the user as an argument and returns results.
 func trialMultiSearchQuery(client *elastic.Client, min, max string, searchKeywords ...string) ([]model.Product, error) {
 
 	var products []model.Product
@@ -145,22 +127,13 @@ func trialMultiSearchQuery(client *elastic.Client, min, max string, searchKeywor
 		stringQuery = elastic.NewMatchAllQuery()
 		fmt.Printf("query is matchallquery %#v", stringQuery)
 	}
-	// sreq3 := elastic.NewTermQuery("brand_name", "nike")
-
-	// searchResult, err := client.Search().
-	// 	Index("sample_product_list"). // search in index "tweets"
-	// 	Query(stringQuery).           // specify the query
-	// 	Pretty(true).                 // pretty print request and response JSON
-	// 	Do(context.Background())      // execute
 
 	priceQuery := elastic.NewRangeQuery("price").From(minPrice).To(maxPrice)
-	// sreq5 := elastic.NewRangeQuery("rating").From(0).To(0)
 
 	query := elastic.NewBoolQuery().Must(stringQuery, priceQuery)
 
 	searchResult, err := client.Search().
 		Index("product_list").
-		// Type("sampleproducttype"). // search in type
 		Query(query).
 		Do(context.Background()) // execute
 
@@ -181,42 +154,5 @@ func trialMultiSearchQuery(client *elastic.Client, min, max string, searchKeywor
 		products = append(products, t)
 	}
 
-	// for i, v := range products {
-	// 	fmt.Printf("%d: %v\n", i, v.Title)
-	// }
 	return products, nil
 }
-
-//for rachel.
-// func imagequery(client *elastic.Client, owner_id int) ([]model.Product, error) {
-// 	var product []model.Product
-// 	req := elastic.NewTermQuery("owner_id", owner_id) //maybe change "1"  to ownder_id , received frum functoin
-// 	searchResult, err := client.Search().
-// 		Index("sample_product_list"). // search in index "tweets"
-// 		Query(req).                   // specify the query
-// 		Pretty(true).                 // pretty print request and response JSON
-// 		Do(context.Background())      // execute
-
-// 	if err != nil {
-// 		fmt.Println("error from querying image", err)
-// 	}
-
-// 	for _, hit := range searchResult.Hits.Hits {
-
-// 		var t model.Product
-
-// 		if err := json.Unmarshal(hit.Source, &t); err != nil {
-// 			// log.Errorf("ERROR UNMARSHALLING ES SUGGESTION RESPONSE: %v", err)
-// 			continue
-// 		}
-// 		if err != nil {
-// 			fmt.Println("error unmarshaling json", err)
-
-// 		}
-// 		product = append(product, t)
-
-// 	}
-
-// 	fmt.Println("these are the products image query.")
-// 	return product, nil
-// }
