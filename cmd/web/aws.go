@@ -7,13 +7,12 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	awsS3 "github.com/aws/aws-sdk-go/aws/session"
 
-	// "github.com/olivere/elastic/aws"
-	// "github.com/olivere/elastic"
 	"github.com/olivere/elastic/v7"
 
 	aws4 "github.com/olivere/elastic/aws/v4"
 )
 
+// NewAWSSession cretes a new session for the usage of AWS S3
 func NewAWSSession() (*awsS3.Session, error) {
 	sess, err := awsS3.NewSession(&aws.Config{
 		Region: aws.String(*region),
@@ -26,6 +25,7 @@ func NewAWSSession() (*awsS3.Session, error) {
 	return sess, err
 }
 
+// NewAWSSession cretes a new client for the usage of AWS Elasticsearch
 func newAWSClient() (*elastic.Client, error) {
 
 	//start of elastic search codes
@@ -40,6 +40,7 @@ func newAWSClient() (*elastic.Client, error) {
 	return awsClient, err
 }
 
+// awsSigning works together with func newAWSClient to sign requests before sending to AWS Elasticsearch
 func awsSigning(awsAccesKey, awsSecretKey, awsRegoin string) *http.Client {
 	signingClient := aws4.NewV4SigningClient(credentials.NewStaticCredentials(
 		awsAccesKey,
@@ -49,6 +50,7 @@ func awsSigning(awsAccesKey, awsSecretKey, awsRegoin string) *http.Client {
 	return signingClient
 }
 
+// awsCreateClient works together with func newAWSClient to create a client instance with AWS Elasticsearch
 func awsCreateClient(url string, sniff bool, signingClient *http.Client) (*elastic.Client, error) {
 	client, err := elastic.NewClient(
 		elastic.SetURL(url),

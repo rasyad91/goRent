@@ -1,3 +1,4 @@
+//Users - all the functions for the users
 package mysql
 
 import (
@@ -10,6 +11,7 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
+//check to see if email exist in the system
 func (m *dbRepo) EmailExist(e string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -25,6 +27,8 @@ func (m *dbRepo) EmailExist(e string) error {
 	}
 	return nil
 }
+
+//fill in User struct
 func (m *dbRepo) GetUser(username string) (model.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -103,6 +107,7 @@ func (m *dbRepo) GetUser(username string) (model.User, error) {
 	return u, x.Wait()
 }
 
+//for GetUser to pass in query and fill in the User struct
 func (m *dbRepo) runQuery(ctx context.Context, user *model.User, query string, structType string) error {
 	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
 
@@ -216,6 +221,7 @@ func (m *dbRepo) runQuery(ctx context.Context, user *model.User, query string, s
 	}
 }
 
+//Insert User into the DB
 func (m *dbRepo) InsertUser(u model.User) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -229,6 +235,7 @@ func (m *dbRepo) InsertUser(u model.User) error {
 	return nil
 }
 
+//Edit Profile base on which form returns
 func (m *dbRepo) EditUser(u model.User, editType string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()

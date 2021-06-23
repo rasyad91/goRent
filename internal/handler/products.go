@@ -22,10 +22,8 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/gorilla/mux"
 
-	"golang.org/x/sync/errgroup"
-
-	// "github.com/aws/aws-sdk-go/aws"
 	awsS3 "github.com/aws/aws-sdk-go/aws/session"
+	"golang.org/x/sync/errgroup"
 )
 
 func (m *Repository) ShowProductByID(w http.ResponseWriter, r *http.Request) {
@@ -178,12 +176,11 @@ func (m *Repository) UserProducts(w http.ResponseWriter, r *http.Request) {
 		m.App.Error.Println(err)
 	}
 }
+
+// AddProduct Handler is used to display the add product page from the browser's get request
 func (m *Repository) AddProduct(w http.ResponseWriter, r *http.Request) {
 
 	data := make(map[string]interface{})
-	// user := m.App.Session.Get(r.Context(), "user").(model.User)
-	// data["products"] = user.Products
-	// data["user"] = user
 	if err := render.Template(w, r, "addproduct.page.html", &render.TemplateData{
 		Data: data,
 		Form: &form.Form{},
@@ -192,6 +189,7 @@ func (m *Repository) AddProduct(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// CreateProduct Handler checks for user inputs on image uploads and if forms are properly populated.
 func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 
 	type imageIndex struct {
@@ -226,7 +224,6 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 				return err
 			} else {
 				defer file.Close()
-				// uploader := s3manager.NewUploader(m.App.AWSS3Session)
 				s3fileName, s3err := storeImagesS3(w, r, id, productIndex, m.App.AWSS3Session)
 				if s3err != nil {
 					m.App.Error.Println("S3 error", err)
@@ -248,10 +245,10 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	}
 	g.Go(func() error {
 
-		form.Required("productname", "price", "brand", "productdescription")
-		form.CheckLength("productname", 1, 255)
+		form.Required("product name", "price", "brand", "product description")
+		form.CheckLength("product name", 1, 255)
 		form.CheckLength("price", 1, 5)
-		form.CheckLength("productdescription", 1, 400)
+		form.CheckLength("product description", 1, 400)
 		productCategory = form.RetrieveCategory("category")
 		productPrice = form.ProcessPrice("price")
 
@@ -268,17 +265,11 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 		if imgCount == 0 {
 			form.Errors.Add("fileupload", "Please at least upload one image")
 		}
-		// form.Errors.Add("fileupload", "A miniumum of 4 images are required")
 	}
-
-	// sort.Slice(imageIndex)
-	fmt.Println("this is the unsorted index", s3ImageInformation)
 
 	sort.Slice(s3ImageInformation, func(i, j int) bool {
 		return s3ImageInformation[i].index < s3ImageInformation[j].index
 	})
-
-	fmt.Println("this is the sorted index", s3ImageInformation)
 
 	var productImageURL []string
 	for _, v := range s3ImageInformation {
@@ -295,9 +286,9 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 		OwnerName:   u.Username,
 		Brand:       r.FormValue("brand"),
 		Category:    productCategory,
-		Title:       r.FormValue("productname"),
+		Title:       r.FormValue("product name"),
 		Rating:      0,
-		Description: r.FormValue("productdescription"),
+		Description: r.FormValue("product description"),
 		Price:       productPrice,
 		Reviews:     []model.ProductReview{},
 		Images:      productImageURL,
@@ -334,11 +325,6 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 
 		g2.Go(func() error {
 			put1, err := m.App.AWSClient.Index().
-				// Index("sample_product_list").
-				// Type("sampleproducttype").
-				// Id(strconv.Itoa(newProduct.ID)).
-				// BodyJson(newProduct).
-				// Do(r.Context())
 				Index("product_list").
 				Type("product").
 				Id(strconv.Itoa(newProduct.ID)).
@@ -346,10 +332,9 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 				Do(r.Context())
 
 			if err != nil {
-				// Handle error
-				panic(err)
+				m.App.Error.Println("Error occured while trying to index product on Elasticserver", err)
 			}
-			fmt.Printf("Indexed tweet %s to index %s, type %s\n", put1.Id, put1.Index, put1.Type)
+			fmt.Printf("Indexed product %s to index %s, type %s\n", put1.Id, put1.Index, put1.Type)
 
 			select {
 			case <-ctx.Done():
@@ -361,7 +346,6 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 
 		if err := g2.Wait(); err != nil {
 			m.App.Error.Println("error from g2", err)
-			// form.Errors.Add("fileupload", "A miniumum of 4 images are required")
 		}
 
 		m.App.Session.Put(r.Context(), "flash", "You've successfully created your product!")
@@ -373,6 +357,7 @@ func (m *Repository) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// storeImagesS3 is respomsible for checking on file size and iamge type before upload, if it passes checks then it uploads to AWS S3 directly
 func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, sess *awsS3.Session) (string, error) {
 
 	const MAX_UPLOAD_SIZE = 1024 * 1024 // 1MB
@@ -388,7 +373,6 @@ func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, 
 	r.Body = http.MaxBytesReader(w, r.Body, MAX_UPLOAD_SIZE)
 
 	if err := r.ParseMultipartForm(MAX_UPLOAD_SIZE); err != nil {
-		// http.Error(w, "The uploaded file is too big. Please choose an file that's less than 1MB in size", http.StatusBadRequest)
 		return "", fmt.Errorf("the uplaoded file is too big. Please choose af ile that's less than 1 MB in size :%s", err)
 	}
 	defer r.Body.Close()
@@ -411,8 +395,6 @@ func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, 
 
 	filetype := http.DetectContentType(buff)
 	if filetype != "image/jpeg" && filetype != "image/png" {
-		// http.Error(w, "The provided file format is not allowed. Please upload a JPEG or PNG image", http.StatusBadRequest)
-		// fmt.Println("error in file type !!!")
 		return "", fmt.Errorf("only .jpeg and .png files are allowed: %s", err)
 	}
 
@@ -438,9 +420,9 @@ func storeImagesS3(w http.ResponseWriter, r *http.Request, i, productIndex int, 
 	fmt.Println("upload to S3 bucket was successful; please check")
 
 	return s3FileName, nil
-
 }
 
+// storeProfileImage is respomsible for checking on file size and iamge type before upload, if it passes checks then it uploads to AWS S3 directly
 func storeProfileImage(w http.ResponseWriter, r *http.Request, owner_ID int, sess *awsS3.Session) (string, error) {
 	const MAX_UPLOAD_SIZE = 1024 * 1024 // 1MB
 	uploader := s3manager.NewUploader(sess)
@@ -451,11 +433,8 @@ func storeProfileImage(w http.ResponseWriter, r *http.Request, owner_ID int, ses
 		return "https://wooteam-productslist.s3.ap-southeast-1.amazonaws.com/profile_images/-1.jpeg", err
 	}
 
-	// fileName := "file" + strconv.Itoa(owner_ID) //file1
-
 	file, header, err := r.FormFile("profileImage")
 	if err != nil {
-		// http.Error(w, "file error here", http.StatusBadRequest)
 		return "https://wooteam-productslist.s3.ap-southeast-1.amazonaws.com/profile_images/-1.jpeg", err
 	}
 
@@ -464,22 +443,16 @@ func storeProfileImage(w http.ResponseWriter, r *http.Request, owner_ID int, ses
 	buff := make([]byte, 512)
 	_, err = file.Read(buff)
 	if err != nil {
-		// http.Error(w, "buff error", http.StatusInternalServerError)
-
-		// http.Error(w, err.Error(), http.StatusInternalServerError)
 		return "https://wooteam-productslist.s3.ap-southeast-1.amazonaws.com/profile_images/-1.jpeg", err
 	}
 
 	filetype := http.DetectContentType(buff)
 	if filetype != "image/jpeg" && filetype != "image/png" {
-		// http.Error(w, "The provided file format is not allowed. Please upload a JPEG or PNG image", http.StatusBadRequest)
 		return "https://wooteam-productslist.s3.ap-southeast-1.amazonaws.com/profile_images/-1.jpeg", errors.New("the provided file format is not allowed. Please upload a JPEG or PNG image")
 	}
 
 	// Reset the file
 	file.Seek(0, 0)
-
-	// s3FileName := "-1" + s3fileExtension
 
 	s3FileName := strconv.Itoa(owner_ID) + filepath.Ext(header.Filename)
 
@@ -503,6 +476,7 @@ func storeProfileImage(w http.ResponseWriter, r *http.Request, owner_ID int, ses
 
 }
 
+// EditProduct is responsible to displaying the edit product page when browser send's a get request to the server
 func (m *Repository) EditProduct(w http.ResponseWriter, r *http.Request) {
 
 	data := make(map[string]interface{})
@@ -521,9 +495,6 @@ func (m *Repository) EditProduct(w http.ResponseWriter, r *http.Request) {
 	data["product"] = product
 
 	fmt.Println("this shows product infomation", product)
-	// user := m.App.Session.Get(r.Context(), "user").(model.User)
-	// data["products"] = user.Products
-	// data["user"] = user
 	if err := render.Template(w, r, "editproduct.page.html", &render.TemplateData{
 		Data: data,
 		Form: &form.Form{},
@@ -532,10 +503,10 @@ func (m *Repository) EditProduct(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// EditProductPost checks on the form inputs submitted by the user to see if it passes all requirements, before making the changes to elastic and persistent storage
 func (m *Repository) EditProductPost(w http.ResponseWriter, r *http.Request) {
 
 	data := make(map[string]interface{})
-
 	type imageIndex struct {
 		index     int
 		imageType string
@@ -621,17 +592,11 @@ func (m *Repository) EditProductPost(w http.ResponseWriter, r *http.Request) {
 
 	if err := g.Wait(); err != nil {
 		m.App.Error.Println(err)
-		// form.Errors.Add("fileupload", "A miniumum of 4 images are required")
 	}
-
-	fmt.Println("this is the unsorted index", s3ImageInformation)
 
 	sort.Slice(s3ImageInformation, func(i, j int) bool {
 		return s3ImageInformation[i].index < s3ImageInformation[j].index
 	})
-	// s3ImageInformation = append(s3ImageInformation, imageIndex{index: id, imageType: s3imgType})
-
-	fmt.Println("this is the sorted index", s3ImageInformation)
 
 	var productImageURL = product.Images
 	var updateImg []model.ImgUrl
@@ -642,8 +607,6 @@ func (m *Repository) EditProductPost(w http.ResponseWriter, r *http.Request) {
 	for k := range product.Images {
 		imagesMap[k] = k
 	}
-
-	fmt.Println("pleaese show me all images in imagesMap", imagesMap)
 
 	for k, v := range s3ImageInformation {
 
@@ -662,8 +625,6 @@ func (m *Repository) EditProductPost(w http.ResponseWriter, r *http.Request) {
 		}
 
 	}
-
-	fmt.Println("this is the slice of new product image", productImageURL)
 
 	var editedProduct = model.Product{
 
@@ -731,8 +692,6 @@ func (m *Repository) EditProductPost(w http.ResponseWriter, r *http.Request) {
 
 		if err := g2.Wait(); err != nil {
 			m.App.Error.Println("error from g2", err)
-			//redirect if err.
-			// form.Errors.Add("fileupload", "A miniumum of 4 images are required")
 		}
 		u := m.App.Session.Get(r.Context(), "user").(model.User)
 

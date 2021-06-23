@@ -5,13 +5,7 @@ import (
 	"goRent/internal/model"
 )
 
-func SortArray(a []int) {
-
-	left := 0
-	right := len(a) - 1
-	quickSort(a, left, right)
-}
-
+// quickSort takes in an array and two ints as arguments and helps to sort the array passed in, in place.
 func quickSort(array []int, left, right int) {
 
 	if left < right {
@@ -97,6 +91,7 @@ func swap(array []int, i1, i2 int) {
 
 // }
 
+// quickSortCategory takes in an array of model.SearchTrends and two ints as arguments and helps to sort the array passed in, in place.
 func quickSortCategory(array []model.SearchTrends, left, right int) {
 
 	if left < right {
@@ -107,6 +102,7 @@ func quickSortCategory(array []model.SearchTrends, left, right int) {
 
 }
 
+// partitionCategory works hand in hand with func quickSortCategory
 func partitionCategory(array []model.SearchTrends, left, right int) int {
 
 	var partitionIndex int = left
@@ -124,6 +120,7 @@ func partitionCategory(array []model.SearchTrends, left, right int) int {
 	return partitionIndex
 }
 
+// swapCategory works hand in hand with func partitionCategory
 func swapCategory(array []model.SearchTrends, i1, i2 int) {
 	temp := array[i1]
 	array[i1] = array[i2]
@@ -131,6 +128,7 @@ func swapCategory(array []model.SearchTrends, i1, i2 int) {
 
 }
 
+// SortArrayCategory is the function to call when you want to call an array sorted. It takes in an array of type model.SearchTrends as an argument
 func SortArrayCategory(a []model.SearchTrends) {
 
 	left := 0

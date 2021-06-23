@@ -7,11 +7,10 @@ import (
 	"net/http"
 	"strconv"
 
-	// "github.com/olivere/elastic/aws"
-	// "github.com/olivere/elastic"
 	"github.com/olivere/elastic/v7"
 )
 
+// ManualProductFix to Elasticsearch is only required if form to update is not available yet.
 func ManualProductFix(r *http.Request, client *elastic.Client, product model.Product) {
 
 	var editedProduct = model.Product{
@@ -32,7 +31,6 @@ func ManualProductFix(r *http.Request, client *elastic.Client, product model.Pro
 		Type("product").
 		Id(strconv.Itoa(editedProduct.ID)).
 		BodyJson(editedProduct).
-		// Do(context.Background())
 		Do(r.Context())
 
 	if err != nil {
@@ -44,10 +42,9 @@ func ManualProductFix(r *http.Request, client *elastic.Client, product model.Pro
 
 }
 
+// ManualDeleteProductsElastic to Elasticsearch is only required if form to update is not available yet.
 func ManualDeleteProductsElastic(r *http.Request, client *elastic.Client, i int) {
 
-	// Delete all documents by sandrae
-	fmt.Println("DeleteProductsElasticUserID fn got triggered. please check for products index")
 	q := elastic.NewTermQuery("ID", i)
 	res, err := client.DeleteByQuery().
 		Index("product_list").
@@ -55,7 +52,7 @@ func ManualDeleteProductsElastic(r *http.Request, client *elastic.Client, i int)
 		Pretty(true).
 		Do(r.Context())
 	if err != nil {
-		fmt.Println("error from delting product from index cause user deleted account", err)
+		fmt.Println("error from deleting product from index cause user deleted account", err)
 	}
 	if res == nil {
 		fmt.Printf("\nexpected response != nil; got: %v\n", res)
@@ -63,6 +60,7 @@ func ManualDeleteProductsElastic(r *http.Request, client *elastic.Client, i int)
 
 }
 
+// DeleteProductsElasticUserID takes in an int argument for ID and deletes all the Elasticsearch products tied to ID
 func DeleteProductsElasticUserID(r *http.Request, client *elastic.Client, s string) error {
 	fmt.Println("owner_id value passed it", s)
 
@@ -83,14 +81,12 @@ func DeleteProductsElasticUserID(r *http.Request, client *elastic.Client, s stri
 	if res == nil {
 		return err
 	}
-
 	return nil
 
 }
 
+// ManualUpdateViaDoc to Elasticsearch is only required if form to update is not available yet.
 func ManualUpdateViaDoc(r *http.Request, client *elastic.Client) {
-	// client := setupTestClient(t) // , SetTraceLog(log.New(os.Stdout, "", 0)))
-
 	fmt.Println("update function got called")
 	doc, err := client.Get().
 		Index("product_list").Id("10").
@@ -116,6 +112,7 @@ func ManualUpdateViaDoc(r *http.Request, client *elastic.Client) {
 	// return nil
 }
 
+// ReviewUpdateViaDoc takes in an int and float32 variable and sends a request to elastic to update the product's review count.
 func ReviewUpdateViaDoc(r *http.Request, client *elastic.Client, i int, f float32) error {
 
 	elastic_id := strconv.Itoa(i)

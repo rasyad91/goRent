@@ -10,8 +10,6 @@ import (
 	"sync"
 )
 
-// rent + toh  -> budget version of a brain
-
 type Cat struct {
 	data map[string]int
 	l    sync.Mutex
@@ -20,6 +18,7 @@ type Cat struct {
 var singleCat Cat = Cat{}
 var doubleCat Cat = Cat{}
 
+// rentohQuery takes in a user input from the search page, processes the query into arrays and then fire them off as different go routines to check against Rentoh's brains
 func rentohQuery(s string) {
 
 	var foundCategory string
@@ -49,10 +48,6 @@ func rentohQuery(s string) {
 				break
 			}
 		}
-
-		// if len(foundCategory) == 0 {
-		// 	//store unknown keyword somewhese else
-		// }
 		return
 	}
 
@@ -68,7 +63,6 @@ func rentohQuery(s string) {
 	for categoryName := range catCh {
 		if categoryName.Index != -1 {
 			foundCategory = categoryName.Keyword
-			//process keywords for left and right of index
 			fmt.Println("this is the name of the category [DOUBLE] FOUND", foundCategory)
 			return
 		}
@@ -92,10 +86,10 @@ func rentohQuery(s string) {
 	}
 }
 
+// checkSingleCategory works hand in hand with rentohQuery to check against Rentoh's brain that contain the single worded categories
 func (m *Cat) checkSingleCategory(i int, s string, catCh chan model.RentohKeyword, wg *sync.WaitGroup) {
 
 	defer wg.Done()
-	// var singleCatMap = make(map[string]int)
 	m.l.Lock()
 	defer m.l.Unlock()
 
@@ -111,6 +105,7 @@ func (m *Cat) checkSingleCategory(i int, s string, catCh chan model.RentohKeywor
 
 }
 
+// checkDoubleCategory works hand in hand with rentohQuery to check against Rentoh's brain that contain the double worded categories
 func (m *Cat) checkDoubleCategory(i int, s1, s2 string, catCh chan model.RentohKeyword, wg *sync.WaitGroup) {
 
 	defer wg.Done()
@@ -138,6 +133,7 @@ func (m *Cat) checkDoubleCategory(i int, s1, s2 string, catCh chan model.RentohK
 
 }
 
+// SearchTrend is responsible for creating and storing the categories and displaying on SearchTrend data page.
 func (m *Repository) SearchTrend(w http.ResponseWriter, r *http.Request) {
 
 	data := make(map[string]interface{})
@@ -156,7 +152,6 @@ func (m *Repository) SearchTrend(w http.ResponseWriter, r *http.Request) {
 
 	SortArrayCategory(categoriesSlice)
 	data["Categories"] = categoriesSlice
-	// fmt.Println("these are all the categories", categoriesSlice)
 
 	if err := render.Template(w, r, "searchtrend.page.html", &render.TemplateData{
 		Data: data,
@@ -167,6 +162,7 @@ func (m *Repository) SearchTrend(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// CreateCategoryDataBase is responsible for teaching, guiding and helping Rentoh become smarter. (Rentoh's brain)
 func (m *Repository) CreateCategoryDataBase(w http.ResponseWriter, r *http.Request) {
 
 	singleCat.data = make(map[string]int)
